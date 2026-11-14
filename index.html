@@ -141,6 +141,21 @@ figcaption b{color:var(--line);font-weight:500}
 .key .tag{margin-right:6px}
 .panel-h .tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
 
+/* Article search */
+.art-results{margin-top:10px}
+.art-results .ah{margin:0 0 6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.alist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.abtn{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;width:100%;min-height:40px;padding:6px 10px;border:1px solid var(--hair);border-radius:2px;background:transparent;text-align:left;cursor:pointer}
+.abtn:hover{border-color:var(--line)}
+.abtn b{font-weight:600;font-size:13px;overflow-wrap:anywhere}
+.abtn span{font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+.abtn[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.amsg{margin:4px 0;font-size:12.5px;color:var(--muted)}
+.snote{margin:10px 0 0;font-size:11.5px;color:var(--muted)}
+.nb{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.nb .here{padding:6px 10px;border:1px solid var(--accent);border-radius:2px;font-size:13px;font-weight:600;color:var(--accent);overflow-wrap:anywhere}
+.info dd a{color:var(--line)}
+
 /* Legend and footer */
 .legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 14px}
 .legend li{display:flex;align-items:center;gap:10px;font-size:12.5px}
@@ -262,6 +277,7 @@ footer a{color:var(--line)}
 #section .s-sub{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
 #section .s-note{font-family:var(--mono);font-size:9px;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round}
 #section .s-note.beam{fill:var(--beam)}
+#section .s-note.acc{fill:var(--accent);font-weight:600}
 
 @media (prefers-reduced-motion:reduce){
   #plan .trail{animation:none}
@@ -323,11 +339,13 @@ footer a{color:var(--line)}
     <div class="class-row" id="class-chips" role="group" aria-label="Towers"></div>
     <div class="sub-head">
       <h3 id="sub-h">Floors</h3>
-      <label class="filter" for="sub-filter"><span class="vh">Find a floor in any tower</span>
-        <input id="sub-filter" type="search" placeholder="Find any floor, e.g. animals" autocomplete="off" enterkeyhint="search">
+      <label class="filter" for="sub-filter"><span class="vh">Find a floor or an article</span>
+        <input id="sub-filter" type="search" placeholder="Find a floor or article, e.g. octopus" autocomplete="off" enterkeyhint="search" aria-controls="art-results">
       </label>
     </div>
     <div class="sub-chips" id="sub-chips" role="group" aria-labelledby="sub-h"></div>
+    <div class="art-results" id="art-results" aria-live="polite"></div>
+    <p class="snote">Article search covers the v1 collection: Wikipedia's ~50,000 Vital Articles, in their shelf order. Some Wikipedia lists share a floor here: Basics and technical geography sits on Physical geography, Regions and countries is the Countries floor, both Arts lists share the Arts floor, and all six Technology lists share the Technology floor.</p>
   </section>
 
   <section class="sheet sect-sheet" aria-labelledby="sect-h">
@@ -532,7 +550,7 @@ Object.keys(ISLES).forEach(function(id){var I=ISLES[id];ZONES[id]={t:I.name,k:"I
 var TR=19, LEVELS=29, SPARE=3, PER=48, WALK_L=10;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
-var state={cls:"8",sub:"8.2",zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
+var state={cls:"8",sub:"8.2",art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
 
 function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k]);}}if(parent){parent.appendChild(e);}return e;}
 function txt(parent,x,y,s,cls,extra){var t=el("text",Object.assign({x:x,y:y,"class":cls},extra||{}),parent);t.textContent=s;return t;}
@@ -912,9 +930,19 @@ function drawSection(){
   el("path",{d:"M"+X0+" "+YG+" V"+f1(ys1)+" M"+f1(X1)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X2)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X3)+" "+YG+" V"+f1(ys1),"class":"s-wall"},sec);
   drawRoof(t.roof,ys1);
 
+  /* A searched article: its place along the floor's shelves (position in the list, bottom to top) */
+  if(state.art!==null&&ART&&ART.floor[state.art]===state.sub){
+    var ab=B.filter(function(v){return v.code===state.sub;})[0];
+    if(ab){
+      var fr=(ART.pos[state.art]-0.5)/ART.byFloor[state.sub].length, ya=Ym(6+3*(ab.from+fr*(ab.to-ab.from+1)));
+      [[X0,X1],[X2,X3]].forEach(function(p){el("rect",{x:f1(p[0]-2),y:f1(ya-2),width:f1(p[1]-p[0]+4),height:4,fill:"var(--accent)","class":"nohit"},sec);});
+      txt(sec,f1(XC),f1(ya+3),"◂ HERE ▸","s-note acc",{"text-anchor":"middle"});
+    }
+  }
+
   /* Flight shaft */
   el("line",{x1:f1(XC),y1:f1(Ym(10)),x2:f1(XC),y2:f1(Ym(88)),"class":"shaft-arrow","marker-end":"url(#sarr)"},sec);
-  txt(sec,f1(XC-5),f1(Ym(50)),"FLIGHT SHAFT · LIFT","s-note beam",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC-5)+" "+f1(Ym(50))+")"});
+  if(state.art===null){txt(sec,f1(XC-5),f1(Ym(50)),"FLIGHT SHAFT · LIFT","s-note beam",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC-5)+" "+f1(Ym(50))+")"});}
 
   /* Level scale and the L10 bridge level */
   [0,5,10,15,20,25].forEach(function(Lv){txt(sec,4,f1(Ym(6+3*Lv)-2),Lv===WALK_L?"L10 WALK":lv(Lv),"lvltxt");});
@@ -980,14 +1008,15 @@ function subChip(k,s,showClass){
   b.appendChild(t);b.appendChild(c);
   return b;
 }
-function renderSubChips(){
+function renderSubChips(){renderFloorChips();renderArticles();}
+function renderFloorChips(){
   subWrap.innerHTML="";
   var q=state.filter.trim().toLowerCase(), h=document.getElementById("sub-h");
   if(q){
     var hits=[];
     CLASSES.forEach(function(k){k.subs.forEach(function(s){if(s[0].toLowerCase().indexOf(q)===0||s[1].toLowerCase().indexOf(q)>=0){hits.push([k,s]);}});});
-    h.textContent="Matches ("+hits.length+")";
-    if(!hits.length){var p=document.createElement("p");p.className="empty";p.textContent="No floor matches “"+state.filter.trim()+"”. Try a broader word, or a number such as 8.2.";subWrap.appendChild(p);return;}
+    h.textContent="Floors ("+hits.length+")";
+    if(!hits.length){var p=document.createElement("p");p.className="empty";p.textContent="No floor name matches “"+state.filter.trim()+"”.";subWrap.appendChild(p);return;}
     hits.slice(0,60).forEach(function(x){subWrap.appendChild(subChip(x[0],x[1],true));});
   }else{
     var k=cls(state.cls);
@@ -1001,7 +1030,7 @@ function setInfo(kind,title,rows,note){
   document.getElementById("info-kind").textContent=kind;
   document.getElementById("info-h").textContent=title;
   var dl=document.getElementById("info-dl");dl.innerHTML="";
-  rows.forEach(function(r){var dt=document.createElement("dt");dt.textContent=r[0];var dd=document.createElement("dd");dd.textContent=r[1];dl.appendChild(dt);dl.appendChild(dd);});
+  rows.forEach(function(r){var dt=document.createElement("dt");dt.textContent=r[0];var dd=document.createElement("dd");if(r[1] instanceof Node){dd.appendChild(r[1]);}else{dd.textContent=r[1];}dl.appendChild(dt);dl.appendChild(dd);});
   document.getElementById("info-note").textContent=note||"";
 }
 function renderInfo(){
@@ -1012,6 +1041,7 @@ function renderInfo(){
     cap.textContent="Selected: "+z.t+".";
     return;
   }
+  if(state.art!==null&&ART){renderArticleCard(cap);return;}
   var k=cls(state.cls), t=TOWERS[k.c], isle=ISLES[t.isle], alt=altOf(k.c);
   var dist=Math.hypot(t.x,t.y), brg=(Math.atan2(t.x,-t.y)*180/Math.PI+360)%360;
   if(state.sub){
@@ -1041,13 +1071,135 @@ function renderInfo(){
   }
 }
 
+/* ---------- Article search (the v1 collection: Wikipedia's Vital Articles, Level 5) ----------
+   The index loads on the first search. Matching ignores case and accents: titles that start with the query first,
+   then titles with a word that starts with it, then any other match; shorter titles first within each group. */
+var IDX_URL="data/va5_index.json", ART=null, artLoading=null;
+var artWrap=document.getElementById("art-results");
+function fold(s){return s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();}
+function floorOfRun(run){return run[1];}
+function loadArticles(){
+  if(ART){return Promise.resolve(ART);}
+  if(artLoading){return artLoading;}
+  artLoading=fetch(IDX_URL).then(function(r){if(!r.ok){throw new Error("HTTP "+r.status);}return r.json();}).then(function(d){
+    var A={titles:[],keys:[],floor:[],path:[],pos:[],byFloor:{},lists:d.lists,paths:d.paths,multi:{},count:d.count}, fl={};
+    d.runs.forEach(function(run){
+      var f=floorOfRun(run);
+      (fl[f]=fl[f]||{})[d.paths[run[0]][0]]=1;
+      run[3].forEach(function(t){
+        var i=A.titles.length;A.titles.push(t);A.keys.push(fold(t));A.floor.push(f);A.path.push(run[0]);
+        (A.byFloor[f]=A.byFloor[f]||[]).push(i);A.pos.push(A.byFloor[f].length);
+      });
+    });
+    Object.keys(fl).forEach(function(f){A.multi[f]=Object.keys(fl[f]).length>1;});
+    ART=A;return A;
+  });
+  artLoading.catch(function(){artLoading=null;});
+  return artLoading;
+}
+function searchArticles(q){
+  var k=fold(q.trim()), pre=[], word=[], sub=[], keys=ART.keys;
+  for(var i=0;i<keys.length;i++){
+    var s=keys[i], p=s.indexOf(k);
+    if(p<0){continue;}
+    if(p===0){pre.push(i);}else if(/[^a-z0-9]/.test(s.charAt(p-1))){word.push(i);}else{sub.push(i);}
+  }
+  function byLen(a,b){return keys[a].length-keys[b].length||a-b;}
+  pre.sort(byLen);word.sort(byLen);sub.sort(byLen);
+  return {hits:pre.concat(word,sub).slice(0,20),total:pre.length+word.length+sub.length};
+}
+function floorCap(code){var k=cls(code.split(".")[0]);var s=k.subs.filter(function(x){return x[0]===code;})[0];return {k:k,cap:s?s[1]:code};}
+function belowFloor(i){
+  var f=ART.floor[i], pe=ART.paths[ART.path[i]], parts=[];
+  if(ART.multi[f]){parts.push(ART.lists[pe[0]]);}
+  if(pe[1]){parts.push(pe[1]);}
+  return parts.join(" › ");
+}
+function addressOf(i){var f=ART.floor[i], fc=floorCap(f), b=belowFloor(i);return fc.k.c+" "+fc.k.t+" › "+f+" "+fc.cap+(b?" › "+b:"");}
+function shortAddr(i){var f=ART.floor[i], b=belowFloor(i);return f+" "+floorCap(f).cap+(b?" › "+b:"");}
+function wikiUrl(t){return "https://en.wikipedia.org/wiki/"+encodeURIComponent(t.replace(/ /g,"_")).replace(/%2F/g,"/").replace(/%3A/g,":").replace(/%2C/g,",");}
+function artButton(i){
+  var b=document.createElement("button");b.type="button";b.className="abtn";b.dataset.art=String(i);
+  b.setAttribute("aria-pressed",state.art===i?"true":"false");
+  var t=document.createElement("b");t.textContent=ART.titles[i];
+  var s=document.createElement("span");s.textContent=shortAddr(i);
+  b.appendChild(t);b.appendChild(s);
+  return b;
+}
+function amsg(text){var p=document.createElement("p");p.className="amsg";p.textContent=text;artWrap.appendChild(p);}
+function renderArticles(){
+  artWrap.innerHTML="";
+  var q=state.filter.trim();
+  if(fold(q).length<2){return;}
+  if(!ART){
+    amsg("Loading the article index…");
+    loadArticles().then(function(){if(state.filter.trim()===q){renderArticles();}},function(){artWrap.innerHTML="";amsg("Could not load the article index. Floor search still works.");});
+    return;
+  }
+  var r=searchArticles(q), h=document.createElement("p");h.className="ah";
+  artWrap.appendChild(h);
+  if(!r.hits.length){
+    h.textContent="Articles (0)";
+    amsg("“"+q+"” is not in the v1 collection of ~50,000 Vital Articles. The 500k version will add the most-read articles.");
+    return;
+  }
+  h.textContent="Articles ("+(r.total>r.hits.length?"top "+r.hits.length+" of "+r.total.toLocaleString("en-US"):r.total)+")";
+  var ul=document.createElement("ul");ul.className="alist";
+  r.hits.forEach(function(i){var li=document.createElement("li");li.appendChild(artButton(i));ul.appendChild(li);});
+  artWrap.appendChild(ul);
+}
+function renderArticleCard(cap){
+  var i=state.art, f=ART.floor[i], list=ART.byFloor[f], p=ART.pos[i];
+  var a=document.createElement("a");a.href=wikiUrl(ART.titles[i]);a.target="_blank";a.rel="noopener";a.textContent="Read on Wikipedia";
+  var nb=document.createElement("ul");nb.className="nb";
+  for(var j=p-3;j<=p+1;j++){
+    if(j<0||j>=list.length){continue;}
+    var li=document.createElement("li");
+    if(list[j]===i){var here=document.createElement("div");here.className="here";here.textContent="▸ "+ART.titles[i];li.appendChild(here);}
+    else{li.appendChild(artButton(list[j]));}
+    nb.appendChild(li);
+  }
+  setInfo("Article · v1 collection",ART.titles[i],[
+    ["Address",addressOf(i)],
+    ["Shelf","#"+p.toLocaleString("en-US")+" of "+list.length.toLocaleString("en-US")+" on this floor"],
+    ["Wikipedia",a],
+    ["Neighbours",nb]
+  ],"Shelf order follows Wikipedia's Vital Articles lists, as in the v1 build. Pick a neighbour to walk along the shelf.");
+  cap.textContent="Selected: "+ART.titles[i]+", floor "+f+" "+floorCap(f).cap+".";
+}
+function pickArticle(i,from){
+  var f=ART.floor[i];
+  state.art=i;state.cls=f.split(".")[0];state.sub=f;state.zone=null;
+  if(state.view==="academy"){setView("site");}
+  render(true);
+  if(from==="list"){var b=artWrap.querySelector('.abtn[data-art="'+i+'"]');if(b){b.focus();}}
+  var card=document.querySelector(".info");
+  if(from==="info"){var h=document.getElementById("info-h");h.setAttribute("tabindex","-1");h.focus({preventScroll:true});}
+  var r=card.getBoundingClientRect();
+  if(r.top>window.innerHeight-60||r.bottom<0){card.scrollIntoView({behavior:"smooth",block:"start"});}
+}
+artWrap.addEventListener("click",function(e){var b=e.target.closest(".abtn");if(b&&ART){pickArticle(Number(b.dataset.art),"list");}});
+document.querySelector(".info").addEventListener("click",function(e){var b=e.target.closest(".abtn");if(b&&ART){pickArticle(Number(b.dataset.art),"info");}});
+filterIn.addEventListener("focus",function(){loadArticles().catch(function(){});},{once:true});
+filterIn.addEventListener("keydown",function(e){
+  if(e.key==="Enter"){var b=artWrap.querySelector(".abtn")||subWrap.querySelector(".schip");if(b){e.preventDefault();b.click();}}
+  else if(e.key==="ArrowDown"){var d=artWrap.querySelector(".abtn")||subWrap.querySelector(".schip");if(d){e.preventDefault();d.focus();}}
+});
+artWrap.addEventListener("keydown",function(e){
+  var bs=Array.prototype.slice.call(artWrap.querySelectorAll(".abtn")), k=bs.indexOf(document.activeElement);
+  if(k<0){return;}
+  if(e.key==="ArrowDown"&&k<bs.length-1){e.preventDefault();bs[k+1].focus();}
+  else if(e.key==="ArrowUp"){e.preventDefault();if(k>0){bs[k-1].focus();}else{filterIn.focus();}}
+  else if(e.key==="Escape"){e.preventDefault();filterIn.focus();}
+});
+
 /* ---------- Updates and events ---------- */
 function render(scrollChips){updatePlan();drawSection();syncClassChips(scrollChips);renderSubChips();renderInfo();}
 function setView(v){state.view=v;document.querySelectorAll("[data-view]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.view===v?"true":"false");});}
 /* No tower stands on Academy Isle any more, so picking a tower or floor always shows the whole site */
-function pickClass(c){state.cls=c;state.sub=null;state.zone=null;if(state.view==="academy"){setView("site");}render(true);}
-function pickSub(c,s){state.cls=c;state.sub=s;state.zone=null;state.filter="";filterIn.value="";if(state.view==="academy"){setView("site");}render(true);}
-function pickZone(z){state.zone=z;render(false);}
+function pickClass(c){state.art=null;state.cls=c;state.sub=null;state.zone=null;if(state.view==="academy"){setView("site");}render(true);}
+function pickSub(c,s){state.art=null;state.cls=c;state.sub=s;state.zone=null;state.filter="";filterIn.value="";if(state.view==="academy"){setView("site");}render(true);}
+function pickZone(z){state.art=null;state.zone=z;render(false);}
 
 classRow.addEventListener("click",function(e){var b=e.target.closest(".cchip");if(b){pickClass(b.dataset.cls);}});
 subWrap.addEventListener("click",function(e){var b=e.target.closest(".schip");if(b){pickSub(b.dataset.cls,b.dataset.sub);}});
