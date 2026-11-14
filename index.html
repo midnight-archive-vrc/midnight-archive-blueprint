@@ -842,6 +842,12 @@ function drawRoof(type,ys1){
   el("circle",{cx:f1(XC),cy:f1(top-10),r:2,"class":"roof"},g);
 }
 
+function fitText(t,size,maxW){
+  t.style.fontSize=size+"px";
+  var w=t.getComputedTextLength?t.getComputedTextLength():0;
+  if(w>maxW){t.style.fontSize=(Math.floor(size*maxW/w*10)/10)+"px";}
+  return t;
+}
 function drawSection(){
   while(sec.firstChild){sec.removeChild(sec.firstChild);}
   var k=cls(state.cls), t=TOWERS[state.cls], B=bandsFor(k), n=B.length, alt=altOf(state.cls);
@@ -855,9 +861,8 @@ function drawSection(){
   el("path",{d:"M0 1L10 5L0 9z",fill:"#8edbff"},mk);
   el("rect",{x:0,y:0,width:360,height:610,fill:"url(#s10)"},sec);
 
-  /* Long topic names shrink the title instead of being cut off */
-  var title="TOWER "+k.c+" · "+k.t.toUpperCase(), tfs=Math.min(19,Math.floor(19*29/title.length*10)/10);
-  txt(sec,8,22,title,"s-title",{style:"font-size:"+tfs+"px"});
+  /* Long topic names shrink the title to fit the sheet (measured, so it holds for any font) */
+  fitText(txt(sec,8,22,"TOWER "+k.c+" · "+k.t.toUpperCase(),"s-title"),19,344);
   txt(sec,8,37,isleName.toUpperCase()+" · +"+alt+" m · 3 m per level","s-sub");
 
   /* Cloud sea far below, the floating rock, root lanterns */
@@ -1065,6 +1070,8 @@ function activate(t){
 buildPlan();
 buildClassChips();
 render(true);
+/* Titles are measured; measure again once the web fonts have loaded */
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){drawSection();});}
 })();
 </script>
 </body>
