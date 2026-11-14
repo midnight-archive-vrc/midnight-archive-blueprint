@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midnight Archive Blueprint (draft v0.4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: an arcane architect's drafting set. Title block and intro, sheet C-101 (shelving rules), then sheet A-101 (archipelago plan) and A-201 (tower section) with the tower and floor pickers between them, then the notes; one column on phones, sheets side by side on wide screens. */
+  --paper:#0b2a48;
+  --line:#e3eeff;
+  --muted:#9ab6d4;
+  --accent:#ffc266;
+  --beam:#8edbff;
+  --spirit:#c6b4ff;
+  /* Two data colours, validated on --paper (lightness band, chroma, colour-blind separation, contrast): articles and books */
+  --vol:#2f95cc;
+  --book:#c97633;
+  --display:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --hair:color-mix(in srgb,var(--line) 24%,transparent);
+  --faint:color-mix(in srgb,var(--line) 7%,transparent);
+  --spine-thin:repeating-linear-gradient(90deg,transparent 0 3px,rgba(11,42,72,.38) 3px 4px);
+  --spine-thick:repeating-linear-gradient(90deg,transparent 0 7px,rgba(11,42,72,.45) 7px 9px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--faint) 1px,transparent 1px),linear-gradient(90deg,var(--faint) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--line);
+  font-family:var(--mono);
+  font-size:14px;
+  line-height:1.5;
+}
+main{
+  max-width:1180px;margin:0 auto;padding:16px;
+  display:grid;gap:14px;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"tb" "intro" "flow" "plan" "pick" "sect" "info" "notes" "legend" "foot";
+}
+@media (min-width:900px){
+  main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"tb tb" "intro intro" "flow flow" "plan sect" "pick info" "notes notes" "legend foot";align-items:start}
+}
+h1,h2,h3{text-wrap:balance}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--beam);outline-offset:2px}
+
+/* Title block */
+.titleblock{grid-area:tb;border:1.5px solid var(--line);background:var(--paper);display:grid;grid-template-columns:minmax(0,1fr)}
+.tb-main{padding:12px 14px 10px}
+.tb-kicker{margin:0;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tb-kicker b{color:var(--accent);font-weight:600}
+.titleblock h1{margin:2px 0 0;font-family:var(--display);font-weight:600;font-size:clamp(36px,10vw,52px);line-height:.95;letter-spacing:.05em;text-transform:uppercase}
+.tb-cells{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--hair)}
+.tb-cells div{padding:7px 12px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.tb-cells div:nth-child(2n){border-right:0}
+.tb-cells dt{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tb-cells dd{margin:0;font-size:13px}
+@media (min-width:900px){
+  .titleblock{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+  .tb-cells{grid-template-columns:repeat(4,minmax(0,1fr));border-top:0;border-left:1px solid var(--hair)}
+  .tb-cells div{border-bottom:0}
+  .tb-cells div:nth-child(2n){border-right:1px solid var(--hair)}
+  .tb-cells div:last-child{border-right:0}
+}
+
+/* Sheets and panels */
+.sheet,.panel{border:1px solid var(--hair);background:var(--paper)}
+.plan-sheet{grid-area:plan}.pick{grid-area:pick}.sect-sheet{grid-area:sect}.info{grid-area:info}.legend{grid-area:legend}.flow-sheet{grid-area:flow}
+footer{grid-area:foot}
+.sheet-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--hair)}
+.sheet-no{font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:.06em;color:var(--accent)}
+.sheet-head h2{margin:0;font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:.08em;text-transform:uppercase}
+.seg{margin-left:auto;display:flex;gap:4px}
+.sheet-head .seg+.seg{margin-left:0}
+.seg button,.tog{border:1px solid var(--hair);background:transparent;border-radius:2px;padding:6px 10px;min-height:36px;font-size:12px;letter-spacing:.04em;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--line);color:var(--paper);border-color:var(--line)}
+.drawing{margin:0;padding:6px 6px 0}
+.drawing svg{display:block;width:100%;height:auto;touch-action:manipulation}
+figcaption{padding:6px 6px 10px;font-size:12.5px;color:var(--muted);min-height:3.2em}
+figcaption b{color:var(--line);font-weight:500}
+.layers{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 12px}
+.tog{display:inline-flex;align-items:center;gap:7px}
+.tog svg{width:24px;height:10px;flex:none}
+.tog[aria-pressed="true"]{border-color:var(--line);background:color-mix(in srgb,var(--line) 12%,transparent)}
+.tog[aria-pressed="false"]{color:var(--muted)}
+
+/* Pickers */
+.panel{padding:12px}
+.panel-h{margin:0 0 8px;font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:.08em;text-transform:uppercase;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.panel-h span{font-family:var(--mono);font-weight:400;font-size:11.5px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
+.class-row{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.cchip{flex:none;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:98px;min-height:66px;padding:7px 9px;border:1px solid var(--hair);border-radius:2px;background:transparent;text-align:left;cursor:pointer}
+.cchip b{font-family:var(--display);font-weight:700;font-size:27px;line-height:1}
+.cchip span{font-size:10.5px;line-height:1.3;color:var(--muted)}
+.cchip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.cchip[aria-pressed="true"] span{color:var(--paper)}
+.sub-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:6px 0 8px}
+.sub-head h3{margin:0;font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.08em;text-transform:uppercase}
+.filter{flex:1 1 200px;display:block}
+.filter input{width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--hair);border-radius:2px;background:transparent;color:var(--line);font:inherit;font-size:16px}
+.filter input::placeholder{color:var(--muted)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sub-chips{display:flex;flex-wrap:wrap;gap:6px}
+.schip{display:flex;align-items:baseline;gap:8px;max-width:100%;min-height:40px;padding:7px 10px;border:1px solid var(--hair);border-radius:2px;background:transparent;text-align:left;cursor:pointer}
+.schip b{font-weight:600;font-size:13px;white-space:nowrap}
+.schip span{font-size:12px;line-height:1.35;color:var(--muted)}
+.schip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.schip[aria-pressed="true"] span{color:var(--paper)}
+.empty{color:var(--muted);font-size:12.5px;margin:4px 0}
+
+/* Info card */
+.info{border-left:3px solid var(--accent)}
+.eyebrow{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.info h2{margin:2px 0 10px;font-family:var(--display);font-weight:600;font-size:26px;line-height:1.1;letter-spacing:.01em}
+.info dl{margin:0;display:grid;grid-template-columns:minmax(84px,auto) minmax(0,1fr);gap:6px 12px}
+.info dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.info dd{margin:0;font-size:13px;overflow-wrap:anywhere}
+.info p.note{margin:12px 0 0;font-size:12.5px;color:var(--muted);max-width:65ch}
+
+/* Intro, notes and status tags */
+.intro{grid-area:intro}
+.notes{grid-area:notes;display:grid;gap:14px;grid-template-columns:minmax(0,1fr);align-items:start}
+@media (min-width:900px){.notes{grid-template-columns:repeat(2,minmax(0,1fr))}.notes .wide{grid-column:1/-1}}
+.prose p{margin:0 0 8px;font-size:13px;max-width:72ch}
+.prose p:last-child{margin-bottom:0}
+.prose ul,.prose ol{margin:0;padding-left:20px;display:grid;gap:7px;font-size:13px;max-width:72ch}
+.prose li::marker{color:var(--muted)}
+.prose dl{margin:0;display:grid;grid-template-columns:minmax(84px,auto) minmax(0,1fr);gap:7px 12px}
+.prose dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.prose dd{margin:0;font-size:13px;overflow-wrap:anywhere}
+.prose .sub{margin:10px 0 0;font-size:12.5px;color:var(--muted)}
+.prose a{color:var(--line)}
+.tag{display:inline-block;font-family:var(--mono);font-weight:500;font-size:10px;line-height:1.5;letter-spacing:.08em;text-transform:uppercase;padding:0 6px;border:1px solid currentColor;border-radius:2px;vertical-align:1px;white-space:nowrap}
+.tag.dec{color:var(--accent)}
+.tag.tb{color:var(--beam)}
+.tag.pro{color:var(--spirit)}
+.tag.idea{color:var(--muted);border-style:dashed}
+.key{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px 14px}
+.key li{font-size:12.5px;color:var(--muted)}
+.key .tag{margin-right:6px}
+.panel-h .tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+
+/* Article-count switch */
+.scale-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:12px 0 4px;padding:10px;border:1px solid var(--line);border-radius:2px}
+.scale-ctl .seg{margin-left:0}
+.scale-ctl .lab{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.08em;text-transform:uppercase}
+.scale-note{flex:1 1 240px;font-size:12.5px;color:var(--muted)}
+
+/* C-101 shelving rules */
+.flow{padding:12px;display:grid;gap:12px}
+.lane{border-left:4px solid var(--vol);padding-left:10px}
+.lane.bk{border-left-color:var(--book)}
+.lane h3{margin:0 0 6px;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.lane h3 span{font-family:var(--mono);font-weight:400;font-size:11.5px;letter-spacing:.02em;text-transform:none;color:var(--muted);margin-left:8px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.steps li{position:relative;border:1px solid var(--hair);border-radius:2px;padding:7px 9px;font-size:12.5px;background:var(--paper)}
+.steps li b{display:block;font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+@media (min-width:760px){
+  .steps{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+  .steps li:not(:last-child)::after{content:"";position:absolute;right:-13px;top:50%;width:10px;border-top:1.5px solid var(--muted)}
+}
+.bridge-note{margin:0;padding:8px 10px;border:1px dashed var(--hair);font-size:12.5px;color:var(--muted)}
+.bridge-note b{color:var(--line);font-weight:500}
+
+/* Census (articles vs books per tower) */
+.series{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 10px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:22px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+.sw.v{background:var(--vol);background-image:var(--spine-thin)}
+.sw.b{background:var(--book);background-image:var(--spine-thick)}
+.sw.t{background:color-mix(in srgb,var(--line) 45%,var(--paper))}
+.sw.o{background:color-mix(in srgb,var(--book) 45%,var(--paper));background-image:var(--spine-thick)}
+.census{display:grid;gap:2px}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nm num" "bar bar";gap:3px 10px;align-items:baseline;width:100%;padding:5px 6px;border:1px solid transparent;border-radius:2px;background:transparent;text-align:left;cursor:pointer}
+.crow:hover{border-color:var(--hair)}
+.crow[aria-pressed="true"]{border-color:var(--accent)}
+.crow .nm{grid-area:nm;font-size:12.5px;min-width:0}
+.crow .nm b{font-family:var(--display);font-weight:700;font-size:17px;margin-right:7px}
+.crow .num{grid-area:num;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.crow .bar{grid-area:bar;display:flex;gap:2px;height:12px;align-self:center}
+.crow .bar i{display:block;height:100%;min-width:1px}
+.crow .bar .a{background:var(--vol);background-image:var(--spine-thin)}
+.crow .bar .b{background:var(--book);background-image:var(--spine-thick)}
+.crow .bar .end{border-radius:0 3px 3px 0}
+@media (max-width:519px){.crow{grid-template-columns:minmax(0,1fr);grid-template-areas:"nm" "num" "bar";gap:2px}.crow .num{white-space:normal}}
+@media (min-width:900px){.crow{grid-template-columns:250px minmax(0,1fr) 220px;grid-template-areas:"nm bar num"}.crow .num{text-align:right}}
+
+/* LoC class table */
+.tablewrap{overflow-x:auto}
+.map{width:100%;border-collapse:collapse;font-size:12.5px}
+.map th{text-align:left;font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:4px 8px 6px 0;border-bottom:1px solid var(--line)}
+.map td{padding:6px 8px 6px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+.map td:first-child{font-weight:600;white-space:nowrap}
+.map .open{color:var(--muted);font-style:italic}
+@media (max-width:400px){.map{font-size:11px}.map th,.map td{padding-right:6px}}
+
+/* Cross-link diagram */
+.xl svg{display:block;width:100%;max-width:460px;height:auto;margin:4px 0 10px}
+.xl .node{fill:var(--paper);stroke-width:1.5}
+.xl .node.v{stroke:var(--vol)}
+.xl .node.b{stroke:var(--book)}
+.xl .t1{font-family:var(--display);font-weight:600;font-size:15px;fill:var(--line)}
+.xl .t2{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+.xl .edge{fill:none;stroke:var(--line);stroke-width:1.2}
+.xl .edge.d{stroke-dasharray:4 4;stroke:var(--muted)}
+.xl .et{font-family:var(--mono);font-size:9.5px;fill:var(--beam);paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round}
+
+/* Storage budget */
+.brow{display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--hair)}
+.brow h3{margin:0;font-size:13px;font-weight:600;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.brow p{margin:0;font-size:12.5px;color:var(--muted);max-width:80ch}
+.sites{display:flex;flex-wrap:wrap;gap:4px}
+.site{display:flex;width:58px;height:24px;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.site.sm{width:24px;height:16px}
+.brow.bad .site{border-style:dashed;border-color:var(--muted)}
+.site i{display:block;height:100%}
+.k-vol{background:var(--vol);background-image:var(--spine-thin)}
+.k-tbl{background:color-mix(in srgb,var(--line) 45%,var(--paper))}
+.k-book{background:var(--book);background-image:var(--spine-thick)}
+.k-open{background:color-mix(in srgb,var(--book) 45%,var(--paper));background-image:var(--spine-thick)}
+.bsum{font-size:12.5px}
+.bsum b{font-weight:600}
+
+/* Example placements */
+.exs{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.exs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ex{border:1px solid var(--hair);border-left:3px solid var(--vol);padding:10px;display:flex;flex-direction:column;gap:8px}
+.ex.bk{border-left-color:var(--book)}
+.ex h3{margin:0;font-family:var(--display);font-weight:600;font-size:21px;line-height:1.1}
+.ex h3 span{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.prose .path{list-style:none;padding:0;gap:5px}
+.path li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;font-size:12.5px}
+.path b{font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:1px}
+.show{margin-top:auto;align-self:flex-start;border:1px solid var(--line);background:transparent;border-radius:2px;padding:6px 10px;min-height:36px;font-size:12px;cursor:pointer}
+.show[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+
+/* Legend and footer */
+.legend ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 14px}
+.legend li{display:flex;align-items:center;gap:10px;font-size:12.5px}
+.legend svg{width:34px;height:16px;flex:none}
+footer{font-size:12px;color:var(--muted);padding:2px 2px 24px}
+footer p{margin:0 0 6px;max-width:72ch}
+footer a{color:var(--line)}
+
+/* ---------- Drawing styles (shared) ---------- */
+.g-minor{fill:none;stroke:var(--line);stroke-opacity:.045;stroke-width:.5}
+.g-major{fill:none;stroke:var(--line);stroke-opacity:.1;stroke-width:.7}
+.hatch{stroke:var(--line);stroke-opacity:.45;stroke-width:1}
+.arrowhead{fill:var(--line)}
+.lbl{font-family:var(--mono);font-weight:500;letter-spacing:.04em;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+.isle-lbl{font-family:var(--display);font-style:italic;font-weight:600;fill:var(--line);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+
+/* Plan */
+#plan .swirl{fill:none;stroke:var(--line);stroke-opacity:.28;stroke-width:1;stroke-linecap:round}
+#plan .moon{fill:color-mix(in srgb,var(--line) 85%,var(--paper));stroke:none}
+#plan .moon-cut{fill:var(--paper)}
+#plan .rose{fill:var(--line)}
+#plan .rose-dim{fill:var(--muted)}
+#plan .rose-ring{fill:none;stroke:var(--line);stroke-opacity:.6}
+#plan .under{fill:url(#phatch);stroke:var(--line);stroke-opacity:.45;stroke-width:1;pointer-events:none}
+#plan .isle{fill:color-mix(in srgb,var(--line) 7%,var(--paper));stroke:var(--line);stroke-width:1.5;cursor:pointer}
+#plan .isle.gz{fill:color-mix(in srgb,var(--line) 4%,var(--paper))}
+#plan .deck-o{fill:none;stroke:var(--line);stroke-width:7;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
+#plan .deck-i{fill:none;stroke:var(--paper);stroke-width:4.2;stroke-linecap:round;pointer-events:none}
+#plan .stair{stroke:var(--line);stroke-width:1;pointer-events:none}
+#plan .walk{fill:none;stroke:var(--line);stroke-opacity:.6;stroke-width:1.1;stroke-dasharray:1.5 3.5;stroke-linecap:round;pointer-events:none}
+#plan .lantern{fill:var(--line);pointer-events:none}
+#plan .debris{fill:var(--line);fill-opacity:.7;pointer-events:none}
+#plan .tram{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:1.2;stroke-dasharray:12 4 2 4;pointer-events:none}
+#plan .ring-hit{fill:none;stroke:transparent;stroke-width:12;pointer-events:stroke;cursor:pointer}
+#plan .tram-stop{fill:var(--paper);stroke:var(--line);stroke-opacity:.7}
+#plan .zone-fill{fill:color-mix(in srgb,var(--line) 10%,var(--paper));stroke:var(--line);stroke-width:1.3;cursor:pointer}
+#plan .gallery{fill:transparent;stroke:var(--line);stroke-width:1;stroke-dasharray:3 3;cursor:pointer}
+#plan .rib,#plan .oculus{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8;pointer-events:none}
+#plan .gazebo{fill:none;stroke:var(--line);stroke-width:1;pointer-events:none}
+#plan .hatchfill{pointer-events:none}
+#plan .zsel{stroke:var(--accent)!important;stroke-width:2.6!important;stroke-opacity:1!important}
+#plan .deck-o.zsel{stroke-width:7!important}
+#plan .tower{cursor:pointer}
+#plan .tw-shadow{fill:#000;fill-opacity:.28;pointer-events:none}
+#plan .tw-shell{fill:var(--paper);stroke:var(--line);stroke-width:1.6}
+#plan .tw-butt{fill:var(--paper);stroke:var(--line);stroke-width:1.1}
+#plan .tw-ring{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8}
+#plan .tw-shaft{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:.8;stroke-dasharray:2 2}
+#plan .tw-letter{font-family:var(--display);font-weight:700;font-size:21px;fill:var(--line);text-anchor:middle;pointer-events:none}
+#plan .hit{fill:transparent}
+#plan .tick-v{stroke:var(--vol);stroke-width:.8;pointer-events:none}
+#plan .tick-b{stroke:var(--book);stroke-width:1.8;pointer-events:none}
+#plan.has-sel .tower:not(.sel){opacity:.62}
+#plan .tower.sel .tw-shell,#plan .tower.sel .tw-butt{stroke:var(--accent);stroke-width:2.6;fill:color-mix(in srgb,var(--accent) 24%,var(--paper))}
+#plan .tower.sel .tw-letter{fill:var(--accent)}
+#plan .tower:focus-visible .tw-shell,#plan .zone-fill:focus-visible,#plan .isle:focus-visible{stroke:var(--beam);stroke-width:3}
+#plan [tabindex]:focus-visible{outline:none}
+#plan .trail-glow{fill:none;stroke:var(--beam);stroke-opacity:.22;stroke-width:6;stroke-linecap:round;pointer-events:none}
+#plan .trail{fill:none;stroke:var(--beam);stroke-width:1.8;stroke-dasharray:7 5;stroke-linecap:round;animation:thread 1.1s linear infinite;pointer-events:none}
+#plan .trail-halo{fill:var(--beam);fill-opacity:.25;pointer-events:none}
+#plan .trail-stop{fill:var(--beam);stroke:var(--paper);stroke-width:1;pointer-events:none}
+#plan .trail-no{font-family:var(--mono);font-weight:600;font-size:9px;fill:var(--paper);text-anchor:middle;pointer-events:none}
+#plan .current{fill:none;stroke:var(--line);stroke-opacity:.8;stroke-width:1.2;stroke-dasharray:1.5 5;stroke-linecap:round;pointer-events:none}
+#plan .route{fill:none;stroke:var(--spirit);stroke-width:1.3;stroke-dasharray:1.5 3.5;stroke-linecap:round;pointer-events:none}
+#plan .npc-dot{fill:var(--spirit);pointer-events:none}
+#plan .scale{fill:none;stroke:var(--line);stroke-width:1}
+#plan .lbl{font-size:13px}
+#plan .isle-lbl{font-size:17px}
+#plan .lbl.zl{font-family:var(--mono);font-size:6.6px;stroke-width:1.6px;fill:var(--line)}
+#plan .lbl.zl.mute{fill:var(--muted)}
+#plan .lbl.npc{fill:var(--spirit)}
+#plan .lbl.trl{fill:var(--beam)}
+#plan .isle-lbl.zl{font-size:9px;stroke-width:2px}
+#plan .co{font-family:var(--display);font-weight:700;font-size:18px;fill:var(--accent);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+#plan .co2{font-family:var(--mono);font-weight:600;font-size:13px;fill:var(--accent);paint-order:stroke;stroke:var(--paper);stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+#plan .layer{display:none}
+#plan.show-below .layer-below,#plan.show-bays .layer-bays,#plan.show-trail .layer-trail,#plan.show-flight .layer-flight,#plan.show-npc .layer-npc{display:inline}
+#plan .vis-d{display:none}
+#plan.zoomed .vis-d{display:inline}
+#plan.zoomed .vis-s{display:none}
+@keyframes thread{to{stroke-dashoffset:-24}}
+
+/* Section */
+#section .rock{fill:url(#shatch);stroke:var(--line);stroke-width:1.2}
+#section .ground{stroke:var(--line);stroke-width:2}
+#section .root{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:1.1;stroke-dasharray:5 4}
+#section .glow{fill:var(--line);fill-opacity:.18}
+#section .lamp{fill:var(--line)}
+#section .cloud{fill:none;stroke:var(--line);stroke-width:1.3}
+#section .cloudfill{fill:color-mix(in srgb,var(--line) 7%,transparent)}
+#section .s-base{fill:color-mix(in srgb,var(--line) 5%,var(--paper));stroke:var(--line);stroke-width:1.2}
+#section .s-wall{fill:none;stroke:var(--line);stroke-width:1.6}
+#section .ring-sep{fill:none;stroke:var(--line);stroke-opacity:.4;stroke-width:.8}
+#section .band{fill:color-mix(in srgb,var(--line) 4%,var(--paper));stroke:none;cursor:pointer}
+#section .band.alt{fill:color-mix(in srgb,var(--line) 11%,var(--paper))}
+#section .band-sel{fill:none;stroke:var(--accent);stroke-width:2;pointer-events:none}
+#section .ring-hl{fill:color-mix(in srgb,var(--accent) 22%,transparent);stroke:var(--accent);stroke-width:2.2;pointer-events:none}
+#section .tail-line{stroke:var(--paper);stroke-width:1.4;stroke-dasharray:2 1.5;pointer-events:none}
+#section .lvl{stroke:var(--line);stroke-opacity:.18;stroke-width:.6;pointer-events:none}
+#section .hdr{stroke:var(--line);stroke-width:1.3;pointer-events:none}
+#section .hdr.sel{stroke:var(--accent);stroke-width:2.4}
+#section .balcony{fill:none;stroke:var(--line);stroke-width:1.1}
+#section .balcony.sel{stroke:var(--accent);stroke-width:1.6}
+#section .spare{fill:var(--paper);stroke:none}
+#section .nohit{pointer-events:none}
+#section .roof{fill:color-mix(in srgb,var(--line) 6%,var(--paper));stroke:var(--line);stroke-width:1.3}
+#section .roof-line{fill:none;stroke:var(--line);stroke-width:1}
+#section .shaft-arrow{stroke:var(--beam);stroke-width:1.2;stroke-dasharray:4 4}
+#section .stub{fill:none;stroke:var(--line);stroke-width:1}
+#section .leader{fill:none;stroke:var(--line);stroke-opacity:.35;stroke-width:.7}
+#section .leader.sel{stroke:var(--accent);stroke-opacity:1;stroke-width:1.2}
+#section .row{cursor:pointer}
+#section .row-hit{fill:transparent}
+#section .row:focus-visible .row-hit{fill:color-mix(in srgb,var(--beam) 18%,transparent)}
+#section [tabindex]:focus-visible{outline:none}
+#section .code{font-family:var(--mono);font-weight:600;font-size:10.5px;fill:var(--line)}
+#section .cap{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+#section .row.sel .code,#section .row.sel .cap{fill:var(--accent)}
+#section .lvltxt{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+#section .s-title{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.05em;fill:var(--line)}
+#section .s-sub{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+#section .s-note{font-family:var(--mono);font-size:9px;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round}
+#section .s-note.beam{fill:var(--beam)}
+#section .s-note.acc{fill:var(--accent);font-weight:600}
+#section .key-t{font-family:var(--mono);font-size:9px;fill:var(--line)}
+
+@media (prefers-reduced-motion:reduce){
+  #plan .trail{animation:none}
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="titleblock">
+    <div class="tb-main">
+      <p class="tb-kicker"><b>Draft</b> · rabbit-hole archive · books and articles · VRChat</p>
+      <h1>Midnight Archive</h1>
+    </div>
+    <dl class="tb-cells">
+      <div><dt>Sheets</dt><dd>C-101 Shelving rules · A-101 Plan · A-201 Section</dd></div>
+      <div><dt>Towers</dt><dd>12 topics · 41 floor lists</dd></div>
+      <div><dt>Revision</dt><dd>0.4 draft · 2026-11-14</dd></div>
+      <div><dt>Design</dt><dd>Jane</dd></div>
+    </dl>
+  </header>
+
+  <section class="panel intro prose" aria-labelledby="intro-h">
+    <h2 class="panel-h" id="intro-h">How everything gets shelved <span>draft v0.4 · not the live plan</span></h2>
+    <p>This draft shows one way to sort two kinds of things into one archive: Wikipedia articles, and full public-domain books from Project Gutenberg. Everything here is a proposal unless it is tagged Decided. The live plan is <a href="../">v0.3</a>.</p>
+    <p>Articles become slim volumes on the inner ring of a floor. Books become thick volumes on the outer ring of the same floor. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
+    <p>Books: Project Gutenberg has about 75,000 public-domain books. Its catalog gives each one a Library of Congress class, subject headings, an author and a language. Nothing is downloaded yet. <span class="tag pro">Proposed</span></p>
+    <div class="scale-ctl">
+      <span class="lab" id="scale-lab">Wikipedia articles</span>
+      <div class="seg" role="group" aria-labelledby="scale-lab">
+        <button type="button" data-scale="50000" aria-pressed="false">50k</button>
+        <button type="button" data-scale="100000" aria-pressed="true">100k</button>
+        <button type="button" data-scale="500000" aria-pressed="false">500k</button>
+      </div>
+      <span class="scale-note" id="scale-note" aria-live="polite"></span>
+    </div>
+    <p class="sub">The switch rescales the towers on both sheets, the census and the storage budget. Every count on this page is an estimate.</p>
+    <ul class="key" aria-label="Status key">
+      <li><span class="tag dec">Decided</span>Jane said yes.</li>
+      <li><span class="tag tb">Testbed</span>Being built now in the tech testbed (v1).</li>
+      <li><span class="tag pro">Proposed</span>A suggestion, not settled.</li>
+      <li><span class="tag idea">Idea</span>Saved idea only. Not designed or decided.</li>
+    </ul>
+  </section>
+
+  <section class="sheet flow-sheet" aria-labelledby="flow-h">
+    <div class="sheet-head">
+      <span class="sheet-no">C-101</span>
+      <h2 id="flow-h">Shelving rules</h2>
+      <span class="tag pro">Proposed</span>
+    </div>
+    <div class="flow">
+      <div class="lane">
+        <h3>An article <span>slim volume · inner ring</span></h3>
+        <ol class="steps">
+          <li><b>1 · Source</b>Wikipedia. v1: Vital Articles, Level 5. Later: the most-read articles.</li>
+          <li><b>2 · Tower</b>Its Vital Articles top topic. Articles outside that list: a topic model picks the tower.</li>
+          <li><b>3 · Floor</b>Its Vital Articles sub-list.</li>
+          <li><b>4 · Shelf</b>Inner ring of that floor.</li>
+          <li><b>5 · Order</b>The curated list's own order first, then the rest by popularity, most-read first.</li>
+        </ol>
+      </div>
+      <p class="bridge-note"><b>Links run between the rings.</b> An article about a book or an author gets a "read the book" link. A book links to its author's article and to subject articles. Articles keep linking articles.</p>
+      <div class="lane bk">
+        <h3>A book <span>thick volume · outer ring</span></h3>
+        <ol class="steps">
+          <li><b>1 · Source</b>Project Gutenberg: full public-domain text, with its catalog record.</li>
+          <li><b>2 · Tower</b>Its Library of Congress class, through the table below. P (literature) goes to the Literature tower.</li>
+          <li><b>3 · Floor</b>Literature: its language or form. Other towers: the closest sub-list.</li>
+          <li><b>4 · Shelf</b>Outer ring of that floor.</li>
+          <li><b>5 · Order</b>Library of Congress call number, then author.</li>
+        </ol>
+      </div>
+      <p class="bridge-note"><b>Low and high.</b> On every floor the most-read things sit lowest, near the balcony where you arrive. Deep cuts climb higher.</p>
+    </div>
+  </section>
+
+  <section class="sheet plan-sheet" aria-labelledby="plan-h">
+    <div class="sheet-head">
+      <span class="sheet-no">A-101</span>
+      <h2 id="plan-h">Archipelago plan</h2>
+      <div class="seg" role="group" aria-label="Plan view">
+        <button type="button" id="view-site" data-view="site" aria-pressed="true">Whole site</button>
+        <button type="button" id="view-academy" data-view="academy" aria-pressed="false">Academy</button>
+      </div>
+      <div class="seg" role="group" aria-label="Wikipedia articles">
+        <button type="button" data-scale="50000" aria-pressed="false">50k</button>
+        <button type="button" data-scale="100000" aria-pressed="true">100k</button>
+        <button type="button" data-scale="500000" aria-pressed="false">500k</button>
+      </div>
+    </div>
+    <figure class="drawing">
+      <svg id="plan" viewBox="-255 -255 510 510" role="img" aria-label="Plan of the archipelago: the academy isle at the centre, and isles of different sizes and heights holding 12 topic towers, each drawn larger the more items it holds, linked by lantern-lit bridges, with an example reading trail, under a rising moon."></svg>
+      <figcaption>North up, metres from the Orrery Dome. Tower size shows its estimated items, articles plus books. <span id="plan-cap"></span></figcaption>
+    </figure>
+    <div class="layers" role="group" aria-label="Layers">
+      <button type="button" class="tog" data-layer="trail" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-width="2" stroke-dasharray="4 3"/></svg>Example trail</button>
+      <button type="button" class="tog" data-layer="flight" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M1 8 Q10 0 19 5" fill="none" stroke="#e3eeff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/><path d="M17 1.5L23 6L16.5 8z" fill="#e3eeff"/></svg>Wind currents</button>
+      <button type="button" class="tog" data-layer="npc" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/></svg>NPC routes</button>
+      <button type="button" class="tog" data-layer="below" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#e3eeff" stroke-opacity=".6" stroke-width="2" stroke-dasharray="5 3"/></svg>Below cloud</button>
+      <button type="button" class="tog" data-layer="bays" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M2 1v3M5 1v3M8 1v3M11 1v3M14 1v3M17 1v3M20 1v3M23 1v3" stroke="#2f95cc" stroke-width="1"/><path d="M3 6v4M9 6v4M15 6v4M21 6v4" stroke="#c97633" stroke-width="2.2"/></svg>Shelf rings</button>
+    </div>
+  </section>
+
+  <section class="panel pick" aria-labelledby="pick-h">
+    <h2 class="panel-h" id="pick-h">Towers <span>11 Wikipedia top topics + Literature</span></h2>
+    <div class="class-row" id="class-chips" role="group" aria-label="Towers"></div>
+    <div class="sub-head">
+      <h3 id="sub-h">Floors</h3>
+      <label class="filter" for="sub-filter"><span class="vh">Find a floor in any tower</span>
+        <input id="sub-filter" type="search" placeholder="Find any floor, e.g. poetry" autocomplete="off" enterkeyhint="search">
+      </label>
+    </div>
+    <div class="sub-chips" id="sub-chips" role="group" aria-labelledby="sub-h"></div>
+  </section>
+
+  <section class="sheet sect-sheet" aria-labelledby="sect-h">
+    <div class="sheet-head">
+      <span class="sheet-no">A-201</span>
+      <h2 id="sect-h">Tower section</h2>
+    </div>
+    <figure class="drawing">
+      <svg id="section" viewBox="0 0 360 610" role="img" aria-label="Tower section"></svg>
+      <figcaption id="sect-cap"></figcaption>
+    </figure>
+  </section>
+
+  <section class="panel info" aria-labelledby="info-h" aria-live="polite">
+    <p class="eyebrow" id="info-kind"></p>
+    <h2 id="info-h"></h2>
+    <dl id="info-dl"></dl>
+    <p class="note" id="info-note"></p>
+  </section>
+
+  <div class="notes">
+    <section class="panel prose wide" aria-labelledby="census-h">
+      <h2 class="panel-h" id="census-h">Tower census <span id="census-sub">estimates</span></h2>
+      <p class="series"><span><span class="sw v"></span>Articles (inner ring)</span><span><span class="sw b"></span>Books (outer ring)</span><span>Bars share one scale across all three article counts. Click a row to pick that tower.</span></p>
+      <div class="census" id="census"></div>
+      <p class="sub" id="census-total"></p>
+      <p class="sub">How these were guessed: article shares follow Wikipedia's Level 5 quotas for the curated 50k, and a guess at what most-read articles are about (lots of people, films, music, places) for the rest. Book counts are a rough guess at Gutenberg's split by Library of Congress class; most of its books are fiction, poetry and drama. The real numbers come from the builds.</p>
+    </section>
+
+    <section class="panel prose" aria-labelledby="map-h">
+      <h2 class="panel-h" id="map-h">Library of Congress class to tower <span class="tag pro">Proposed</span></h2>
+      <div class="tablewrap">
+        <table class="map">
+          <thead><tr><th scope="col">LoC class</th><th scope="col">What it holds</th><th scope="col">Tower</th></tr></thead>
+          <tbody>
+            <tr><td>P</td><td>Language and literature</td><td>12 Literature</td></tr>
+            <tr><td>B</td><td>Philosophy, psychology, religion</td><td>5 Philosophy and religion</td></tr>
+            <tr><td>C, D, E, F</td><td>History, archaeology, genealogy; D the world, E and F the Americas</td><td>2 History</td></tr>
+            <tr><td>CT</td><td>Biography</td><td>1 People</td></tr>
+            <tr><td>G</td><td>Geography, maps, travel, anthropology, folklore</td><td>3 Geography</td></tr>
+            <tr><td>GT, GV, TX</td><td>Customs, sports and games, cooking and the home</td><td>6 Everyday life</td></tr>
+            <tr><td>H, J, K, L</td><td>Social sciences, politics, law, education</td><td>7 Society</td></tr>
+            <tr><td>M, N</td><td>Music, fine arts</td><td>4 Arts</td></tr>
+            <tr><td>QA</td><td>Mathematics</td><td>11 Mathematics</td></tr>
+            <tr><td>Q, QB&ndash;QE</td><td>General science, astronomy, physics, chemistry, geology</td><td>9 Physical sciences</td></tr>
+            <tr><td>QH&ndash;QR, R</td><td>Biology, plants, animals, anatomy, medicine</td><td>8 Biological and health</td></tr>
+            <tr><td>S, T</td><td>Agriculture, technology</td><td>10 Technology</td></tr>
+            <tr><td>A, Z</td><td>General works (many old magazines), library science</td><td class="open">7 Society? open</td></tr>
+            <tr><td>U, V</td><td>Military and naval science</td><td class="open">2 History? open</td></tr>
+            <tr><td>none</td><td>Books with no LoC class in the catalog</td><td class="open">by subject or language? open</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub">Travel books in D, E and F could go to Geography instead, using their "Description and travel" subject headings.</p>
+    </section>
+
+    <section class="panel prose" aria-labelledby="floors-h">
+      <h2 class="panel-h" id="floors-h">Floors and order <span class="tag pro">Proposed</span></h2>
+      <ul>
+        <li><b>Floors are sub-topics.</b> Articles use the Vital Articles sub-lists, as in v0.3.</li>
+        <li><b>Literature floors:</b> English, American, French, German, Classical (Greek and Latin), Other languages, Poetry, Drama, Children's. A book goes to its language floor unless it is poetry, drama or for children.</li>
+        <li><b>Literature is a 12th tower,</b> split out of Arts. Most Gutenberg books are fiction, poetry and drama; in Arts they would swamp music and painting. It is numbered 12 so the v0.3 numbers stay put.</li>
+        <li><b>Two shelf rings on every floor.</b> Inner ring: slim volumes, the encyclopedia articles. Outer ring: thick books, the full texts.</li>
+        <li><b>Order within a floor.</b> Articles in the curated list's order, then by popularity. Books by call number, then author.</li>
+        <li><b>Low and high.</b> The most-read sit lowest, near the floor's balcony. Deep cuts climb higher. On A-201 a dashed line in the inner ring marks where the curated list ends and the most-read tail begins.</li>
+        <li><b>Size estimate.</b> A shelf bay holds about 100 slim volumes or 40 thick books, and a ring has 48 bays, so a level holds about 4,800 articles or 1,920 books. Each floor gets at least one level.</li>
+      </ul>
+    </section>
+
+    <section class="panel prose xl" aria-labelledby="xl-h">
+      <h2 class="panel-h" id="xl-h">Cross-links <span class="tag pro">Proposed</span></h2>
+      <svg viewBox="0 0 340 172" role="img" aria-label="Example of cross-links: the Moby-Dick article links to the Moby-Dick book with read the book; the book links to the Herman Melville article as its author and to subject articles from its subject headings; articles also link to each other.">
+        <defs><marker id="xarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1L10 5L0 9z" fill="#e3eeff"/></marker></defs>
+        <rect class="node v" x="4" y="8" width="150" height="44" rx="2"/>
+        <text class="t1" x="12" y="27">Moby-Dick</text><text class="t2" x="12" y="43">article · inner ring</text>
+        <rect class="node b" x="186" y="8" width="150" height="44" rx="2"/>
+        <text class="t1" x="194" y="27">Moby-Dick</text><text class="t2" x="194" y="43">book · outer ring</text>
+        <rect class="node v" x="4" y="120" width="150" height="44" rx="2"/>
+        <text class="t1" x="12" y="139">Herman Melville</text><text class="t2" x="12" y="155">article · tower 1</text>
+        <rect class="node v" x="186" y="120" width="150" height="44" rx="2"/>
+        <text class="t1" x="194" y="139">Subject articles</text><text class="t2" x="194" y="155">from subject headings</text>
+        <path class="edge" d="M154 30 H184" marker-end="url(#xarr)"/>
+        <text class="et" x="158" y="68" text-anchor="middle">read the book</text>
+        <path class="edge" d="M220 52 L150 118" marker-end="url(#xarr)"/>
+        <text class="et" x="188" y="94">author</text>
+        <path class="edge" d="M282 52 V118" marker-end="url(#xarr)"/>
+        <text class="et" x="287" y="90">subjects</text>
+        <path class="edge d" d="M40 118 V54" marker-end="url(#xarr)"/>
+        <text class="et" x="46" y="90">article links</text>
+      </svg>
+      <ul>
+        <li>An article about a book or an author gets a "Read the book" link.</li>
+        <li>A book links to its author's article, and to subject articles from its Library of Congress subject headings.</li>
+        <li>Articles keep linking articles, as in v0.3.</li>
+        <li>Every jump flies the item to you and adds to your glowing trail.</li>
+      </ul>
+    </section>
+
+    <section class="panel prose" aria-labelledby="way-h">
+      <h2 class="panel-h" id="way-h">Wayfinding <span class="tag pro">Proposed</span></h2>
+      <ul>
+        <li><b>Tower signs</b> with the topic name, seen from far away. Tower size already tells you how much is inside.</li>
+        <li><b>Floor plaques</b> at each floor's balcony.</li>
+        <li><b>Search</b> by title or author, for articles and books alike.</li>
+        <li><b>A random door</b> that opens a random book, for when you don't know where to start.</li>
+        <li><b>The glowing trail</b> showing where you have been.</li>
+      </ul>
+    </section>
+
+    <section class="panel prose wide" aria-labelledby="budget-h">
+      <h2 class="panel-h" id="budget-h">Storage budget <span>choices for Jane, not decided</span></h2>
+      <dl>
+        <dt>Text</dt><dd>Text that every visitor can read must sit on a trusted host. GitHub Pages is the trusted host that can hold this much. Each Pages site holds 1 GB. A few sites in the org are fine; dozens are not.</dd>
+        <dt>Articles</dt><dd>About 2 KB per article lead: 50k ≈ 0.1 GB, 100k ≈ 0.2 GB, 500k ≈ 1 GB. Longer article text costs more (the v1 build estimates 100 to 300 MB for its 50k).</dd>
+        <dt>Books</dt><dd>A full Gutenberg book is very roughly 300 to 400 KB of text. All 75,000 come to about 25 to 30 GB. That does not fit.</dd>
+        <dt>Pictures</dt><dd>Only for visitors with "Allow Untrusted URLs" on, served from Cloudflare. <span class="tag dec">Decided</span></dd>
+      </dl>
+      <p class="series" style="margin-top:12px"><span><span class="sw v"></span>Article text</span><span><span class="sw t"></span>Search and link tables</span><span><span class="sw b"></span>Complete books</span><span><span class="sw o"></span>Opening chapters</span><span>Each box is one 1 GB GitHub Pages site.</span></p>
+      <div id="budget"></div>
+      <p class="sub">Assumptions: 350 KB per complete book (middle of 300 to 400); an opening chapter is the first ~20 KB; search and link tables ~0.1 GB, ~0.2 GB at 500k (a guess). Boxes are packed full; real sites need some headroom. Each site also has a soft limit of 100 GB of traffic a month, and one complete book is ~350 KB per open.</p>
+    </section>
+
+    <section class="panel prose wide" aria-labelledby="ex-h">
+      <h2 class="panel-h" id="ex-h">Three examples, end to end <span class="tag pro">Proposed</span></h2>
+      <div class="exs">
+        <article class="ex bk">
+          <h3>Moby-Dick <span>book</span></h3>
+          <ol class="path">
+            <li><b>Source</b><span>Project Gutenberg. LoC class PS, American literature.</span></li>
+            <li><b>Tower</b><span>12 Literature, because P is literature.</span></li>
+            <li><b>Floor</b><span>12.2 American.</span></li>
+            <li><b>Shelf</b><span>Outer ring, by call number, then author.</span></li>
+            <li><b>Next to</b><span>The Moby-Dick article on the inner ring. Herman Melville's article is in tower 1 People (1.1 Writers and journalists), one link away.</span></li>
+          </ol>
+          <button type="button" class="show" data-ex="moby" aria-pressed="false">Show on the sheets</button>
+        </article>
+        <article class="ex">
+          <h3>Octopus <span>article</span></h3>
+          <ol class="path">
+            <li><b>Source</b><span>Wikipedia, on the Vital Articles list.</span></li>
+            <li><b>Tower</b><span>8 Biological and health sciences, its Vital Articles topic.</span></li>
+            <li><b>Floor</b><span>8.2 Animals, its sub-list.</span></li>
+            <li><b>Shelf</b><span>Inner ring, in the list's order.</span></li>
+            <li><b>Next to</b><span>Other animal articles, with books about animals on the outer ring.</span></li>
+          </ol>
+          <button type="button" class="show" data-ex="octopus" aria-pressed="false">Show on the sheets</button>
+        </article>
+        <article class="ex bk">
+          <h3>On the Origin of Species <span>book</span></h3>
+          <ol class="path">
+            <li><b>Source</b><span>Project Gutenberg. LoC class QH, natural history and biology.</span></li>
+            <li><b>Tower</b><span>8 Biological and health sciences, because QH is biology.</span></li>
+            <li><b>Floor</b><span>8.1 Biology. There is no separate Evolution list, so it joins Biology.</span></li>
+            <li><b>Shelf</b><span>Outer ring, by call number, then author.</span></li>
+            <li><b>Next to</b><span>The Evolution article on the inner ring.</span></li>
+          </ol>
+          <button type="button" class="show" data-ex="origin" aria-pressed="false">Show on the sheets</button>
+        </article>
+      </div>
+      <p class="sub">The LoC classes shown are what these books are expected to carry; check them against Gutenberg's catalog once it is downloaded.</p>
+    </section>
+
+    <section class="panel prose" aria-labelledby="dec-h">
+      <h2 class="panel-h" id="dec-h">Decided so far <span class="tag dec">Decided</span></h2>
+      <ul>
+        <li>A rabbit-hole archive of readable Wikipedia articles, still called The Midnight Archive.</li>
+        <li>A scale-up beyond the v1 list. Jane approved about 500,000 most-read articles ("works for me"); her latest message says 100,000. Which number is still open.</li>
+        <li>Pictures only for visitors with "Allow Untrusted URLs" on, served from Cloudflare.</li>
+        <li>Credits through one QR code and a hosted page. PCVR is the beauty target; Quest gets the detail baked into textures. Upload is always Jane's.</li>
+      </ul>
+    </section>
+
+    <section class="panel prose" aria-labelledby="open-h">
+      <h2 class="panel-h" id="open-h">Open questions for Jane</h2>
+      <ul>
+        <li>100,000 or 500,000 articles?</li>
+        <li>Complete books: option A, option B, or something else?</li>
+        <li>Is a 12th tower for Literature right, or should books share the Arts tower?</li>
+        <li>Literature floors: by language first, or by form (poetry, drama) first?</li>
+        <li>Where do books with no LoC class go? And general works (A) and military and naval science (U, V)?</li>
+        <li>English-language books only, or every language Gutenberg has?</li>
+        <li>Read Project Gutenberg's terms on reusing its files and its name before hosting copies.</li>
+      </ul>
+      <p class="sub">Not changed by this draft: dream books, messages in bottles, narration, the look, and the NPCs. See <a href="../">v0.3</a>.</p>
+    </section>
+  </div>
+
+  <section class="panel legend" aria-labelledby="legend-h">
+    <h2 class="panel-h" id="legend-h">Legend</h2>
+    <ul>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#e3eeff" stroke-width="1.6"/></svg>Built into the world file (baked)</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h2" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><path d="M4 9 Q10 3 18 4 Q28 4 30 9 Q24 14 14 13 Q6 13 4 9Z" transform="translate(0 2)" fill="url(#lg-h2)" stroke="#e3eeff" stroke-opacity=".5"/><path d="M4 7 Q10 1 18 2 Q28 2 30 7 Q24 12 14 11 Q6 11 4 7Z" fill="#14324f" stroke="#e3eeff" stroke-width="1.2"/></svg>Floating isle, underside hatched</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#2f95cc"/><path d="M6 3v10M10 3v10M14 3v10M18 3v10M22 3v10M26 3v10M30 3v10" stroke="#0b2a48" stroke-opacity=".5"/></svg>Inner ring: slim volumes (articles)</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#c97633"/><path d="M10 3v10M18 3v10M26 3v10" stroke="#0b2a48" stroke-opacity=".55" stroke-width="2"/></svg>Outer ring: thick books (full texts)</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="2" width="30" height="12" fill="#2f95cc"/><line x1="2" y1="8" x2="32" y2="8" stroke="#0b2a48" stroke-width="1.6" stroke-dasharray="2 1.5"/></svg>Inner ring: curated list below the dash, most-read tail above</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 11 Q17 1 32 11" fill="none" stroke="#e3eeff" stroke-width="6"/><path d="M2 11 Q17 1 32 11" fill="none" stroke="#0b2a48" stroke-width="3.6"/><circle cx="10" cy="7" r="1.3" fill="#e3eeff"/><circle cx="17" cy="6" r="1.3" fill="#e3eeff"/><circle cx="24" cy="7" r="1.3" fill="#e3eeff"/></svg>Lantern Way: bridges looping past every isle</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#e3eeff" stroke-opacity=".6" stroke-width="1.6" stroke-dasharray="6 4"/></svg>Below the cloud surface</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-opacity=".3" stroke-width="6" stroke-linecap="round"/><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-width="2" stroke-dasharray="5 4"/><circle cx="3" cy="8" r="2.6" fill="#8edbff"/><circle cx="31" cy="8" r="2.6" fill="#8edbff"/></svg>Trail: your path between books, drawn in light</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 12 Q14 1 27 7" fill="none" stroke="#e3eeff" stroke-width="1.6" stroke-dasharray="1 4" stroke-linecap="round"/><path d="M25 3L32 8L24.5 10.5z" fill="#e3eeff"/></svg>Wind current for flying</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3.5" stroke-linecap="round"/></svg>NPC route</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><rect x="2" y="3" width="30" height="10" fill="url(#lg-h)" stroke="#e3eeff" stroke-width="1"/></svg>Spare room to grow</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" fill="none" stroke="#ffc266" stroke-width="2"/></svg>Your current selection</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Draft v0.4 · 2026-11-14: adds Project Gutenberg books, a 12th tower for Literature, an article-count switch (50k, 100k, 500k), two shelf rings per floor, tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
+    <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Books would come from <a href="https://www.gutenberg.org/">Project Gutenberg</a>. Wikipedia text is CC BY-SA 4.0.</p>
+    <p>Isle groupings, heights, roofs, floors and every count are proposals or estimates. Book counts set the real tower heights, so the skyline will be uneven.</p>
+    <p>Shared for ideas. Tell Jane what you would add.</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+
+/* ---------- Towers, floors and estimates (all Proposed) ----------
+   va: share of the curated 50k (Vital Articles Level 5, v1). tail: share of the extra most-read articles above 50k.
+   books: rough guess at Project Gutenberg books per tower from their LoC class.
+   Every number is an estimate until the builds count. */
+var CLASSES=[
+{c:"1",t:"People",s:"People",va:.28,tail:.34,books:1500,subs:[["1.1","Writers and journalists"],["1.2","Artists, musicians, and composers"],["1.3","Entertainers, directors, producers, and screenwriters"],["1.4","Philosophers, historians, political and social scientists"],["1.5","Religious figures"],["1.6","Politicians and leaders"],["1.7","Military personnel, revolutionaries, and activists"],["1.8","Scientists, inventors, and mathematicians"],["1.9","Sports figures"],["1.10","Miscellaneous"]]},
+{c:"2",t:"History",s:"History",one:true,va:.065,tail:.06,books:7500,subs:[["2.1","History"]]},
+{c:"3",t:"Geography",s:"Geography",va:.11,tail:.14,books:2500,subs:[["3.1","Physical geography"],["3.2","Countries"],["3.3","Cities"]]},
+{c:"4",t:"Arts",s:"Arts",one:true,va:.045,tail:.16,books:1500,subs:[["4.1","Arts (without literature)"]]},
+{c:"5",t:"Philosophy and religion",s:"Philosophy and religion",one:true,va:.035,tail:.01,books:4500,subs:[["5.1","Philosophy and religion"]]},
+{c:"6",t:"Everyday life",s:"Everyday life",va:.05,tail:.09,books:1500,subs:[["6.1","Everyday life"],["6.2","Sports, games and recreation"]]},
+{c:"7",t:"Society and social sciences",s:"Society and social sciences",va:.10,tail:.07,books:4000,subs:[["7.1","Social studies"],["7.2","Politics and economics"],["7.3","Culture"]]},
+{c:"8",t:"Biological and health sciences",s:"Biological and health sciences",va:.13,tail:.04,books:1500,subs:[["8.1","Biology"],["8.2","Animals"],["8.3","Plants"],["8.4","Health"]]},
+{c:"9",t:"Physical sciences",s:"Physical sciences",va:.08,tail:.015,books:800,subs:[["9.1","Basics and measurement"],["9.2","Astronomy"],["9.3","Chemistry"],["9.4","Earth science"],["9.5","Physics"]]},
+{c:"10",t:"Technology",s:"Technology",one:true,va:.06,tail:.04,books:1200,subs:[["10.1","Technology"]]},
+{c:"11",t:"Mathematics",s:"Mathematics",one:true,va:.02,tail:.005,books:200,subs:[["11.1","Mathematics"]]},
+{c:"12",t:"Literature",s:"Literature",lit:true,va:.025,tail:.03,books:43000,subs:[["12.1","English"],["12.2","American"],["12.3","French"],["12.4","German"],["12.5","Classical (Greek and Latin)"],["12.6","Other languages"],["12.7","Poetry"],["12.8","Drama"],["12.9","Children's"]]}
+];
+var CORE=50000, BOOKS_TOTAL=75000, BOOKS_UNPLACED=5300;
+
+/* ---------- The archipelago (plan x east, plan y south, metres from the Orrery Dome). All of it is a proposal. ---------- */
+var TOWERS={
+  "1":{x:180,y:-105,isle:"chron",shell:"buttress",roof:"spire",reach:"Lantern Way from History, then on to Geography."},
+  "2":{x:110,y:-170,isle:"chron",shell:"round",roof:"crenel",reach:"Lantern Way from the academy's north-east side, then on to People."},
+  "3":{x:215,y:0,isle:"wayfarer",shell:"octagon",roof:"lantern",reach:"Lantern Way between People and Society. A map balcony over the cloud sea."},
+  "4":{x:-105,y:160,isle:"lyric",shell:"round",roof:"bell",reach:"The high arch from Everyday life, the south-west bridge from the academy, and Lyric Isle walkways to Literature."},
+  "5":{x:-10,y:-182,isle:"high",shell:"round",roof:"spire",reach:"The Long Stair from the academy, the Lantern Way from Technology, or flight."},
+  "6":{x:105,y:170,isle:"commons",shell:"octagon",roof:"dome",reach:"Commons walkways, the south-east bridge from the academy, and the high arch to Arts."},
+  "7":{x:172,y:125,isle:"commons",shell:"buttress",roof:"crenel",reach:"Lantern Way from Geography; Commons walkways."},
+  "8":{x:-195,y:25,isle:"observatory",shell:"round",roof:"dome",reach:"Lantern Way from Literature; Observatory walkways."},
+  "9":{x:-150,y:-20,isle:"observatory",shell:"round",roof:"spire",reach:"Observatory walkways, and the west bridge from the Dream Hearth."},
+  "10":{x:-155,y:-105,isle:"observatory",shell:"buttress",roof:"lantern",reach:"Observatory walkways; Lantern Way on to High Isle."},
+  "11":{x:-205,y:-70,isle:"observatory",shell:"octagon",roof:"spire",reach:"Observatory walkways."},
+  "12":{x:-170,y:172,isle:"lyric",shell:"buttress",roof:"dome",reach:"Lyric Isle walkways from Arts; Lantern Way on to Observatory Isle."}
+};
+var ISLES={
+  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Dream Hearth, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate."},
+  high:{name:"High Isle",alt:70,classes:"5 Philosophy and religion",n:"The highest rock, alone above the rest. Reached by the Long Stair or by flight."},
+  chron:{name:"Chronicle Chain",alt:"46 and 38",classes:"2 History, 1 People",n:"History and the people in it, on two rocks stepping down toward the present: History +46, People +38 m."},
+  wayfarer:{name:"Wayfarer's Rock",alt:18,classes:"3 Geography",n:"Geography on a lone rock with a map balcony over the cloud sea."},
+  commons:{name:"The Commons",alt:20,classes:"6 Everyday life, 7 Society and social sciences",n:"Everyday life and society share one broad, busy isle."},
+  lyric:{name:"Lyric Isle",alt:34,classes:"4 Arts, 12 Literature",n:"Arts and Literature share an isle beside the high arch, so the books of stories sit next to music and painting."},
+  observatory:{name:"Observatory Isle",alt:52,classes:"8, 9, 10, 11",n:"Biological and health sciences, physical sciences, technology and mathematics on a long isle reaching north."}
+};
+var ISLE_ALT={academy:24,high:70,chron:{"2":46,"1":38},wayfarer:18,commons:20,lyric:34,observatory:52};
+function altOf(c){var t=TOWERS[c],a=ISLE_ALT[t.isle];return typeof a==="object"?a[c]:a;}
+
+/* [isle, x, y, rx, ry, seed, tower that sets a minimum size] */
+var ROCKS=[
+  ["high",-10,-182,31,30,1,"5"],["chron",110,-170,30,28,2,"2"],["chron",180,-105,34,32,3,"1"],
+  ["wayfarer",215,0,27,27,6,"3"],["commons",140,145,72,58,7],["lyric",-135,165,72,50,8],["observatory",-178,-45,60,106,9],
+  ["gazebo",-100,-84,11,10,13],["gazebo",35,-135,11,10,14],["gazebo",118,40,11,10,15],["gazebo",58,214,11,10,16],
+  ["landing",0,229,23,21,17]
+];
+
+/* ---------- Places (proposals carried over from v0.3) ---------- */
+var ZONES={
+  landing:{t:"Approach Landing",k:"Place · spawn",rows:[["Where","South of the archipelago"],["Baked","Language lectern, paw-print trail"]],n:"Frame the postcard view of the towers here. The Long Bridge curves north to the Registrar's Gate."},
+  bridge:{t:"Long Bridge",k:"Place · path",rows:[["Runs","Approach Landing to the Registrar's Gate"],["Crosses","Under the high arch between Everyday life and Arts"]],n:"The first walk in, with lantern posts and the isles rising on both sides."},
+  lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts and Literature, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. Links and the trail do the exploring; the Way is for strolling."},
+  longstair:{t:"Long Stair",k:"Path · academy to High Isle",rows:[["Climb","From the Lecture Hall up to High Isle (+70 m)"],["Rest","A reading gazebo floats beside the halfway turn"]],n:"The slow way to Philosophy and religion. Everyone else flies."},
+  broken:{t:"Broken span",k:"Path · sealed",rows:[["From","The Storm Wing, east"],["State","Snapped off in the storm, debris below"]],n:"Restoring the Storm Wing rebuilds this bridge toward the Chronicle Chain."},
+  gate:{t:"Registrar's Gate",k:"Place · academy",rows:[["NPC","The Registrar, a stern badger"],["You do","Sign the ledger, get a library card"]],n:"The ledger line is a word-picker message, so it works without a keyboard and leaves no room for trolls."},
+  dome:{t:"Orrery Dome",k:"Place · academy atrium",rows:[["Position","Origin (0, 0) · atrium floor at +24 m"],["Does","The brass dial shows any date's moon"]],n:"Each book flies to you from its own shelf, so the dome is a meeting place, not the data hub."},
+  hearth:{t:"Dream Hearth",k:"Place · west wing",rows:[["NPCs","Margin keeps solo readers company"],["Does","Journals whose words rise as line drawings; midnight oil fills while you idle"],["Later","Where dream books would be written and read"]],n:"The concept art's hearth scenes. Reuse the NIGHT RENT rug and pouf for the cushions."},
+  lecture:{t:"Lecture Hall",k:"Place · north wing",rows:[["Does","Lectern boosts the speaker to the whole room"],["Events","Weekly Midnight Lectures, posted on the event board"]],n:"The Long Stair to High Isle starts behind it."},
+  storm:{t:"Storm Wing",k:"Place · east wing · sealed",rows:[["State","Sealed. Lightning blew its pages into the sky."],["Restores","By pages returned, counted across everyone in the instance"]],n:"Bringing friends literally rebuilds it, and its broken bridge with it."},
+  lofts:{t:"Loft nooks",k:"Place · upper gallery",rows:[["Who","One nook for each player present"],["Holds","Your finds, your favourite dream drawing"]],n:"Uses The Collection's alcove assignment and the NIGHT RENT lit-drawer bed."},
+  gazebo:{t:"Reading gazebo",k:"Place · small floating rock",rows:[["Seats","Two or three readers"],["Sound","Voices fall off fast, so it stays quiet"]],n:"Four of them drift between the isles. Good spots to hide with a book."},
+  tram:{t:"Lantern tram",k:"Path · under the cloud surface",rows:[["Runs","A wandering loop beneath the isles"],["Stops","Six, spread beneath the isles"]],n:"Patron spirits ride in each night, then drift up into the library."}
+};
+Object.keys(ISLES).forEach(function(id){var I=ISLES[id];ZONES[id]={t:I.name,k:"Isle · +"+I.alt+" m",rows:[["Towers",I.classes],["Height","+"+I.alt+" m above the cloud sea"]],n:I.n+" Grouping is a proposal."};});
+
+/* ---------- Example placements ---------- */
+var EXAMPLES={
+  moby:{t:"Moby-Dick",kind:"book",cls:"12",sub:"12.2",ring:"outer",where:"A book on the outer ring of this floor, next to the Moby-Dick article on the inner ring. Herman Melville's article is in tower 1, one link away."},
+  octopus:{t:"Octopus",kind:"article",cls:"8",sub:"8.2",ring:"inner",where:"An article on the inner ring of this floor, in the list's order."},
+  origin:{t:"On the Origin of Species",kind:"book",cls:"8",sub:"8.1",ring:"outer",where:"A book on the outer ring of this floor, beside the Evolution article on the inner ring."}
+};
+
+/* ---------- Geometry and estimates ---------- */
+var TR=19, SPARE=3, PER=48, PER_VOL=PER*100, PER_BOOK=PER*40;
+var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
+var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
+var state={n:100000,cls:"8",sub:"8.2",ring:null,ex:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
+
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k]);}}if(parent){parent.appendChild(e);}return e;}
+function txt(parent,x,y,s,cls,extra){var t=el("text",Object.assign({x:x,y:y,"class":cls},extra||{}),parent);t.textContent=s;return t;}
+function rad(d){return d*Math.PI/180;}
+function pol(r,deg){return [r*Math.sin(rad(deg)),-r*Math.cos(rad(deg))];}
+function f1(n){return (Math.round(n*10)/10).toFixed(1);}
+function pad(n,w){var s=String(n);while(s.length<w){s="0"+s;}return s;}
+function lv(n){return "L"+pad(n,2);}
+function cls(k){return CLASSES[IDX[k]];}
+function fmt(n){return Math.round(n).toLocaleString("en-US");}
+function est(n){var r=n<1000?50:(n<10000?100:1000);return "~"+fmt(Math.max(r,Math.round(n/r)*r));}
+function coreA(k){return CORE*k.va;}
+function artA(k,n){return coreA(k)+Math.max(0,(n||state.n)-CORE)*k.tail;}
+function items(k,n){return artA(k,n)+k.books;}
+var ITEM_MAX=0; CLASSES.forEach(function(k){ITEM_MAX=Math.max(ITEM_MAX,items(k,500000));});
+function sOf(c,n){return 0.62+0.98*Math.sqrt(items(cls(c),n)/ITEM_MAX);}
+function outerR(c){var t=TOWERS[c];return (t.shell==="buttress"?TR+4.5:(t.shell==="octagon"?TR+1:TR))*sOf(c);}
+/* Floors: an even split of the tower's estimate (placeholder). Levels per floor = whichever ring needs more room. */
+function bandsFor(k,n){
+  var nf=k.subs.length, A=artA(k,n), a=A/nf, b=k.books/nf, L=0, coreShare=coreA(k)/A;
+  return k.subs.map(function(s){
+    var av=a/PER_VOL, bv=b/PER_BOOK, h=Math.max(1,Math.ceil(av),Math.ceil(bv));
+    var band={code:s[0],cap:s[1],from:L,to:L+h-1,h:h,a:a,b:b,av:av,bv:bv,core:av*coreShare};
+    L+=h;return band;
+  });
+}
+function levelsOf(k,n){var B=bandsFor(k,n);return B[B.length-1].to+1;}
+var LMAX=0; CLASSES.forEach(function(k){LMAX=Math.max(LMAX,levelsOf(k,500000)+SPARE);});
+
+function smooth(pts,closed){
+  var n=pts.length, d="M"+f1(pts[0][0])+" "+f1(pts[0][1]);
+  var last=closed?n:n-1;
+  for(var i=0;i<last;i++){
+    var p0=closed?pts[(i-1+n)%n]:pts[Math.max(i-1,0)], p1=pts[i], p2=pts[(i+1)%n], p3=closed?pts[(i+2)%n]:pts[Math.min(i+2,n-1)];
+    d+=" C"+f1(p1[0]+(p2[0]-p0[0])/6)+" "+f1(p1[1]+(p2[1]-p0[1])/6)+" "+f1(p2[0]-(p3[0]-p1[0])/6)+" "+f1(p2[1]-(p3[1]-p1[1])/6)+" "+f1(p2[0])+" "+f1(p2[1]);
+  }
+  return d+(closed?" Z":"");
+}
+function blob(cx,cy,rx,ry,seed){
+  var pts=[],N=36;
+  for(var i=0;i<N;i++){
+    var t=2*Math.PI*i/N, n=1+0.05*Math.sin(3*t+seed*1.7)+0.03*Math.sin(5*t+seed*2.3)+0.015*Math.sin(9*t+seed*0.9);
+    pts.push([cx+rx*n*Math.cos(t),cy+ry*n*Math.sin(t)]);
+  }
+  return smooth(pts,true);
+}
+function lobe(b,c){var d=Math.abs(((b-c)%360+540)%360-180);return Math.exp(-(d/20)*(d/20));}
+function academyPath(){
+  var pts=[];
+  for(var b=0;b<360;b+=6){
+    var r=72+26*lobe(b,47)+26*lobe(b,309)+8*lobe(b,180)+12*lobe(b,270)+12*lobe(b,90)+10*lobe(b,0)+3*Math.sin(rad(7*b));
+    pts.push(pol(r,b));
+  }
+  return smooth(pts,true);
+}
+function quadAt(p,c,q,t){var u=1-t;return [u*u*p[0]+2*u*t*c[0]+t*t*q[0],u*u*p[1]+2*u*t*c[1]+t*t*q[1]];}
+function cubicAt(p,a,b,q,t){var u=1-t;return [u*u*u*p[0]+3*u*u*t*a[0]+3*u*t*t*b[0]+t*t*t*q[0],u*u*u*p[1]+3*u*u*t*a[1]+3*u*t*t*b[1]+t*t*t*q[1]];}
+
+/* ---------- Plan ---------- */
+var plan=document.getElementById("plan");
+var towerEls={}, zoneEls={}, callout;
+function reg(id,e){(zoneEls[id]=zoneEls[id]||[]).push(e);return e;}
+function zoneRect(parent,id,x,y,w,h,hatched,label){
+  var r=reg(id,el("rect",{x:x,y:y,width:w,height:h,"class":"zone-fill","data-zone":id,tabindex:"0",role:"button","aria-label":label},parent));
+  if(hatched){el("rect",{x:x,y:y,width:w,height:h,fill:"url(#phatch)","class":"hatchfill"},parent);}
+  return r;
+}
+
+/* Bridges between isles: [zone, from, control, to, lanterns] */
+var BRIDGES=[
+  ["lanternway",[52,-48],[100,-95],[110,-170],true],
+  ["lanternway",[110,-170],[160,-168],[180,-105],true],
+  ["lanternway",[180,-105],[218,-62],[215,0],true],
+  ["lanternway",[215,0],[226,70],[172,125],true],
+  ["lanternway",[105,170],[-8,226],[-105,160],true],
+  ["lanternway",[-170,172],[-225,110],[-195,25],true],
+  ["lanternway",[-155,-105],[-100,-205],[-10,-182],true],
+  ["lanternway",[-68,2],[-110,14],[-150,-20],false],
+  ["lanternway",[48,52],[95,95],[105,170],false],
+  ["lanternway",[-60,30],[-95,90],[-105,160],false],
+  ["bridge",[0,58],[14,132],[0,207],true]
+];
+var WALKS=[[[172,125],[105,170]],[[-105,160],[-170,172]],[[-195,25],[-150,-20],[-205,-70],[-155,-105]]];
+/* An example reading trail (made up): an article, a book, then two articles. [stop, control point of the hop that ends here] */
+var TRAIL=[[[-185,15]],[[-160,162],[-130,90]],[[170,-95],[150,120]],[[100,-160],[125,-110]]];
+var STAIR=[[-10,-152],[25,-136],[-35,-100],[0,-76]];
+var CURRENTS=["M-70 -128 C-20 -246 110 -240 168 -176","M226 -112 C254 -40 256 40 222 122","M178 226 C80 254 -40 254 -138 234","M-226 150 C-254 60 -254 -72 -206 -162","M-118 60 C-56 -12 36 54 112 -34"];
+
+function buildPlan(){
+  while(plan.firstChild){plan.removeChild(plan.firstChild);}
+  towerEls={};zoneEls={};
+  var defs=el("defs",null,plan);
+  var p10=el("pattern",{id:"p10",width:10,height:10,patternUnits:"userSpaceOnUse"},defs);
+  el("path",{d:"M10 0H0V10","class":"g-minor"},p10);
+  var p50=el("pattern",{id:"p50",width:50,height:50,patternUnits:"userSpaceOnUse"},defs);
+  el("rect",{width:50,height:50,fill:"url(#p10)"},p50);
+  el("path",{d:"M50 0H0V50","class":"g-major"},p50);
+  var ph=el("pattern",{id:"phatch",width:4.5,height:4.5,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("line",{x1:0,y1:0,x2:0,y2:4.5,"class":"hatch"},ph);
+  var mk=el("marker",{id:"arr",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"6",markerHeight:"6",orient:"auto"},defs);
+  el("path",{d:"M0 1L10 5L0 9z","class":"arrowhead"},mk);
+  el("rect",{x:-300,y:-300,width:600,height:600,fill:"url(#p50)"},plan);
+
+  /* Sky furniture: swirls, moon, compass rose */
+  var sky=el("g",{"class":"vis-s"},plan);
+  [[232,-130,11,1],[-232,198,12,-1],[110,-240,9,1],[-30,-246,7,-1]].forEach(function(s){
+    var pts=[];for(var a=0;a<=600;a+=20){var r=s[2]*a/600;var t=rad(a)*s[3];pts.push([s[0]+r*Math.cos(t),s[1]+r*Math.sin(t)]);}
+    pts.push([s[0]+s[2]+14,s[1]+(s[3]>0?-2:2)]);
+    el("path",{d:smooth(pts,false),"class":"swirl"},sky);
+  });
+  el("circle",{cx:232,cy:-236,r:13,"class":"moon"},sky);
+  el("circle",{cx:238,cy:-240,r:11,"class":"moon-cut"},sky);
+  txt(sky,248,-211,"Moonrise","isle-lbl",{"text-anchor":"end",style:"font-size:13px"});
+  var rose=el("g",{transform:"translate(-222 -214)"},sky);
+  el("circle",{r:13,"class":"rose-ring"},rose);
+  [0,90,180,270].forEach(function(a){el("path",{d:"M0 -23 L4 -4 L0 0 Z",transform:"rotate("+a+")","class":"rose"},rose);el("path",{d:"M0 -23 L-4 -4 L0 0 Z",transform:"rotate("+a+")","class":"rose-dim"},rose);});
+  [45,135,225,315].forEach(function(a){el("path",{d:"M0 -13 L2.5 -2.5 L0 0 L-2.5 -2.5 Z",transform:"rotate("+a+")","class":"rose-dim"},rose);});
+  txt(sky,-222,-241,"N","isle-lbl",{"text-anchor":"middle",style:"font-size:13px"});
+  txt(sky,142,-238,"Cloud Sea","isle-lbl",{style:"font-size:15px;fill:var(--muted)"});
+
+  /* Below the cloud: the lantern tram */
+  var below=el("g",{"class":"layer layer-below"},plan);
+  var tp=[],stops=[];
+  for(var b=0;b<360;b+=10){var r=128+16*Math.sin(rad(3*b)+0.6)+9*Math.sin(rad(5*b)+2.1);tp.push(pol(r,b));}
+  var tramD=smooth(tp,true);
+  el("path",{d:tramD,"class":"tram"},below);
+  reg("tram",el("path",{d:tramD,"class":"ring-hit","data-zone":"tram"},below));
+  [20,85,150,205,260,320].forEach(function(b){var r=128+16*Math.sin(rad(3*b)+0.6)+9*Math.sin(rad(5*b)+2.1);var p=pol(r,b);stops.push(p);el("rect",{x:f1(p[0]-3.5),y:f1(p[1]-3.5),width:7,height:7,"class":"tram-stop"},below);});
+
+  /* Bridges (behind the isles) */
+  var br=el("g",null,plan);
+  BRIDGES.forEach(function(B){
+    var d="M"+B[1][0]+" "+B[1][1]+" Q"+B[2][0]+" "+B[2][1]+" "+B[3][0]+" "+B[3][1];
+    reg(B[0],el("path",{d:d,"class":"deck-o","data-zone":B[0]},br));
+    el("path",{d:d,"class":"deck-i"},br);
+    if(B[4]){for(var t=0.12;t<0.9;t+=0.13){var p=quadAt(B[1],B[2],B[3],t);el("circle",{cx:f1(p[0]),cy:f1(p[1]),r:1.3,"class":"lantern"},br);}}
+  });
+  var sd="M"+STAIR[0].join(" ")+" C"+STAIR[1].join(" ")+" "+STAIR[2].join(" ")+" "+STAIR[3].join(" ");
+  reg("longstair",el("path",{d:sd,"class":"deck-o","data-zone":"longstair"},br));
+  el("path",{d:sd,"class":"deck-i"},br);
+  for(var s2=0.06;s2<0.97;s2+=0.06){var p0=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2-0.01),p1=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2+0.01);var dx=p1[0]-p0[0],dy=p1[1]-p0[1],L=Math.hypot(dx,dy)||1;var m=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2);el("line",{x1:f1(m[0]-dy/L*2.6),y1:f1(m[1]+dx/L*2.6),x2:f1(m[0]+dy/L*2.6),y2:f1(m[1]-dx/L*2.6),"class":"stair"},br);}
+  var bd="M68 2 Q92 -16 114 -12";
+  reg("broken",el("path",{d:bd,"class":"deck-o","data-zone":"broken"},br));
+  el("path",{d:bd,"class":"deck-i"},br);
+  el("path",{d:"M113 -17 L118 -13 L112 -10 L117 -6","class":"stair"},br);
+  [[124,-8,1.6],[129,0,1.2],[122,5,1],[133,-12,0.9]].forEach(function(q){el("circle",{cx:q[0],cy:q[1],r:q[2],"class":"debris"},br);});
+
+  /* Isles: hatched underside, then the top. Rocks under a single tower grow with that tower. */
+  var isles=el("g",null,plan);
+  var ad=academyPath();
+  el("path",{d:ad,transform:"translate(0 8)","class":"under"},isles);
+  reg("academy",el("path",{d:ad,"class":"isle","data-zone":"academy",tabindex:"0",role:"button","aria-label":"Academy Isle"},isles));
+  ROCKS.forEach(function(R){
+    var rx=R[3], ry=R[4];
+    if(R[6]){var need=outerR(R[6])+7;rx=Math.max(rx,need);ry=Math.max(ry,need);}
+    var d=blob(R[1],R[2],rx,ry,R[5]);
+    var depth=R[0]==="gazebo"?4:(rx>40?9:7);
+    el("path",{d:d,transform:"translate(0 "+depth+")","class":"under"},isles);
+    var lbl=R[0]==="landing"?"Approach Landing, spawn":(ISLES[R[0]]?ISLES[R[0]].name:ZONES[R[0]].t);
+    reg(R[0],el("path",{d:d,"class":"isle"+(R[0]==="gazebo"?" gz":""),"data-zone":R[0],tabindex:"0",role:"button","aria-label":lbl},isles));
+    if(R[0]==="gazebo"){var gz=el("g",{transform:"translate("+R[1]+" "+R[2]+")"},isles);el("circle",{r:5.5,"class":"gazebo"},gz);el("path",{d:"M-5.5 0H5.5M0 -5.5V5.5","class":"gazebo"},gz);el("circle",{r:1.2,"class":"lantern"},gz);}
+  });
+  WALKS.forEach(function(w){el("path",{d:smooth(w,false),"class":"walk"},isles);});
+
+  /* Academy rooms */
+  var ac=el("g",null,plan);
+  zoneRect(ac,"lecture",-20,-68,40,32,false,"Lecture Hall");
+  zoneRect(ac,"hearth",-68,-18,32,36,false,"Dream Hearth");
+  zoneRect(ac,"storm",36,-18,32,36,true,"Storm Wing, sealed");
+  zoneRect(ac,"gate",-12,36,24,22,false,"Registrar's Gate");
+  reg("lofts",el("circle",{cx:0,cy:0,r:34,"class":"gallery","data-zone":"lofts",tabindex:"0",role:"button","aria-label":"Loft nooks, upper gallery"},ac));
+  reg("dome",el("circle",{cx:0,cy:0,r:26,"class":"zone-fill","data-zone":"dome",tabindex:"0",role:"button","aria-label":"Orrery Dome"},ac));
+  for(var d=0;d<360;d+=30){var q=pol(26,d);el("line",{x1:0,y1:0,x2:f1(q[0]),y2:f1(q[1]),"class":"rib"},ac);}
+  el("circle",{cx:0,cy:0,r:6,"class":"oculus"},ac);
+
+  /* Wind currents */
+  var fl=el("g",{"class":"layer layer-flight"},plan);
+  CURRENTS.forEach(function(c){el("path",{d:c,"class":"current","marker-end":"url(#arr)"},fl);});
+
+  /* NPC routes */
+  var npc=el("g",{"class":"layer layer-npc"},plan);
+  el("circle",{cx:0,cy:0,r:44,"class":"route"},npc);
+  el("path",{d:"M-36 3 C-12 14 12 14 36 3","class":"route"},npc);
+  BRIDGES.forEach(function(B){if(B[0]==="lanternway"&&B[4]){el("path",{d:"M"+B[1][0]+" "+B[1][1]+" Q"+B[2][0]+" "+B[2][1]+" "+B[3][0]+" "+B[3][1],"class":"route"},npc);}});
+  [[0,47],[-52,12],[-36,3],[31.1,-31.1],[f1(stops[3][0]),f1(stops[3][1])]].forEach(function(p){el("circle",{cx:p[0],cy:p[1],r:2.2,"class":"npc-dot"},npc);});
+
+  /* Towers, each scaled by its estimated items. Shelf rings: slim inner ticks = articles, thick outer ticks = books. */
+  var tw=el("g",null,plan), bays=el("g",{"class":"layer layer-bays"},plan);
+  Object.keys(TOWERS).forEach(function(c){
+    var t=TOWERS[c], k=cls(c), sc=sOf(c), tr="translate("+t.x+" "+t.y+") scale("+sc.toFixed(3)+")";
+    var g=el("g",{"class":"tower","data-cls":c,transform:tr,tabindex:"0",role:"button","aria-label":"Tower "+c+", "+k.t+", about "+est(items(k)).slice(1)+" items"},tw);
+    el("circle",{cx:3,cy:6,r:TR,"class":"tw-shadow"},g);
+    if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
+    if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
+    else{el("circle",{r:TR,"class":"tw-shell"},g);}
+    el("circle",{r:16.2,"class":"tw-ring"},g);
+    el("circle",{r:9,"class":"tw-shaft"},g);
+    txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
+    el("circle",{r:26,"class":"hit"},g);
+    towerEls[c]=g;
+    var bg=el("g",{transform:tr},bays);
+    for(var s=0;s<PER;s++){var a1=pol(9.8,s*7.5),a2=pol(12,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick-v"},bg);}
+    for(var s3=0;s3<PER/2;s3++){var b1=pol(12.9,s3*15+3.75),b2=pol(15.6,s3*15+3.75);el("line",{x1:f1(b1[0]),y1:f1(b1[1]),x2:f1(b2[0]),y2:f1(b2[1]),"class":"tick-b"},bg);}
+  });
+
+  /* Example reading trail: each hop is an item flying to the reader */
+  var trl=el("g",{"class":"layer layer-trail"},plan);
+  var td="M"+TRAIL[0][0].join(" ");
+  for(var h=1;h<TRAIL.length;h++){td+=" Q"+TRAIL[h][1].join(" ")+" "+TRAIL[h][0].join(" ");}
+  el("path",{d:td,"class":"trail-glow"},trl);
+  el("path",{d:td,"class":"trail"},trl);
+  TRAIL.forEach(function(s,i){
+    el("circle",{cx:s[0][0],cy:s[0][1],r:9,"class":"trail-halo"},trl);
+    el("circle",{cx:s[0][0],cy:s[0][1],r:5.5,"class":"trail-stop"},trl);
+    txt(trl,s[0][0],s[0][1],String(i+1),"trail-no",{dy:"0.35em"});
+  });
+  txt(trl,132,58,"EXAMPLE TRAIL","lbl trl vis-s");
+
+  /* Selection */
+  callout=el("g",{"class":"vis-s"},plan);
+
+  /* Names and sheet furniture */
+  var names=el("g",null,plan);
+  txt(names,0,5,"Academy","isle-lbl vis-s",{"text-anchor":"middle",style:"font-size:15px"});
+  txt(names,-48,-206,"High Isle +70","isle-lbl vis-s",{"text-anchor":"end"});
+  txt(names,110,-218,"Chronicle Chain","isle-lbl vis-s",{"text-anchor":"middle"});
+  txt(names,140,228,"The Commons","isle-lbl vis-s",{"text-anchor":"middle"});
+  txt(names,-135,238,"Lyric Isle","isle-lbl vis-s",{"text-anchor":"middle"});
+  txt(names,-188,-163,"Observatory Isle","isle-lbl vis-s",{"text-anchor":"middle"});
+  el("path",{d:"M-245 242 H-195 M-245 237 V247 M-220 239 V245 M-195 237 V247","class":"scale vis-s"},names);
+  txt(names,-245,232,"0","lbl vis-s",{"text-anchor":"middle"});
+  txt(names,-195,232,"50 m","lbl vis-s",{"text-anchor":"middle"});
+  txt(names,0,234,"SPAWN","lbl",{"text-anchor":"middle",style:"font-size:10px"});
+
+  /* Academy close-up labels */
+  [["LECTURE",0,-54],["HALL",0,-45],["DREAM",-52,-2],["HEARTH",-52,7],["STORM",52,-6],["WING",52,2],["SEALED",52,10],["ORRERY DOME",0,2.5]].forEach(function(l){txt(names,l[1],l[2],l[0],"lbl zl vis-d",{"text-anchor":"middle"});});
+  txt(names,15,49,"REGISTRAR'S GATE","lbl zl vis-d");
+  txt(names,26,33,"LOFT NOOKS","lbl zl mute vis-d");
+  txt(names,5,72,"LONG BRIDGE","lbl zl mute vis-d");
+  txt(names,-7,-86,"LONG STAIR","lbl zl mute vis-d",{"text-anchor":"end"});
+  txt(names,109,-19,"BROKEN SPAN","lbl zl mute vis-d",{"text-anchor":"end"});
+  txt(names,70,-80,"LANTERN WAY","lbl zl mute vis-d",{"text-anchor":"end"});
+  txt(names,-42,38,"Academy Isle +24","isle-lbl zl vis-d",{"text-anchor":"middle"});
+
+  /* NPC labels */
+  txt(npc,0,20,"Old Index","lbl zl npc vis-d",{"text-anchor":"middle"});
+  txt(npc,32,-22,"Tea cart","lbl zl npc vis-d");
+  txt(npc,-52,16.5,"Margin","lbl zl npc vis-d",{"text-anchor":"middle"});
+  txt(npc,3,55,"Registrar","lbl zl npc vis-d");
+
+  /* Below-cloud labels last, so nothing draws over them */
+  var belowLbl=el("g",{"class":"layer layer-below"},plan);
+  txt(belowLbl,100,70,"TRAM","lbl vis-s",{"text-anchor":"middle",style:"font-size:11px"});
+}
+
+function updatePlan(){
+  plan.setAttribute("viewBox",VIEWS[state.view]);
+  plan.classList.toggle("zoomed",state.view==="academy");
+  Object.keys(state.layers).forEach(function(k){plan.classList.toggle("show-"+k,state.layers[k]);});
+  plan.classList.toggle("has-sel",!state.zone);
+  Object.keys(towerEls).forEach(function(c){towerEls[c].classList.toggle("sel",!state.zone&&c===state.cls);});
+  Object.keys(zoneEls).forEach(function(z){zoneEls[z].forEach(function(e){e.classList.toggle("zsel",state.zone===z);});});
+  var t=TOWERS[state.cls];
+  while(callout.firstChild){callout.removeChild(callout.firstChild);}
+  if(!state.zone){
+    var k=cls(state.cls), anchor="middle", x=t.x, off=outerR(state.cls)+10;
+    if(t.x<-150){anchor="start";x=Math.max(t.x-22,-250);}else if(t.x>150){anchor="end";x=Math.min(t.x+22,250);}
+    var name=k.s.toUpperCase(); if(name.length>16){name=name.slice(0,15).trim()+"…";}
+    var line1=k.c+" · "+name, two=!!state.sub, line2="";
+    if(two){var sc=k.subs.filter(function(s){return s[0]===state.sub;})[0][1];if(sc.length>22){sc=sc.slice(0,21).replace(/[\s.,-]+$/,"")+"…";}line2=state.sub+" "+sc;}
+    var w=Math.max(line1.length*11,line2.length*8.5), h=two?30:16;
+    /* Try above and below the tower; keep whichever covers fewer towers */
+    var cands=[two?[t.y-off-13,t.y-off]:[t.y-off],two?[t.y+off+12,t.y+off+26]:[t.y+off+12]];
+    var best=null,bestScore=1e9;
+    cands.forEach(function(ys){
+      var x0=anchor==="start"?x:(anchor==="end"?x-w:x-w/2), y0=ys[0]-14, y1=y0+h, score=0;
+      Object.keys(TOWERS).forEach(function(o){if(o===state.cls){return;}var q=TOWERS[o],cx=Math.max(x0,Math.min(q.x,x0+w)),cy=Math.max(y0,Math.min(q.y,y1)),d=Math.hypot(q.x-cx,q.y-cy),rr=outerR(o)+4;if(d<rr){score+=rr-d;}});
+      if(x0<-252||x0+w>252||y0<-252||y1>252){score+=1000;}
+      if(score<bestScore){bestScore=score;best=ys;}
+    });
+    txt(callout,f1(x),f1(best[0]),line1,"co",{"text-anchor":anchor});
+    if(two){txt(callout,f1(x),f1(best[1]),line2,"co2",{"text-anchor":anchor});}
+  }
+}
+
+/* ---------- Tower section (one vertical scale for every tower and every article count) ---------- */
+var sec=document.getElementById("section");
+var YG=480, SX=3.4, PXL=Math.min(10.2,315/(LMAX+2)), SY=PXL/3;
+function Ym(m){return YG-m*SY;}
+var OW=4*SX, IW=3*SX;
+var X0=64, XA=X0+OW, X1=XA+IW, X2=X1+18*SX, XB=X2+IW, X3=XB+OW, XC=(X0+X3)/2;
+
+function drawRoof(type,ys1){
+  var g=el("g",null,sec), top;
+  if(type==="dome"){
+    var rr=(X3-X0)/2+4; top=ys1-rr;
+    el("path",{d:"M"+f1(X0-4)+" "+f1(ys1)+" A"+f1(rr)+" "+f1(rr)+" 0 0 1 "+f1(X3+4)+" "+f1(ys1)+" Z","class":"roof"},g);
+    [0.35,0.65].forEach(function(f){el("path",{d:"M"+f1(X0-4+(X3-X0+8)*f)+" "+f1(ys1)+" Q"+f1(XC+(f-0.5)*40)+" "+f1(top+18)+" "+f1(XC)+" "+f1(top),"class":"roof-line"},g);});
+    el("rect",{x:f1(XC-7),y:f1(top-13),width:14,height:13,"class":"roof"},g);
+    el("path",{d:"M"+f1(XC-9)+" "+f1(top-13)+" L"+f1(XC)+" "+f1(top-24)+" L"+f1(XC+9)+" "+f1(top-13)+" Z","class":"roof"},g);
+    top=top-24;
+  }else if(type==="crenel"){
+    var h=14, d="M"+f1(X0-5)+" "+f1(ys1)+" V"+f1(ys1-h);
+    for(var x=X0-5,i=0;x<X3+5-0.1;x+=(X3-X0+10)/9,i++){var nx=x+(X3-X0+10)/9;d+=(i%2===0)?" H"+f1(nx)+" V"+f1(ys1-h+6):" H"+f1(nx)+" V"+f1(ys1-h);}
+    d+=" V"+f1(ys1)+" Z";
+    el("path",{d:d,"class":"roof"},g);
+    el("line",{x1:f1(XC),y1:f1(ys1-h),x2:f1(XC),y2:f1(ys1-h-34),"class":"roof-line"},g);
+    el("path",{d:"M"+f1(XC)+" "+f1(ys1-h-34)+" L"+f1(XC+16)+" "+f1(ys1-h-29)+" L"+f1(XC)+" "+f1(ys1-h-24)+" Z","class":"roof"},g);
+    top=ys1-h-34;
+  }else if(type==="lantern"){
+    el("path",{d:"M"+f1(X0-4)+" "+f1(ys1)+" L"+f1(XC-26)+" "+f1(ys1-10)+" H"+f1(XC+26)+" L"+f1(X3+4)+" "+f1(ys1)+" Z","class":"roof"},g);
+    el("rect",{x:f1(XC-24),y:f1(ys1-40),width:48,height:30,"class":"roof"},g);
+    for(var mx=XC-16;mx<XC+17;mx+=8){el("line",{x1:f1(mx),y1:f1(ys1-40),x2:f1(mx),y2:f1(ys1-10),"class":"roof-line"},g);}
+    el("path",{d:"M"+f1(XC-30)+" "+f1(ys1-40)+" L"+f1(XC)+" "+f1(ys1-64)+" L"+f1(XC+30)+" "+f1(ys1-40)+" Z","class":"roof"},g);
+    top=ys1-64;
+  }else if(type==="bell"){
+    el("path",{d:"M"+f1(X0-4)+" "+f1(ys1)+" C"+f1(X0-4)+" "+f1(ys1-30)+" "+f1(XC-16)+" "+f1(ys1-30)+" "+f1(XC-10)+" "+f1(ys1-52)+" L"+f1(XC)+" "+f1(ys1-66)+" L"+f1(XC+10)+" "+f1(ys1-52)+" C"+f1(XC+16)+" "+f1(ys1-30)+" "+f1(X3+4)+" "+f1(ys1-30)+" "+f1(X3+4)+" "+f1(ys1)+" Z","class":"roof"},g);
+    top=ys1-66;
+  }else{
+    var apex=ys1-62;
+    el("path",{d:"M"+f1(X0-4)+" "+f1(ys1)+" L"+f1(XC)+" "+f1(apex)+" L"+f1(X3+4)+" "+f1(ys1)+" Z","class":"roof"},g);
+    [[-24,-10],[18,-10]].forEach(function(o){var bx=XC+o[0];el("path",{d:"M"+f1(bx-6)+" "+f1(ys1+o[1])+" L"+f1(bx)+" "+f1(ys1+o[1]-12)+" L"+f1(bx+6)+" "+f1(ys1+o[1])+" Z","class":"roof"},g);});
+    top=apex;
+  }
+  el("line",{x1:f1(XC),y1:f1(top),x2:f1(XC),y2:f1(top-9),"class":"roof-line"},g);
+  el("circle",{cx:f1(XC),cy:f1(top-10),r:2,"class":"roof"},g);
+}
+
+function fitText(t,size,maxW){
+  t.style.fontSize=size+"px";
+  var w=t.getComputedTextLength?t.getComputedTextLength():0;
+  if(w>maxW){t.style.fontSize=(Math.floor(size*maxW/w*10)/10)+"px";}
+  return t;
+}
+function drawSection(){
+  while(sec.firstChild){sec.removeChild(sec.firstChild);}
+  var k=cls(state.cls), t=TOWERS[state.cls], B=bandsFor(k), n=B.length, L=B[n-1].to+1, alt=altOf(state.cls);
+  var isleName=ISLES[t.isle].name;
+  var defs=el("defs",null,sec);
+  var ph=el("pattern",{id:"shatch",width:5,height:5,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("line",{x1:0,y1:0,x2:0,y2:5,"class":"hatch"},ph);
+  var p10=el("pattern",{id:"s10",width:10,height:10,patternUnits:"userSpaceOnUse"},defs);
+  el("path",{d:"M10 0H0V10","class":"g-minor"},p10);
+  var mk=el("marker",{id:"sarr",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"6",markerHeight:"6",orient:"auto"},defs);
+  el("path",{d:"M0 1L10 5L0 9z",fill:"#8edbff"},mk);
+  /* Spines: slim volumes (articles) and thick books, as fills */
+  var pv=el("pattern",{id:"volpat",width:2.4,height:10,patternUnits:"userSpaceOnUse"},defs);
+  el("rect",{width:2.4,height:10,fill:"#2f95cc"},pv);el("line",{x1:0.3,y1:0,x2:0.3,y2:10,stroke:"#0b2a48","stroke-opacity":".5","stroke-width":".6"},pv);
+  var pb=el("pattern",{id:"bookpat",width:4.6,height:10,patternUnits:"userSpaceOnUse"},defs);
+  el("rect",{width:4.6,height:10,fill:"#c97633"},pb);el("line",{x1:0.6,y1:0,x2:0.6,y2:10,stroke:"#0b2a48","stroke-opacity":".55","stroke-width":"1.2"},pb);
+  el("rect",{x:0,y:0,width:360,height:610,fill:"url(#s10)"},sec);
+
+  /* Long lines shrink to fit the sheet instead of running off it (measured, so it holds for any font) */
+  fitText(txt(sec,8,22,"TOWER "+k.c+" · "+k.t.toUpperCase(),"s-title"),19,344);
+  fitText(txt(sec,8,37,isleName.toUpperCase()+" · +"+alt+" m · ~"+L+" levels + "+SPARE+" spare (estimate)","s-sub"),9.5,344);
+  el("rect",{x:8,y:45,width:16,height:9,fill:"url(#bookpat)"},sec);txt(sec,28,53,"BOOKS · OUTER RING","key-t");
+  el("rect",{x:150,y:45,width:16,height:9,fill:"url(#volpat)"},sec);txt(sec,170,53,"ARTICLES · INNER RING","key-t");
+
+  /* Cloud sea far below, the floating rock, root lanterns */
+  var wave="M0 598";for(var x=0;x<360;x+=20){wave+=" Q"+(x+10)+" "+(598-(x%40===0?5:-5))+" "+(x+20)+" 598";}
+  el("path",{d:wave+" V610 H0 Z","class":"cloudfill"},sec);
+  el("path",{d:wave,"class":"cloud"},sec);
+  txt(sec,6,590,"CLOUD SEA · "+alt+" m BELOW THE ISLE TOP","s-note");
+  var rockPts=[[24,480],[336,480],[326,488],[316,494],[304,506],[288,512],[272,526],[252,532],[236,546],[214,552],[196,566],[178,556],[160,550],[138,538],[118,532],[100,518],[80,510],[60,498],[44,492],[32,486]];
+  el("polygon",{points:rockPts.map(function(p){return p.join(",");}).join(" "),"class":"rock"},sec);
+  [[80,510,-8,560],[138,538,-6,580],[214,552,8,588],[288,512,12,566]].forEach(function(r){
+    el("path",{d:"M"+r[0]+" "+r[1]+" q"+(r[2]*1.6)+" "+((r[3]-r[1])*0.5)+" "+r[2]+" "+(r[3]-r[1]),"class":"root"},sec);
+    el("circle",{cx:r[0]+r[2],cy:r[3],r:5.5,"class":"glow"},sec);
+    el("circle",{cx:r[0]+r[2],cy:r[3],r:2.4,"class":"lamp"},sec);
+  });
+  txt(sec,232,584,"ROOT LANTERNS","s-note");
+  el("line",{x1:24,y1:480,x2:336,y2:480,"class":"ground"},sec);
+  txt(sec,X3+8,475,"ISLE TOP · +"+alt+" m","s-note");
+
+  /* Plinth, then each floor: empty shelf in both rings, filled up to the estimated contents */
+  el("rect",{x:X0,y:f1(Ym(6)),width:f1(X3-X0),height:f1(6*SY),"class":"s-base"},sec);
+  var bandsG=el("g",null,sec), selBand=null;
+  var COLS=[[X0,OW,"o"],[XA,IW,"i"],[X2,IW,"i"],[XB,OW,"o"]];
+  B.forEach(function(b,j){
+    var yb=Ym(6+3*b.from), yt=Ym(6+3*(b.to+1));
+    if(state.sub===b.code){selBand=b;}
+    COLS.forEach(function(col){
+      el("rect",{x:f1(col[0]),y:f1(yt),width:f1(col[1]),height:f1(yb-yt),"class":"band"+(j%2?" alt":""),"data-cls":k.c,"data-sub":b.code},bandsG);
+      var inner=col[2]==="i", filled=Math.min(b.h,inner?b.av:b.bv);
+      if(filled>0){var fh=filled*3*SY;el("rect",{x:f1(col[0]),y:f1(yb-fh),width:f1(col[1]),height:f1(fh),fill:"url(#"+(inner?"volpat":"bookpat")+")","class":"nohit"},bandsG);}
+      if(inner&&state.n>CORE&&b.core<filled-0.05){var yc=yb-b.core*3*SY;el("line",{x1:f1(col[0]),y1:f1(yc),x2:f1(col[0]+col[1]),y2:f1(yc),"class":"tail-line"},bandsG);}
+    });
+  });
+  var lvG=el("g",null,sec);
+  for(var Lv=0;Lv<=L+SPARE;Lv++){
+    var yy=f1(Ym(6+3*Lv));
+    el("line",{x1:X0,y1:yy,x2:f1(X1),y2:yy,"class":"lvl"},lvG);
+    el("line",{x1:f1(X2),y1:yy,x2:f1(X3),y2:yy,"class":"lvl"},lvG);
+  }
+  B.forEach(function(b){
+    var yb=Ym(6+3*b.from), sel=(state.sub===b.code);
+    el("line",{x1:X0,y1:f1(yb),x2:f1(X3),y2:f1(yb),"class":"hdr"+(sel?" sel":"")},sec);
+    if(b.from>0){
+      el("path",{d:"M"+f1(X0-7)+" "+f1(yb)+" H"+X0+" M"+f1(X0-7)+" "+f1(yb)+" L"+X0+" "+f1(yb+5)+" M"+f1(X3)+" "+f1(yb)+" H"+f1(X3+7)+" M"+f1(X3+7)+" "+f1(yb)+" L"+f1(X3)+" "+f1(yb+5),"class":"balcony"+(sel?" sel":"")},sec);
+    }
+  });
+  var ys0=Ym(6+3*L), ys1=Ym(6+3*(L+SPARE));
+  [X0,X2].forEach(function(x){
+    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW+IW),height:f1(ys0-ys1),"class":"spare"},sec);
+    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW+IW),height:f1(ys0-ys1),fill:"url(#shatch)","class":"nohit"},sec);
+  });
+  el("path",{d:"M"+f1(XA)+" "+f1(Ym(6))+" V"+f1(ys0)+" M"+f1(XB)+" "+f1(Ym(6))+" V"+f1(ys0),"class":"ring-sep"},sec);
+  el("path",{d:"M"+X0+" "+YG+" V"+f1(ys1)+" M"+f1(X1)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X2)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X3)+" "+YG+" V"+f1(ys1),"class":"s-wall"},sec);
+  drawRoof(t.roof,ys1);
+
+  /* Selected floor, and the ring an example sits on */
+  if(selBand){
+    var sb=Ym(6+3*selBand.from), st=Ym(6+3*(selBand.to+1));
+    [[X0,X1],[X2,X3]].forEach(function(p){el("rect",{x:f1(p[0]-1),y:f1(st-1),width:f1(p[1]-p[0]+2),height:f1(sb-st+2),"class":"band-sel"},sec);});
+    if(state.ring){
+      var rc=state.ring==="outer"?[[X0,OW],[XB,OW]]:[[XA,IW],[X2,IW]];
+      rc.forEach(function(c){el("rect",{x:f1(c[0]),y:f1(st),width:f1(c[1]),height:f1(sb-st),"class":"ring-hl"},sec);});
+      txt(sec,f1(XC),f1((sb+st)/2+3),state.ring==="outer"?"◂ BOOK ▸":"◂ ARTICLE ▸","s-note acc",{"text-anchor":"middle"});
+    }
+  }
+
+  /* Flight shaft */
+  if(Ym(6)-ys0>60){
+    el("line",{x1:f1(XC),y1:f1(Ym(6)-6),x2:f1(XC),y2:f1(ys0+8),"class":"shaft-arrow","marker-end":"url(#sarr)"},sec);
+    if(Ym(6)-ys0>150&&!state.ring){var ym=(Ym(6)+ys0)/2;txt(sec,f1(XC-5),f1(ym),"FLIGHT SHAFT · LIFT","s-note beam",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC-5)+" "+f1(ym)+")"});}
+  }
+
+  /* Level scale and the walkway level */
+  var step=L>30?10:5, W=Math.min(10,Math.floor(L/3)), lastQ=W;
+  for(var q=0;q<L;q+=step){if(q!==W&&Math.abs(q-W)*PXL>=11){txt(sec,4,f1(Ym(6+3*q)-2),lv(q),"lvltxt");lastQ=Math.max(lastQ,q);}}
+  if((L-lastQ)*PXL>=11){txt(sec,4,f1(ys0-2),lv(L)+"+","lvltxt");}
+  var yw=Ym(6+3*W);
+  txt(sec,4,f1(yw-2),lv(W)+" WALK","lvltxt");
+  el("path",{d:"M48 "+f1(yw)+" H"+(X0-7)+" M48 "+f1(yw-4)+" H"+(X0-7),"class":"stub"},sec);
+
+  /* Floor labels (de-overlapped; they may rise above a short tower) */
+  var colX=194, minGap=13, top=68;
+  var mids=B.map(function(b){return (Ym(6+3*b.from)+Ym(6+3*(b.to+1)))/2;});
+  var ys=mids.slice();
+  for(var j=1;j<n;j++){if(ys[j]>ys[j-1]-minGap){ys[j]=ys[j-1]-minGap;}}
+  if(n&&ys[n-1]<top){ys[n-1]=top;for(var m=n-2;m>=0;m--){if(ys[m]<ys[m+1]+minGap){ys[m]=ys[m+1]+minGap;}}}
+  B.forEach(function(b,j){
+    var sel=(state.sub===b.code);
+    el("path",{d:"M"+f1(X3+9)+" "+f1(mids[j])+" L"+f1(colX-14)+" "+f1(mids[j])+" L"+f1(colX-4)+" "+f1(ys[j]-3.5),"class":"leader"+(sel?" sel":"")},sec);
+    var row=el("g",{"class":"row"+(sel?" sel":""),"data-cls":k.c,"data-sub":b.code,tabindex:"0",role:"button","aria-label":"Floor "+b.code+", "+b.cap},sec);
+    el("rect",{x:colX-3,y:f1(ys[j]-11),width:f1(360-colX),height:13,"class":"row-hit"},row);
+    txt(row,colX,f1(ys[j]),b.code,"code");
+    var cap=b.cap.length>21?b.cap.slice(0,20).replace(/[\s.,(-]+$/,"")+"…":b.cap;
+    txt(row,colX+(b.code.length>4?b.code.length*6.6+6:36),f1(ys[j]),cap,"cap");
+  });
+
+  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare, each floor with an outer ring of books and an inner ring of articles filled to their estimated counts, a central flight shaft, a "+t.roof+" roof, and the cloud sea "+alt+" metres down.");
+  var capEl=document.getElementById("sect-cap");capEl.innerHTML="";
+  var bEl=document.createElement("b");bEl.textContent="Tower "+k.c+", "+isleName+": ";
+  capEl.appendChild(bEl);
+  capEl.appendChild(document.createTextNode(n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare, at "+fmt(state.n)+" articles. Colour shows how full each ring is."+(state.n>CORE?" The dash in the inner ring marks where the curated list ends and the most-read tail begins.":"")+" Every tower is drawn to the same scale, so you can compare them. All estimates."));
+}
+
+/* ---------- Pickers ---------- */
+var classRow=document.getElementById("class-chips");
+var subWrap=document.getElementById("sub-chips");
+var filterIn=document.getElementById("sub-filter");
+
+function buildClassChips(){
+  CLASSES.forEach(function(k){
+    var b=document.createElement("button");
+    b.type="button";b.className="cchip";b.dataset.cls=k.c;
+    var t=document.createElement("b");t.textContent=k.c;
+    var s=document.createElement("span");s.textContent=k.s;
+    b.appendChild(t);b.appendChild(s);
+    b.setAttribute("aria-label","Tower "+k.c+", "+k.t);
+    classRow.appendChild(b);
+  });
+}
+function syncClassChips(scroll){
+  var chips=classRow.querySelectorAll(".cchip"), cur=null;
+  chips.forEach(function(ch){var on=(ch.dataset.cls===state.cls&&!state.zone);ch.setAttribute("aria-pressed",on?"true":"false");if(ch.dataset.cls===state.cls){cur=ch;}});
+  if(scroll&&cur){classRow.scrollLeft=Math.max(0,cur.offsetLeft-classRow.offsetLeft-(classRow.clientWidth-cur.offsetWidth)/2);}
+}
+function subChip(k,s,showClass){
+  var b=document.createElement("button");
+  b.type="button";b.className="schip";
+  b.dataset.cls=k.c;b.dataset.sub=s[0];
+  b.setAttribute("aria-pressed",(state.sub===s[0]&&state.cls===k.c&&!state.zone)?"true":"false");
+  var t=document.createElement("b");t.textContent=s[0];
+  var c=document.createElement("span");c.textContent=s[1]+(showClass&&!k.one?" · "+k.t:"");
+  b.appendChild(t);b.appendChild(c);
+  return b;
+}
+function renderSubChips(){
+  subWrap.innerHTML="";
+  var q=state.filter.trim().toLowerCase(), h=document.getElementById("sub-h");
+  if(q){
+    var hits=[];
+    CLASSES.forEach(function(k){k.subs.forEach(function(s){if(s[0].toLowerCase().indexOf(q)===0||s[1].toLowerCase().indexOf(q)>=0){hits.push([k,s]);}});});
+    h.textContent="Matches ("+hits.length+")";
+    if(!hits.length){var p=document.createElement("p");p.className="empty";p.textContent="No floor matches “"+state.filter.trim()+"”. Try a broader word, or a number such as 12.7.";subWrap.appendChild(p);return;}
+    hits.slice(0,60).forEach(function(x){subWrap.appendChild(subChip(x[0],x[1],true));});
+  }else{
+    var k=cls(state.cls);
+    h.textContent="Floors · tower "+k.c+" ("+k.subs.length+")";
+    k.subs.forEach(function(s){subWrap.appendChild(subChip(k,s,false));});
+  }
+}
+
+/* ---------- Info card and caption ---------- */
+function setInfo(kind,title,rows,note){
+  document.getElementById("info-kind").textContent=kind;
+  document.getElementById("info-h").textContent=title;
+  var dl=document.getElementById("info-dl");dl.innerHTML="";
+  rows.forEach(function(r){var dt=document.createElement("dt");dt.textContent=r[0];var dd=document.createElement("dd");dd.textContent=r[1];dl.appendChild(dt);dl.appendChild(dd);});
+  document.getElementById("info-note").textContent=note||"";
+}
+function renderInfo(){
+  var cap=document.getElementById("plan-cap");
+  if(state.zone){
+    var z=ZONES[state.zone];
+    setInfo(z.k,z.t,z.rows,z.n);
+    cap.textContent="Selected: "+z.t+".";
+    return;
+  }
+  var k=cls(state.cls), t=TOWERS[k.c], isle=ISLES[t.isle], alt=altOf(k.c), B=bandsFor(k), L=B[B.length-1].to+1;
+  var dist=Math.hypot(t.x,t.y), brg=(Math.atan2(t.x,-t.y)*180/Math.PI+360)%360;
+  var A=artA(k), core=coreA(k), tail=A-core;
+  if(state.sub){
+    var band=B.filter(function(v){return v.code===state.sub;})[0];
+    var lvls=lv(band.from)+(band.to>band.from?"–"+lv(band.to):"");
+    var rows=[];
+    if(state.ex){var ex=EXAMPLES[state.ex];rows.push(["Example",ex.t+" ("+ex.kind+"). "+ex.where]);}
+    rows.push(["Levels",lvls+" (estimate) · balcony and plaque at "+lv(band.from)]);
+    rows.push(["Inner ring",est(band.a)+" articles, as slim volumes. Curated list order, then most-read first."]);
+    rows.push(["Outer ring",est(band.b)+" books, as thick volumes. By call number, then author."]);
+    rows.push(["List",k.lit?"Literature floor by language or form (proposal)":"Vital Articles, Level 5 · "+k.t+(k.one?"":" · "+band.cap)]);
+    rows.push(["Links","Read-the-book, author and subject links, and article links. Each jump extends the trail."]);
+    rows.push(["Tower","Tower "+k.c+" · "+k.t]);
+    setInfo((state.ex?"Example · ":"")+"Floor · tower "+k.c+" · "+isle.name, band.code+" · "+band.cap, rows,
+      "Floor counts are an even split of the tower's estimate until the builds count. "+(k.one&&!k.lit?"Wikipedia keeps this topic on one page; its section headings could split it into floors. ":"")+"Baked into the world: the building and every item's address. Fetched only when someone opens it: the text.");
+    cap.textContent="Selected: floor "+band.code+" "+band.cap+", tower "+k.c+" on "+isle.name+", "+lvls+".";
+  }else{
+    setInfo("Tower "+k.c+" · "+isle.name, k.t,[
+      ["Articles",est(A)+" (estimate): "+est(core)+" from the curated list"+(tail>0?", "+est(tail)+" more most-read":"")],
+      ["Books",est(k.books)+" from Project Gutenberg (rough guess)"],
+      ["Isle",isle.name+" · +"+alt+" m above the cloud sea"],
+      ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the dome, bearing "+Math.round(brg)+"°"],
+      ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
+      ["Floors",k.lit?k.subs.length+" floors by language or form (proposal)":(k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each")],
+      ["Levels","about "+L+" + "+SPARE+" spare (estimate)"],
+      ["Reach",t.reach]
+    ],"Pick a floor to see what it holds. Tower size on the plan and height on the section both follow these estimates. Isle, shape and position are proposals.");
+    cap.textContent="Selected: tower "+k.c+", "+k.t+", on "+isle.name+".";
+  }
+}
+
+/* ---------- Census, budget, examples ---------- */
+var censusEl=document.getElementById("census");
+function renderCensus(){
+  censusEl.innerHTML="";
+  CLASSES.forEach(function(k){
+    var A=artA(k), b=document.createElement("button");
+    b.type="button";b.className="crow";b.dataset.cls=k.c;
+    b.setAttribute("aria-pressed",(k.c===state.cls&&!state.zone)?"true":"false");
+    b.setAttribute("aria-label","Tower "+k.c+", "+k.t+": "+est(A)+" articles and "+est(k.books)+" books, estimates");
+    b.title=k.t+": "+est(A)+" articles, "+est(k.books)+" books (estimates)";
+    var nm=document.createElement("span");nm.className="nm";
+    var nb=document.createElement("b");nb.textContent=k.c;nm.appendChild(nb);nm.appendChild(document.createTextNode(k.t));
+    var bar=document.createElement("span");bar.className="bar";
+    var ia=document.createElement("i");ia.className="a";ia.style.width=(A/ITEM_MAX*100).toFixed(2)+"%";
+    var ib=document.createElement("i");ib.className="b end";ib.style.width=(k.books/ITEM_MAX*100).toFixed(2)+"%";
+    bar.appendChild(ia);bar.appendChild(ib);
+    var num=document.createElement("span");num.className="num";num.textContent=est(A)+" articles · "+est(k.books)+" books";
+    b.appendChild(nm);b.appendChild(bar);b.appendChild(num);
+    censusEl.appendChild(b);
+  });
+  document.getElementById("census-sub").textContent="at "+fmt(state.n)+" articles · estimates";
+  document.getElementById("census-total").textContent="Total: "+fmt(state.n)+" articles and about "+fmt(BOOKS_TOTAL)+" books. About "+fmt(BOOKS_UNPLACED)+" of the books have no LoC class in the catalog and are not counted above (a guess).";
+}
+function syncCensus(){censusEl.querySelectorAll(".crow").forEach(function(r){r.setAttribute("aria-pressed",(r.dataset.cls===state.cls&&!state.zone)?"true":"false");});}
+
+var GB_ART=0.000002, GB_BOOK=0.00035, GB_OPEN=0.00002;
+function gb(x){return (x<10?x.toFixed(1):Math.round(x).toString())+" GB";}
+function renderBudget(){
+  var wrap=document.getElementById("budget");wrap.innerHTML="";
+  var art=state.n*GB_ART, tbl=state.n>=500000?0.2:0.1, base=[["vol",art],["tbl",tbl]];
+  var rows=[
+    {name:"Articles only",desc:"The articles at the chosen count, with no books.",segs:base},
+    {name:"Option A",choice:true,desc:"About 2,000 complete classics in full, plus the opening chapter of the other ~73,000 books. Works for every visitor.",segs:base.concat([["book",2000*GB_BOOK],["open",73000*GB_OPEN]])},
+    {name:"Option B",choice:true,desc:"The opening chapter of all ~75,000 books here, for everyone. Complete texts on Cloudflare R2, readable only by visitors with untrusted URLs on.",segs:base.concat([["open",75000*GB_OPEN]]),r2:75000*GB_BOOK},
+    {name:"Every book in full on GitHub Pages",bad:true,desc:"Does not fit. It would take dozens of sites.",segs:base.concat([["book",75000*GB_BOOK]])}
+  ];
+  rows.forEach(function(r){
+    var total=r.segs.reduce(function(s,x){return s+x[1];},0), nSites=Math.max(1,Math.ceil(total-1e-9));
+    var div=document.createElement("div");div.className="brow"+(r.bad?" bad":"");
+    var h=document.createElement("h3");h.textContent=r.name;
+    if(r.choice){var tg=document.createElement("span");tg.className="tag pro";tg.textContent="Choice";h.appendChild(document.createTextNode(" "));h.appendChild(tg);}
+    var p=document.createElement("p");p.textContent=r.desc;
+    var sites=document.createElement("div");sites.className="sites";sites.setAttribute("role","img");
+    sites.setAttribute("aria-label",r.name+": about "+gb(total)+" on GitHub Pages, "+nSites+" site"+(nSites>1?"s":"")+" of 1 GB");
+    for(var i=0;i<nSites;i++){
+      var box=document.createElement("span");box.className="site"+(nSites>8?" sm":"");
+      var acc=0;
+      r.segs.forEach(function(sg){
+        var lo=Math.max(acc,i), hi=Math.min(acc+sg[1],i+1);
+        if(hi>lo){var seg=document.createElement("i");seg.className="k-"+sg[0];seg.style.width=((hi-lo)*100).toFixed(1)+"%";box.appendChild(seg);}
+        acc+=sg[1];
+      });
+      sites.appendChild(box);
+    }
+    var sum=document.createElement("p");sum.className="bsum";
+    var sb=document.createElement("b");sb.textContent="~"+gb(total)+" on GitHub Pages = "+nSites+" site"+(nSites>1?"s":"");
+    sum.appendChild(sb);
+    if(r.r2){sum.appendChild(document.createTextNode(" + ~"+gb(r.r2)+" on Cloudflare R2 (no 1 GB cap; untrusted-URL visitors only)"));}
+    div.appendChild(h);div.appendChild(p);div.appendChild(sites);div.appendChild(sum);
+    wrap.appendChild(div);
+  });
+}
+
+var SCALE_NOTES={
+  50000:'v1: Wikipedia\'s Vital Articles, Level 5 (curated). <span class="tag tb">Testbed</span>',
+  100000:'The number in Jane\'s latest message. Assumed here: the curated 50k plus the next 50k most-read articles.',
+  500000:'The approved scale-up: about 500,000 most-read articles, assumed to include the curated 50k. <span class="tag dec">Decided</span>'
+};
+function syncScale(){
+  document.querySelectorAll("[data-scale]").forEach(function(b){b.setAttribute("aria-pressed",Number(b.dataset.scale)===state.n?"true":"false");});
+  document.getElementById("scale-note").innerHTML=SCALE_NOTES[state.n];
+}
+function syncExamples(){document.querySelectorAll("[data-ex]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.ex===state.ex?"true":"false");});}
+
+/* ---------- Updates and events ---------- */
+function render(scrollChips){updatePlan();drawSection();syncClassChips(scrollChips);renderSubChips();renderInfo();syncCensus();syncExamples();}
+function setView(v){state.view=v;document.querySelectorAll("[data-view]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.view===v?"true":"false");});}
+function clearEx(){state.ex=null;state.ring=null;}
+/* No tower stands on Academy Isle, so picking a tower or floor always shows the whole site */
+function pickClass(c){clearEx();state.cls=c;state.sub=null;state.zone=null;if(state.view==="academy"){setView("site");}render(true);}
+function pickSub(c,s){clearEx();state.cls=c;state.sub=s;state.zone=null;state.filter="";filterIn.value="";if(state.view==="academy"){setView("site");}render(true);}
+function pickZone(z){clearEx();state.zone=z;render(false);}
+function setScale(n){state.n=n;syncScale();buildPlan();renderCensus();renderBudget();render(false);}
+function showExample(id){
+  var ex=EXAMPLES[id];
+  state.ex=id;state.ring=ex.ring;state.cls=ex.cls;state.sub=ex.sub;state.zone=null;state.filter="";filterIn.value="";
+  if(state.view==="academy"){setView("site");}
+  render(true);
+  var target=document.querySelector(".sect-sheet");
+  if(target&&target.scrollIntoView){target.scrollIntoView({behavior:"smooth",block:"start"});}
+}
+
+classRow.addEventListener("click",function(e){var b=e.target.closest(".cchip");if(b){pickClass(b.dataset.cls);}});
+subWrap.addEventListener("click",function(e){var b=e.target.closest(".schip");if(b){pickSub(b.dataset.cls,b.dataset.sub);}});
+censusEl.addEventListener("click",function(e){var b=e.target.closest(".crow");if(b){pickClass(b.dataset.cls);}});
+filterIn.addEventListener("input",function(){state.filter=filterIn.value;renderSubChips();});
+document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){setView(b.dataset.view);updatePlan();});});
+document.querySelectorAll("[data-layer]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.layer;state.layers[k]=!state.layers[k];b.setAttribute("aria-pressed",state.layers[k]?"true":"false");updatePlan();});});
+document.querySelectorAll("[data-scale]").forEach(function(b){b.addEventListener("click",function(){setScale(Number(b.dataset.scale));});});
+document.querySelectorAll("[data-ex]").forEach(function(b){b.addEventListener("click",function(){showExample(b.dataset.ex);});});
+
+function activate(t){
+  if(!t){return;}
+  var tw=t.closest("[data-cls]"), z=t.closest("[data-zone]");
+  if(tw&&tw.dataset.sub){pickSub(tw.dataset.cls,tw.dataset.sub);}
+  else if(tw){pickClass(tw.dataset.cls);}
+  else if(z){pickZone(z.dataset.zone);}
+}
+[plan,sec].forEach(function(svg){
+  svg.addEventListener("click",function(e){activate(e.target);});
+  svg.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();activate(e.target);}});
+});
+
+buildPlan();
+buildClassChips();
+syncScale();
+renderCensus();
+renderBudget();
+render(true);
+/* Titles are measured; measure again once the web fonts have loaded */
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){drawSection();});}
+})();
+</script>
+</body>
+</html>
