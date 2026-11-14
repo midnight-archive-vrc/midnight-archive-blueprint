@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Midnight Archive Blueprint (draft v0.4)</title>
+<title>Midnight Archive Blueprint (draft v0.4.1)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -299,6 +299,8 @@ footer a{color:var(--line)}
 #plan .tw-butt{fill:var(--paper);stroke:var(--line);stroke-width:1.1}
 #plan .tw-ring{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8}
 #plan .tw-shaft{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:.8;stroke-dasharray:2 2}
+#plan .tw-walk{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8;stroke-dasharray:2 2}
+#plan .tw-in{fill:var(--accent);fill-opacity:.14;stroke:none;pointer-events:none}
 #plan .tw-letter{font-family:var(--display);font-weight:700;font-size:21px;fill:var(--line);text-anchor:middle;pointer-events:none}
 #plan .hit{fill:transparent}
 #plan .tick-v{stroke:var(--vol);stroke-width:.8;pointer-events:none}
@@ -359,6 +361,15 @@ footer a{color:var(--line)}
 #section .roof{fill:color-mix(in srgb,var(--line) 6%,var(--paper));stroke:var(--line);stroke-width:1.3}
 #section .roof-line{fill:none;stroke:var(--line);stroke-width:1}
 #section .shaft-arrow{stroke:var(--beam);stroke-width:1.2;stroke-dasharray:4 4}
+#section .band.in{fill:color-mix(in srgb,var(--accent) 5%,var(--paper))}
+#section .band.in.alt{fill:color-mix(in srgb,var(--accent) 10%,var(--paper))}
+#section .walk{fill:none;stroke:var(--line);stroke-opacity:.6;stroke-width:1}
+#section .stair-o{stroke:var(--line);stroke-opacity:.35;stroke-width:.8}
+#section .stair-i{stroke:var(--accent);stroke-opacity:.75;stroke-width:1.3;stroke-dasharray:1.2 1.6}
+#section .net{fill:none;stroke:var(--accent);stroke-opacity:.8;stroke-width:1;stroke-dasharray:2 1.5}
+#section .slide{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:1.4;stroke-linecap:round}
+#section .cushion{fill:var(--accent);fill-opacity:.55}
+#section .nest{fill:color-mix(in srgb,var(--accent) 35%,var(--paper));stroke:var(--accent);stroke-width:1}
 #section .stub{fill:none;stroke:var(--line);stroke-width:1}
 #section .leader{fill:none;stroke:var(--line);stroke-opacity:.35;stroke-width:.7}
 #section .leader.sel{stroke:var(--accent);stroke-opacity:1;stroke-width:1.2}
@@ -392,15 +403,16 @@ footer a{color:var(--line)}
     <dl class="tb-cells">
       <div><dt>Sheets</dt><dd>C-101 Shelving rules · A-101 Plan · A-201 Section</dd></div>
       <div><dt>Towers</dt><dd>12 topics · 41 floor lists</dd></div>
-      <div><dt>Revision</dt><dd>0.4 draft · 2026-11-14</dd></div>
+      <div><dt>Revision</dt><dd>0.4.1 draft · 2026-11-14</dd></div>
       <div><dt>Design</dt><dd>Jane</dd></div>
     </dl>
   </header>
 
   <section class="panel intro prose" aria-labelledby="intro-h">
-    <h2 class="panel-h" id="intro-h">How everything gets shelved <span>draft v0.4 · not the live plan</span></h2>
+    <h2 class="panel-h" id="intro-h">How everything gets shelved <span>draft v0.4.1 · not the live plan</span></h2>
     <p>This draft shows one way to sort two kinds of things into one archive: Wikipedia articles, and full public-domain books from Project Gutenberg. Everything here is a proposal unless it is tagged Decided. The live plan is <a href="../">v0.3</a>.</p>
-    <p>Articles become slim volumes on the inner ring of a floor. Books become thick volumes on the outer ring of the same floor. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
+    <p>The shelves are on the towers' outside walls and face the sky, with a railed walkway around every level and a stair winding up the outside. <span class="tag dec">Decided</span> Articles become slim volumes on a floor's lower shelves. Books become thick volumes on the shelves just above them. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
+    <p>The inside of each tower holds no books. It is cozy space for lying around and talking, themed by the tower's topic. <span class="tag dec">Decided</span> What goes in is proposed below.</p>
     <p>Books: Project Gutenberg has about 75,000 public-domain books. Its catalog gives each one a Library of Congress class, subject headings, an author and a language. Nothing is downloaded yet. <span class="tag pro">Proposed</span></p>
     <p>Articles: the ~500,000 most-read Wikipedia articles. <span class="tag dec">Decided</span> v1 in the testbed uses the ~50k Vital Articles as a first step.</p>
     <p class="sub">Every drawing and count on this page is for ~500,000 articles, and every count is an estimate.</p>
@@ -420,27 +432,27 @@ footer a{color:var(--line)}
     </div>
     <div class="flow">
       <div class="lane">
-        <h3>An article <span>slim volume · inner ring</span></h3>
+        <h3>An article <span>slim volume · lower shelves</span></h3>
         <ol class="steps">
           <li><b>1 · Source</b>Wikipedia: the ~500,000 most-read articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
           <li><b>2 · Tower</b>Its Vital Articles top topic. Articles outside that list: a topic model picks the tower.</li>
           <li><b>3 · Floor</b>Its Vital Articles sub-list.</li>
-          <li><b>4 · Shelf</b>Inner ring of that floor.</li>
+          <li><b>4 · Shelf</b>The lower shelves of that floor's outside wall.</li>
           <li><b>5 · Order</b>The curated list's own order first, then the rest by popularity, most-read first.</li>
         </ol>
       </div>
-      <p class="bridge-note"><b>Links run between the rings.</b> An article about a book or an author gets a "read the book" link. A book links to its author's article and to subject articles. Articles keep linking articles.</p>
+      <p class="bridge-note"><b>Links run between them.</b> An article about a book or an author gets a "read the book" link. A book links to its author's article and to subject articles. Articles keep linking articles.</p>
       <div class="lane bk">
-        <h3>A book <span>thick volume · outer ring</span></h3>
+        <h3>A book <span>thick volume · upper shelves</span></h3>
         <ol class="steps">
           <li><b>1 · Source</b>Project Gutenberg: full public-domain text, with its catalog record.</li>
           <li><b>2 · Tower</b>Its Library of Congress class, through the table below. P (literature) goes to the Literature tower.</li>
           <li><b>3 · Floor</b>Literature: its language or form. Other towers: the closest sub-list.</li>
-          <li><b>4 · Shelf</b>Outer ring of that floor.</li>
+          <li><b>4 · Shelf</b>The shelves above that floor's articles.</li>
           <li><b>5 · Order</b>Library of Congress call number, then author.</li>
         </ol>
       </div>
-      <p class="bridge-note"><b>Low and high.</b> On every floor the most-read things sit lowest, near the balcony where you arrive. Deep cuts climb higher.</p>
+      <p class="bridge-note"><b>Low and high.</b> On every floor the most-read things sit lowest, on the walkway where you arrive. Deep cuts climb higher, a walkway or two up the outside stair.</p>
     </div>
   </section>
 
@@ -462,7 +474,7 @@ footer a{color:var(--line)}
       <button type="button" class="tog" data-layer="flight" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M1 8 Q10 0 19 5" fill="none" stroke="#e3eeff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/><path d="M17 1.5L23 6L16.5 8z" fill="#e3eeff"/></svg>Wind currents</button>
       <button type="button" class="tog" data-layer="npc" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/></svg>NPC routes</button>
       <button type="button" class="tog" data-layer="below" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#e3eeff" stroke-opacity=".6" stroke-width="2" stroke-dasharray="5 3"/></svg>Below cloud</button>
-      <button type="button" class="tog" data-layer="bays" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M2 1v3M5 1v3M8 1v3M11 1v3M14 1v3M17 1v3M20 1v3M23 1v3" stroke="#2f95cc" stroke-width="1"/><path d="M3 6v4M9 6v4M15 6v4M21 6v4" stroke="#c97633" stroke-width="2.2"/></svg>Shelf rings</button>
+      <button type="button" class="tog" data-layer="bays" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M2 1v3M5 1v3M8 1v3M11 1v3M14 1v3M17 1v3M20 1v3M23 1v3" stroke="#2f95cc" stroke-width="1"/><path d="M3 6v4M9 6v4M15 6v4M21 6v4" stroke="#c97633" stroke-width="2.2"/></svg>Outside shelves</button>
     </div>
   </section>
 
@@ -501,7 +513,7 @@ footer a{color:var(--line)}
   <div class="notes">
     <section class="panel prose wide" aria-labelledby="census-h">
       <h2 class="panel-h" id="census-h">Tower census <span id="census-sub">estimates</span></h2>
-      <p class="series"><span><span class="sw v"></span>Articles (inner ring)</span><span><span class="sw b"></span>Books (outer ring)</span><span>Click a row to pick that tower.</span></p>
+      <p class="series"><span><span class="sw v"></span>Articles (lower shelves)</span><span><span class="sw b"></span>Books (shelves above)</span><span>Click a row to pick that tower.</span></p>
       <div class="census" id="census"></div>
       <p class="sub" id="census-total"></p>
       <p class="sub">How these were guessed: article shares follow Wikipedia's Level 5 quotas for the curated 50k, and a guess at what most-read articles are about (lots of people, films, music, places) for the rest. Book counts are a rough guess at Gutenberg's split by Library of Congress class; most of its books are fiction, poetry and drama. The real numbers come from the builds.</p>
@@ -540,11 +552,45 @@ footer a{color:var(--line)}
         <li><b>Floors are sub-topics.</b> Articles use the Vital Articles sub-lists, as in v0.3.</li>
         <li><b>Literature floors:</b> English, American, French, German, Classical (Greek and Latin), Other languages, Poetry, Drama, Children's. A book goes to its language floor unless it is poetry, drama or for children.</li>
         <li><b>Literature is a 12th tower,</b> split out of Arts. Most Gutenberg books are fiction, poetry and drama; in Arts they would swamp music and painting. It is numbered 12 so the v0.3 numbers stay put.</li>
-        <li><b>Two shelf rings on every floor.</b> Inner ring: slim volumes, the encyclopedia articles. Outer ring: thick books, the full texts.</li>
+        <li><b>One shelf wall, facing out.</b> Each floor's outside wall carries both: slim volumes (the encyclopedia articles) on the lower shelves, thick books (the full texts) above them. A railed walkway runs around every level, and a stair winds up the outside.</li>
         <li><b>Order within a floor.</b> Articles in the curated list's order, then by popularity. Books by call number, then author.</li>
-        <li><b>Low and high.</b> The most-read sit lowest, near the floor's balcony. Deep cuts climb higher. On A-201 a dashed line in the inner ring marks where the curated list ends and the most-read tail begins.</li>
-        <li><b>Size estimate.</b> A shelf bay holds about 100 slim volumes or 40 thick books, and a ring has 48 bays, so a level holds about 4,800 articles or 1,920 books. Each floor gets at least one level.</li>
+        <li><b>Low and high.</b> The most-read sit lowest, on the walkway where you arrive. Deep cuts climb higher. On A-201 a dashed line in the articles marks where the curated list ends and the most-read tail begins.</li>
+        <li><b>Size estimate.</b> A shelf bay holds about 100 slim volumes or 40 thick books, and the wall has 48 bays per level, so a level holds about 4,800 articles or 1,920 books. A floor gets as many levels as its articles and books need together, at least one.</li>
       </ul>
+    </section>
+
+    <section class="panel prose wide" aria-labelledby="inside-h">
+      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Decided</span> cozy, themed by topic</h2>
+      <p>With the books on the outside, every tower's inside is free for lying around, cuddling and talking. Jane: "could the inside just be like cuddle stuff and stairs going across sections".</p>
+      <p><b>In every tower</b> <span class="tag pro">Proposed</span></p>
+      <ul>
+        <li><b>Window seats</b> built into the back of the shelf wall, each big enough for two. The backs of the books glow through small gaps like stained glass.</li>
+        <li><b>Stairs crossing the open middle</b> between floors, meeting at landings piled with pillows.</li>
+        <li><b>Hammock nets</b> strung across the middle every few floors, to lie on together and look up through the tower.</li>
+        <li><b>A slide</b> spiralling down the middle for the quick way down, and <b>a page updraft</b>: step into a column of drifting glowing pages and float slowly up.</li>
+        <li><b>A pillow nest</b> on the top floor, under glass, with the moon overhead.</li>
+      </ul>
+      <p><b>A theme per tower</b> <span class="tag pro">Proposed</span> Built from one shared furniture set plus a few hero props each, so Quest stays light.</p>
+      <div class="tablewrap">
+        <table class="map">
+          <thead><tr><th scope="col">Tower</th><th scope="col">Inside</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            <tr><td>1 People</td><td><b>Portrait parlour.</b> Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces).</td><td>New</td></tr>
+            <tr><td>2 History</td><td><b>Hearth hall.</b> A big old fireplace, a timeline rug that winds across the floor, stone benches heaped with blankets.</td><td>New</td></tr>
+            <tr><td>3 Geography</td><td><b>Map room.</b> A giant glowing floor map with beanbags to sprawl on, and globe lamps.</td><td>Jane liked</td></tr>
+            <tr><td>4 Arts</td><td><b>Studio loft.</b> A small stage for music and open mic, floor cushions for the audience, easels around the edge.</td><td>New</td></tr>
+            <tr><td>5 Philosophy and religion</td><td><b>Quiet pool.</b> A still reflecting pool ringed with floor cushions and candles. The hush floor.</td><td>Jane liked</td></tr>
+            <tr><td>6 Everyday life</td><td><b>Kitchen hearth.</b> A big kitchen with a long table, a kettle on the fire, couches and quilts. The tea cart lives here.</td><td>Jane liked</td></tr>
+            <tr><td>7 Society</td><td><b>Talking pit.</b> A sunken round pit of cushions for group talks late into the night.</td><td>New</td></tr>
+            <tr><td>8 Biological and health</td><td><b>Greenhouse.</b> Moss beds, fern-leaf hammocks, softly glowing fungi.</td><td>Jane liked</td></tr>
+            <tr><td>9 Physical sciences</td><td><b>Planetarium.</b> Floor mattresses under a slowly turning star ceiling.</td><td>Jane liked</td></tr>
+            <tr><td>10 Technology</td><td><b>Clockwork den.</b> Slow brass gears turning in the walls, armchairs, a toy train looping the floor.</td><td>New</td></tr>
+            <tr><td>11 Mathematics</td><td><b>Geometry steps.</b> Stepped platforms in nested shapes with wool mats, drifting polyhedron lamps.</td><td>New</td></tr>
+            <tr><td>12 Literature</td><td><b>Story bunks.</b> Stacked blanket-fort bunks with reading lamps, and a story circle of armchairs.</td><td>New</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub">A tall tower like People could change theme every ten floors or so instead of using one theme all the way up. The inspiration pictures are a cozy atrium with hammock nets and crossing stairs, and an outward-shelved tower with walkways and an outside spiral stair (ChatGPT, 14 Nov).</p>
     </section>
 
     <section class="panel prose xl" aria-labelledby="xl-h">
@@ -552,9 +598,9 @@ footer a{color:var(--line)}
       <svg viewBox="0 0 340 172" role="img" aria-label="Example of cross-links: the Moby-Dick article links to the Moby-Dick book with read the book; the book links to the Herman Melville article as its author and to subject articles from its subject headings; articles also link to each other.">
         <defs><marker id="xarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1L10 5L0 9z" fill="#e3eeff"/></marker></defs>
         <rect class="node v" x="4" y="8" width="150" height="44" rx="2"/>
-        <text class="t1" x="12" y="27">Moby-Dick</text><text class="t2" x="12" y="43">article · inner ring</text>
+        <text class="t1" x="12" y="27">Moby-Dick</text><text class="t2" x="12" y="43">article · lower shelves</text>
         <rect class="node b" x="186" y="8" width="150" height="44" rx="2"/>
-        <text class="t1" x="194" y="27">Moby-Dick</text><text class="t2" x="194" y="43">book · outer ring</text>
+        <text class="t1" x="194" y="27">Moby-Dick</text><text class="t2" x="194" y="43">book · shelves above</text>
         <rect class="node v" x="4" y="120" width="150" height="44" rx="2"/>
         <text class="t1" x="12" y="139">Herman Melville</text><text class="t2" x="12" y="155">article · tower 1</text>
         <rect class="node v" x="186" y="120" width="150" height="44" rx="2"/>
@@ -609,8 +655,8 @@ footer a{color:var(--line)}
             <li><b>Source</b><span>Project Gutenberg. LoC class PS, American literature.</span></li>
             <li><b>Tower</b><span>12 Literature, because P is literature.</span></li>
             <li><b>Floor</b><span>12.2 American.</span></li>
-            <li><b>Shelf</b><span>Outer ring, by call number, then author.</span></li>
-            <li><b>Next to</b><span>The Moby-Dick article on the inner ring. Herman Melville's article is in tower 1 People (1.1 Writers and journalists), one link away.</span></li>
+            <li><b>Shelf</b><span>Upper shelves, by call number, then author.</span></li>
+            <li><b>Next to</b><span>Just above the Moby-Dick article on the lower shelves. Herman Melville's article is in tower 1 People (1.1 Writers and journalists), one link away.</span></li>
           </ol>
           <button type="button" class="show" data-ex="moby" aria-pressed="false">Show on the sheets</button>
         </article>
@@ -620,8 +666,8 @@ footer a{color:var(--line)}
             <li><b>Source</b><span>Wikipedia, on the Vital Articles list.</span></li>
             <li><b>Tower</b><span>8 Biological and health sciences, its Vital Articles topic.</span></li>
             <li><b>Floor</b><span>8.2 Animals, its sub-list.</span></li>
-            <li><b>Shelf</b><span>Inner ring, in the list's order.</span></li>
-            <li><b>Next to</b><span>Other animal articles, with books about animals on the outer ring.</span></li>
+            <li><b>Shelf</b><span>Lower shelves, in the list's order.</span></li>
+            <li><b>Next to</b><span>Other animal articles, with books about animals on the shelves above.</span></li>
           </ol>
           <button type="button" class="show" data-ex="octopus" aria-pressed="false">Show on the sheets</button>
         </article>
@@ -631,8 +677,8 @@ footer a{color:var(--line)}
             <li><b>Source</b><span>Project Gutenberg. LoC class QH, natural history and biology.</span></li>
             <li><b>Tower</b><span>8 Biological and health sciences, because QH is biology.</span></li>
             <li><b>Floor</b><span>8.1 Biology. There is no separate Evolution list, so it joins Biology.</span></li>
-            <li><b>Shelf</b><span>Outer ring, by call number, then author.</span></li>
-            <li><b>Next to</b><span>The Evolution article on the inner ring.</span></li>
+            <li><b>Shelf</b><span>Upper shelves, by call number, then author.</span></li>
+            <li><b>Next to</b><span>Above the Evolution article on the lower shelves.</span></li>
           </ol>
           <button type="button" class="show" data-ex="origin" aria-pressed="false">Show on the sheets</button>
         </article>
@@ -646,6 +692,7 @@ footer a{color:var(--line)}
         <li>A rabbit-hole archive of readable Wikipedia articles, still called The Midnight Archive.</li>
         <li>About 500,000 most-read Wikipedia articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
         <li>Pictures only for visitors with "Allow Untrusted URLs" on, served from Cloudflare.</li>
+        <li>The books go on the towers' outside walls, facing out, as in the first concept art. The insides are cozy space for lying around and talking, each themed by its tower's topic.</li>
         <li>Credits through one QR code and a hosted page. PCVR is the beauty target; Quest gets the detail baked into textures. Upload is always Jane's.</li>
       </ul>
     </section>
@@ -659,8 +706,10 @@ footer a{color:var(--line)}
         <li>Where do books with no LoC class go? And general works (A) and military and naval science (U, V)?</li>
         <li>English-language books only, or every language Gutenberg has?</li>
         <li>Read Project Gutenberg's terms on reusing its files and its name before hosting copies.</li>
+        <li>Which cozy pieces go in every tower: window seats, crossing stairs, hammock nets, the slide, the page updraft, the pillow nest?</li>
+        <li>The seven themes marked New (People, History, Arts, Society, Technology, Mathematics, Literature): keep, change or swap?</li>
       </ul>
-      <p class="sub">Not changed by this draft: dream books, messages in bottles, narration, the look, and the NPCs. See <a href="../">v0.3</a>.</p>
+      <p class="sub">Not changed by this draft: dream books, messages in bottles, narration, and the NPCs. See <a href="../">v0.3</a>.</p>
     </section>
   </div>
 
@@ -669,9 +718,11 @@ footer a{color:var(--line)}
     <ul>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#e3eeff" stroke-width="1.6"/></svg>Built into the world file (baked)</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h2" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><path d="M4 9 Q10 3 18 4 Q28 4 30 9 Q24 14 14 13 Q6 13 4 9Z" transform="translate(0 2)" fill="url(#lg-h2)" stroke="#e3eeff" stroke-opacity=".5"/><path d="M4 7 Q10 1 18 2 Q28 2 30 7 Q24 12 14 11 Q6 11 4 7Z" fill="#14324f" stroke="#e3eeff" stroke-width="1.2"/></svg>Floating isle, underside hatched</li>
-      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#2f95cc"/><path d="M6 3v10M10 3v10M14 3v10M18 3v10M22 3v10M26 3v10M30 3v10" stroke="#0b2a48" stroke-opacity=".5"/></svg>Inner ring: slim volumes (articles)</li>
-      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#c97633"/><path d="M10 3v10M18 3v10M26 3v10" stroke="#0b2a48" stroke-opacity=".55" stroke-width="2"/></svg>Outer ring: thick books (full texts)</li>
-      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="2" width="30" height="12" fill="#2f95cc"/><line x1="2" y1="8" x2="32" y2="8" stroke="#0b2a48" stroke-width="1.6" stroke-dasharray="2 1.5"/></svg>Inner ring: curated list below the dash, most-read tail above</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#2f95cc"/><path d="M6 3v10M10 3v10M14 3v10M18 3v10M22 3v10M26 3v10M30 3v10" stroke="#0b2a48" stroke-opacity=".5"/></svg>Lower shelves: slim volumes (articles), facing out</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" rx="1" fill="#c97633"/><path d="M10 3v10M18 3v10M26 3v10" stroke="#0b2a48" stroke-opacity=".55" stroke-width="2"/></svg>Shelves above: thick books (full texts), facing out</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="2" width="30" height="12" fill="#2f95cc"/><line x1="2" y1="8" x2="32" y2="8" stroke="#0b2a48" stroke-width="1.6" stroke-dasharray="2 1.5"/></svg>Articles: curated list below the dash, most-read tail above</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="2" width="30" height="12" fill="#ffc266" fill-opacity=".16"/><rect x="4" y="9" width="9" height="3" rx="1.5" fill="#ffc266" fill-opacity=".6"/><path d="M14 13 L30 3" stroke="#ffc266" stroke-width="1.3" stroke-dasharray="1.2 1.6"/></svg>Inside: cozy floors, window seats, crossing stairs, hammock nets</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 12 H8 V10 M8 12 L12 4 M26 12 H32 V10" fill="none" stroke="#e3eeff" stroke-opacity=".6" stroke-width="1"/></svg>Walkway around every level, stair up the outside</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 11 Q17 1 32 11" fill="none" stroke="#e3eeff" stroke-width="6"/><path d="M2 11 Q17 1 32 11" fill="none" stroke="#0b2a48" stroke-width="3.6"/><circle cx="10" cy="7" r="1.3" fill="#e3eeff"/><circle cx="17" cy="6" r="1.3" fill="#e3eeff"/><circle cx="24" cy="7" r="1.3" fill="#e3eeff"/></svg>Lantern Way: bridges looping past every isle</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#e3eeff" stroke-opacity=".6" stroke-width="1.6" stroke-dasharray="6 4"/></svg>Below the cloud surface</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-opacity=".3" stroke-width="6" stroke-linecap="round"/><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-width="2" stroke-dasharray="5 4"/><circle cx="3" cy="8" r="2.6" fill="#8edbff"/><circle cx="31" cy="8" r="2.6" fill="#8edbff"/></svg>Trail: your path between books, drawn in light</li>
@@ -683,7 +734,7 @@ footer a{color:var(--line)}
   </section>
 
   <footer>
-    <p>Draft v0.4 · 2026-11-14: adds Project Gutenberg books, a 12th tower for Literature, everything drawn for ~500,000 articles (Jane's call), two shelf rings per floor, tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
+    <p>Draft v0.4.1 · 2026-11-14: the shelves move to the towers' outside walls and face the sky, with walkways around every level; the insides become cozy floors themed by topic (Jane's call). v0.4 added Project Gutenberg books, a 12th tower for Literature, everything drawn for ~500,000 articles (Jane's call), tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
     <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Books would come from <a href="https://www.gutenberg.org/">Project Gutenberg</a>. Wikipedia text is CC BY-SA 4.0.</p>
     <p>Isle groupings, heights, roofs, floors and every count are proposals or estimates. Book counts set the real tower heights, so the skyline will be uneven.</p>
     <p>Shared for ideas. Tell Jane what you would add.</p>
@@ -770,15 +821,32 @@ Object.keys(ISLES).forEach(function(id){var I=ISLES[id];ZONES[id]={t:I.name,k:"I
 
 /* ---------- Example placements ---------- */
 var EXAMPLES={
-  moby:{t:"Moby-Dick",kind:"book",cls:"12",sub:"12.2",ring:"outer",where:"A book on the outer ring of this floor, next to the Moby-Dick article on the inner ring. Herman Melville's article is in tower 1, one link away."},
-  octopus:{t:"Octopus",kind:"article",cls:"8",sub:"8.2",ring:"inner",where:"An article on the inner ring of this floor, in the list's order."},
-  origin:{t:"On the Origin of Species",kind:"book",cls:"8",sub:"8.1",ring:"outer",where:"A book on the outer ring of this floor, beside the Evolution article on the inner ring."}
+  moby:{t:"Moby-Dick",kind:"book",cls:"12",sub:"12.2",ring:"outer",where:"A book on this floor's upper shelves, just above the Moby-Dick article on the lower shelves. Herman Melville's article is in tower 1, one link away."},
+  octopus:{t:"Octopus",kind:"article",cls:"8",sub:"8.2",ring:"inner",where:"An article on this floor's lower shelves, in the list's order."},
+  origin:{t:"On the Origin of Species",kind:"book",cls:"8",sub:"8.1",ring:"outer",where:"A book on this floor's upper shelves, above the Evolution article on the lower shelves."}
 };
 
 /* ---------- Geometry and estimates ---------- */
 var TR=19, SPARE=3, PER=48, PER_VOL=PER*100, PER_BOOK=PER*40;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
+/* Inside each tower: cozy space themed by its topic (Jane liked the idea, 14 Nov; 3, 5, 6, 8 and 9 are the ones she saw). */
+var THEMES={
+  "1":{t:"Portrait parlour",d:"Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces)."},
+  "2":{t:"Hearth hall",d:"A big old fireplace, a timeline rug that winds across the floor, and stone benches heaped with blankets."},
+  "3":{t:"Map room",d:"A giant glowing floor map with beanbags to sprawl on, and globe lamps."},
+  "4":{t:"Studio loft",d:"A small stage for music and open mic, floor cushions for the audience, easels around the edge."},
+  "5":{t:"Quiet pool",d:"A still reflecting pool ringed with floor cushions and candles. The hush floor."},
+  "6":{t:"Kitchen hearth",d:"A big kitchen with a long table, a kettle on the fire, couches and quilts. The tea cart lives here."},
+  "7":{t:"Talking pit",d:"A sunken round pit of cushions for group talks late into the night."},
+  "8":{t:"Greenhouse",d:"Moss beds, fern-leaf hammocks and softly glowing fungi."},
+  "9":{t:"Planetarium",d:"Floor mattresses under a slowly turning star ceiling."},
+  "10":{t:"Clockwork den",d:"Slow brass gears turning in the walls, armchairs, a toy train looping the floor."},
+  "11":{t:"Geometry steps",d:"Stepped platforms in nested shapes with wool mats, and drifting polyhedron lamps."},
+  "12":{t:"Story bunks",d:"Stacked blanket-fort bunks with reading lamps, and a story circle of armchairs."}
+};
+var THEMES_SEEN={"3":1,"5":1,"6":1,"8":1,"9":1};
+
 var state={n:500000,cls:"8",sub:"8.2",ring:null,ex:null,art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
 
 function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k]);}}if(parent){parent.appendChild(e);}return e;}
@@ -797,11 +865,12 @@ function items(k,n){return artA(k,n)+k.books;}
 var ITEM_MAX=0; CLASSES.forEach(function(k){ITEM_MAX=Math.max(ITEM_MAX,items(k,500000));});
 function sOf(c,n){return 0.62+0.98*Math.sqrt(items(cls(c),n)/ITEM_MAX);}
 function outerR(c){var t=TOWERS[c];return (t.shell==="buttress"?TR+4.5:(t.shell==="octagon"?TR+1:TR))*sOf(c);}
-/* Floors: an even split of the tower's estimate (placeholder). Levels per floor = whichever ring needs more room. */
+/* Floors: an even split of the tower's estimate (placeholder). One outward shelf wall carries both kinds:
+   articles on a floor's lower shelves, books above them, so levels per floor = room for both. */
 function bandsFor(k,n){
   var nf=k.subs.length, A=artA(k,n), a=A/nf, b=k.books/nf, L=0, coreShare=coreA(k)/A;
   return k.subs.map(function(s){
-    var av=a/PER_VOL, bv=b/PER_BOOK, h=Math.max(1,Math.ceil(av),Math.ceil(bv));
+    var av=a/PER_VOL, bv=b/PER_BOOK, h=Math.max(1,Math.ceil(av+bv-1e-9));
     var band={code:s[0],cap:s[1],from:L,to:L+h-1,h:h,a:a,b:b,av:av,bv:bv,core:av*coreShare};
     L+=h;return band;
   });
@@ -966,7 +1035,8 @@ function buildPlan(){
   BRIDGES.forEach(function(B){if(B[0]==="lanternway"&&B[4]){el("path",{d:"M"+B[1][0]+" "+B[1][1]+" Q"+B[2][0]+" "+B[2][1]+" "+B[3][0]+" "+B[3][1],"class":"route"},npc);}});
   [[0,47],[-52,12],[-36,3],[31.1,-31.1],[f1(stops[3][0]),f1(stops[3][1])]].forEach(function(p){el("circle",{cx:p[0],cy:p[1],r:2.2,"class":"npc-dot"},npc);});
 
-  /* Towers, each scaled by its estimated items. Shelf rings: slim inner ticks = articles, thick outer ticks = books. */
+  /* Towers, each scaled by its estimated items. Shelves face out: ticks around the outside of the shell (one per bay),
+     then the dashed walkway ring. The warm disc is the cozy inside. */
   var tw=el("g",null,plan), bays=el("g",{"class":"layer layer-bays"},plan);
   Object.keys(TOWERS).forEach(function(c){
     var t=TOWERS[c], k=cls(c), sc=sOf(c), tr="translate("+t.x+" "+t.y+") scale("+sc.toFixed(3)+")";
@@ -975,14 +1045,13 @@ function buildPlan(){
     if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
     if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
     else{el("circle",{r:TR,"class":"tw-shell"},g);}
-    el("circle",{r:16.2,"class":"tw-ring"},g);
-    el("circle",{r:9,"class":"tw-shaft"},g);
+    el("circle",{r:TR-4,"class":"tw-in"},g);
     txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
     el("circle",{r:26,"class":"hit"},g);
     towerEls[c]=g;
-    var bg=el("g",{transform:tr},bays);
-    for(var s=0;s<PER;s++){var a1=pol(9.8,s*7.5),a2=pol(12,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick-v"},bg);}
-    for(var s3=0;s3<PER/2;s3++){var b1=pol(12.9,s3*15+3.75),b2=pol(15.6,s3*15+3.75);el("line",{x1:f1(b1[0]),y1:f1(b1[1]),x2:f1(b2[0]),y2:f1(b2[1]),"class":"tick-b"},bg);}
+    var bg=el("g",{transform:tr},bays), rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
+    for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":(s%4===3?"tick-b":"tick-v")},bg);}
+    el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
   });
 
   /* Example reading trail: each hop is an item flying to the reader */
@@ -1069,8 +1138,9 @@ function updatePlan(){
 var sec=document.getElementById("section");
 var YG=480, SX=3.4, PXL=Math.min(10.2,315/(LMAX+2)), SY=PXL/3;
 function Ym(m){return YG-m*SY;}
-var OW=4*SX, IW=3*SX;
-var X0=64, XA=X0+OW, X1=XA+IW, X2=X1+18*SX, XB=X2+IW, X3=XB+OW, XC=(X0+X3)/2;
+/* One shelf wall per side, facing OUT (Jane, 14 Nov): X0..XA and XB..X3. Between them, the cozy inside. */
+var OW=4*SX;
+var X0=64, X3=X0+2*OW+24*SX, XA=X0+OW, XB=X3-OW, XC=(X0+X3)/2;
 
 function drawRoof(type,ys1){
   var g=el("g",null,sec), top;
@@ -1135,8 +1205,8 @@ function drawSection(){
   /* Long lines shrink to fit the sheet instead of running off it (measured, so it holds for any font) */
   fitText(txt(sec,8,22,"TOWER "+k.c+" · "+k.t.toUpperCase(),"s-title"),19,344);
   fitText(txt(sec,8,37,isleName.toUpperCase()+" · +"+alt+" m · ~"+L+" levels + "+SPARE+" spare (estimate)","s-sub"),9.5,344);
-  el("rect",{x:8,y:45,width:16,height:9,fill:"url(#bookpat)"},sec);txt(sec,28,53,"BOOKS · OUTER RING","key-t");
-  el("rect",{x:150,y:45,width:16,height:9,fill:"url(#volpat)"},sec);txt(sec,170,53,"ARTICLES · INNER RING","key-t");
+  el("rect",{x:8,y:45,width:16,height:9,fill:"url(#volpat)"},sec);txt(sec,28,53,"ARTICLES · LOW SHELVES","key-t");
+  el("rect",{x:160,y:45,width:16,height:9,fill:"url(#bookpat)"},sec);txt(sec,180,53,"BOOKS · ABOVE · ALL FACE OUT","key-t");
 
   /* Cloud sea far below, the floating rock, root lanterns */
   var wave="M0 598";for(var x=0;x<360;x+=20){wave+=" Q"+(x+10)+" "+(598-(x%40===0?5:-5))+" "+(x+20)+" 598";}
@@ -1154,25 +1224,35 @@ function drawSection(){
   el("line",{x1:24,y1:480,x2:336,y2:480,"class":"ground"},sec);
   txt(sec,X3+8,475,"ISLE TOP · +"+alt+" m","s-note");
 
-  /* Plinth, then each floor: empty shelf in both rings, filled up to the estimated contents */
+  /* Plinth, then each floor. The shelf walls face OUT: articles fill a floor's lower shelves, books the shelves above.
+     The inside of every floor is cozy space (drawn further down). */
   el("rect",{x:X0,y:f1(Ym(6)),width:f1(X3-X0),height:f1(6*SY),"class":"s-base"},sec);
   var bandsG=el("g",null,sec), selBand=null;
-  var COLS=[[X0,OW,"o"],[XA,IW,"i"],[X2,IW,"i"],[XB,OW,"o"]];
   B.forEach(function(b,j){
     var yb=Ym(6+3*b.from), yt=Ym(6+3*(b.to+1));
     if(state.sub===b.code){selBand=b;}
-    COLS.forEach(function(col){
-      el("rect",{x:f1(col[0]),y:f1(yt),width:f1(col[1]),height:f1(yb-yt),"class":"band"+(j%2?" alt":""),"data-cls":k.c,"data-sub":b.code},bandsG);
-      var inner=col[2]==="i", filled=Math.min(b.h,inner?b.av:b.bv);
-      if(filled>0){var fh=filled*3*SY;el("rect",{x:f1(col[0]),y:f1(yb-fh),width:f1(col[1]),height:f1(fh),fill:"url(#"+(inner?"volpat":"bookpat")+")","class":"nohit"},bandsG);}
-      if(inner&&state.n>CORE&&b.core<filled-0.05){var yc=yb-b.core*3*SY;el("line",{x1:f1(col[0]),y1:f1(yc),x2:f1(col[0]+col[1]),y2:f1(yc),"class":"tail-line"},bandsG);}
+    el("rect",{x:f1(XA),y:f1(yt),width:f1(XB-XA),height:f1(yb-yt),"class":"band in"+(j%2?" alt":""),"data-cls":k.c,"data-sub":b.code},bandsG);
+    var fa=Math.min(b.h,b.av), fb=Math.min(b.h-fa,b.bv);
+    [X0,XB].forEach(function(x){
+      el("rect",{x:f1(x),y:f1(yt),width:f1(OW),height:f1(yb-yt),"class":"band"+(j%2?" alt":""),"data-cls":k.c,"data-sub":b.code},bandsG);
+      if(fa>0){var ha=fa*3*SY;el("rect",{x:f1(x),y:f1(yb-ha),width:f1(OW),height:f1(ha),fill:"url(#volpat)","class":"nohit"},bandsG);}
+      if(fb>0){var hb=fb*3*SY;el("rect",{x:f1(x),y:f1(yb-fa*3*SY-hb),width:f1(OW),height:f1(hb),fill:"url(#bookpat)","class":"nohit"},bandsG);}
+      if(state.n>CORE&&b.core<fa-0.05){var yc=yb-b.core*3*SY;el("line",{x1:f1(x),y1:f1(yc),x2:f1(x+OW),y2:f1(yc),"class":"tail-line"},bandsG);}
     });
   });
   var lvG=el("g",null,sec);
   for(var Lv=0;Lv<=L+SPARE;Lv++){
     var yy=f1(Ym(6+3*Lv));
-    el("line",{x1:X0,y1:yy,x2:f1(X1),y2:yy,"class":"lvl"},lvG);
-    el("line",{x1:f1(X2),y1:yy,x2:f1(X3),y2:yy,"class":"lvl"},lvG);
+    el("line",{x1:X0,y1:yy,x2:f1(XA),y2:yy,"class":"lvl"},lvG);
+    el("line",{x1:f1(XB),y1:yy,x2:f1(X3),y2:yy,"class":"lvl"},lvG);
+  }
+  /* A railed walkway rings the outside of every level; a stair winds around the outside between them
+     (drawn on the left face). On short sheets every other level, so the lines don't merge. */
+  var wkG=el("g",{"class":"nohit"},sec), wstep=PXL<3.5?2:1;
+  for(var Lw=0;Lw<L+SPARE;Lw+=wstep){
+    var yw0=Ym(6+3*Lw), yw1=Ym(6+3*Math.min(L+SPARE,Lw+wstep));
+    el("path",{d:"M"+f1(X0-5)+" "+f1(yw0)+" H"+X0+" M"+f1(X0-5)+" "+f1(yw0)+" V"+f1(yw0-1.8)+" M"+f1(X3)+" "+f1(yw0)+" H"+f1(X3+5)+" V"+f1(yw0-1.8),"class":"walk"},wkG);
+    el("line",{x1:f1(X0-5),y1:f1(yw0),x2:f1(X0-1),y2:f1(yw1),"class":"stair-o"},wkG);
   }
   B.forEach(function(b){
     var yb=Ym(6+3*b.from), sel=(state.sub===b.code);
@@ -1182,36 +1262,63 @@ function drawSection(){
     }
   });
   var ys0=Ym(6+3*L), ys1=Ym(6+3*(L+SPARE));
-  [X0,X2].forEach(function(x){
-    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW+IW),height:f1(ys0-ys1),"class":"spare"},sec);
-    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW+IW),height:f1(ys0-ys1),fill:"url(#shatch)","class":"nohit"},sec);
+  /* Spare levels: room to grow on the shelf walls only; the inside of the top is the pillow nest */
+  [X0,XB].forEach(function(x){
+    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW),height:f1(ys0-ys1),"class":"spare"},sec);
+    el("rect",{x:f1(x),y:f1(ys1),width:f1(OW),height:f1(ys0-ys1),fill:"url(#shatch)","class":"nohit"},sec);
   });
-  el("path",{d:"M"+f1(XA)+" "+f1(Ym(6))+" V"+f1(ys0)+" M"+f1(XB)+" "+f1(Ym(6))+" V"+f1(ys0),"class":"ring-sep"},sec);
-  el("path",{d:"M"+X0+" "+YG+" V"+f1(ys1)+" M"+f1(X1)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X2)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X3)+" "+YG+" V"+f1(ys1),"class":"s-wall"},sec);
+  el("path",{d:"M"+X0+" "+YG+" V"+f1(ys1)+" M"+f1(XA)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(XB)+" "+f1(Ym(6))+" V"+f1(ys1)+" M"+f1(X3)+" "+YG+" V"+f1(ys1),"class":"s-wall"},sec);
   drawRoof(t.roof,ys1);
 
-  /* Selected floor, and the ring an example sits on */
+  /* Inside: cozy floors. Window seats against the backs of the shelves, stairs crossing the open middle between floors,
+     hammock nets strung across it, a slide down and a page updraft up the middle, and a pillow nest on top. */
+  var inG=el("g",{"class":"nohit"},sec);
+  B.forEach(function(b,j){
+    var yb=Ym(6+3*b.from), yt=Ym(6+3*(b.to+1)), hp=yb-yt;
+    if(hp>=6){
+      el("rect",{x:f1(XA+1.5),y:f1(yb-3),width:7,height:2.4,rx:1.2,"class":"cushion"},inG);
+      el("rect",{x:f1(XB-8.5),y:f1(yb-3),width:7,height:2.4,rx:1.2,"class":"cushion"},inG);
+    }
+    if(j%2===1&&hp>=8){
+      var l2r=(j%4===1), xs=l2r?XA+10:XB-10, xe=l2r?XB-30:XA+30;
+      el("line",{x1:f1(xs),y1:f1(yb-0.5),x2:f1(xe),y2:f1(yt+0.5),"class":"stair-i"},inG);
+    }
+    if(j%3===2&&hp>=6){
+      var yn=yt+Math.min(hp*0.35,6);
+      el("path",{d:"M"+f1(XA)+" "+f1(yn)+" Q"+f1(XC)+" "+f1(yn+Math.min(hp*0.5,8))+" "+f1(XB)+" "+f1(yn),"class":"net"},inG);
+    }
+  });
+  var yIn0=Ym(6)-4, yIn1=ys0+10;
+  if(yIn0-yIn1>40){
+    var sd2="M"+f1(XC-9)+" "+f1(yIn1);
+    for(var yy2=yIn1,sgn=1;yy2<yIn0;yy2+=14,sgn=-sgn){sd2+=" Q"+f1(XC-9+sgn*9)+" "+f1(Math.min(yIn0,yy2+7))+" "+f1(XC-9)+" "+f1(Math.min(yIn0,yy2+14));}
+    el("path",{d:sd2,"class":"slide"},inG);
+    el("line",{x1:f1(XC+12),y1:f1(yIn0),x2:f1(XC+12),y2:f1(yIn1),"class":"shaft-arrow","marker-end":"url(#sarr)"},inG);
+  }
+  el("path",{d:"M"+f1(XA+5)+" "+f1(ys0-5)+" Q"+f1(XC)+" "+f1(ys0+4)+" "+f1(XB-5)+" "+f1(ys0-5)+" Z","class":"nest"},inG);
+  [[-14,-3.5],[-4,-2.5],[6,-3],[15,-3.5]].forEach(function(c){el("circle",{cx:f1(XC+c[0]),cy:f1(ys0+c[1]),r:2.1,"class":"cushion"},inG);});
+
+  /* Selected floor, and the shelves an example sits on (articles low, books above) */
   if(selBand){
     var sb=Ym(6+3*selBand.from), st=Ym(6+3*(selBand.to+1));
-    [[X0,X1],[X2,X3]].forEach(function(p){el("rect",{x:f1(p[0]-1),y:f1(st-1),width:f1(p[1]-p[0]+2),height:f1(sb-st+2),"class":"band-sel"},sec);});
+    el("rect",{x:f1(X0-1),y:f1(st-1),width:f1(X3-X0+2),height:f1(sb-st+2),"class":"band-sel"},sec);
     if(state.ring){
-      var rc=state.ring==="outer"?[[X0,OW],[XB,OW]]:[[XA,IW],[X2,IW]];
-      rc.forEach(function(c){el("rect",{x:f1(c[0]),y:f1(st),width:f1(c[1]),height:f1(sb-st),"class":"ring-hl"},sec);});
-      if(state.art===null){txt(sec,f1(XC),f1((sb+st)/2+3),state.ring==="outer"?"◂ BOOK ▸":"◂ ARTICLE ▸","s-note acc",{"text-anchor":"middle"});}
+      var sfa=Math.min(selBand.h,selBand.av), sfb=Math.min(selBand.h-sfa,selBand.bv);
+      var yr0=state.ring==="outer"?sb-sfa*3*SY:sb, hr=Math.max(2,(state.ring==="outer"?sfb:sfa)*3*SY);
+      [X0,XB].forEach(function(x){el("rect",{x:f1(x),y:f1(yr0-hr),width:f1(OW),height:f1(hr),"class":"ring-hl"},sec);});
+      if(state.art===null){txt(sec,f1(XC),f1(yr0-hr/2+3),state.ring==="outer"?"◂ BOOK ▸":"◂ ARTICLE ▸","s-note acc",{"text-anchor":"middle"});}
     }
-    /* A searched article: its place along the inner ring's filled shelves (position in the list, bottom to top) */
+    /* A searched article: its place along the floor's article shelves (position in the list, bottom to top) */
     if(state.art!==null&&ART&&ART.floor[state.art]===state.sub){
       var fr=(ART.pos[state.art]-0.5)/ART.byFloor[state.sub].length, ya=sb-fr*Math.min(selBand.h,selBand.av)*3*SY;
-      [[XA,IW],[X2,IW]].forEach(function(c){el("rect",{x:f1(c[0]-2),y:f1(ya-2),width:f1(c[1]+4),height:4,fill:"var(--accent)","class":"nohit"},sec);});
+      [X0,XB].forEach(function(x){el("rect",{x:f1(x-2),y:f1(ya-2),width:f1(OW+4),height:4,fill:"var(--accent)","class":"nohit"},sec);});
       txt(sec,f1(XC),f1(ya+3),"◂ HERE ▸","s-note acc",{"text-anchor":"middle"});
     }
   }
 
-  /* Flight shaft */
-  if(Ym(6)-ys0>60){
-    el("line",{x1:f1(XC),y1:f1(Ym(6)-6),x2:f1(XC),y2:f1(ys0+8),"class":"shaft-arrow","marker-end":"url(#sarr)"},sec);
-    if(Ym(6)-ys0>150&&!state.ring){var ym=(Ym(6)+ys0)/2;txt(sec,f1(XC-5),f1(ym),"FLIGHT SHAFT · LIFT","s-note beam",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC-5)+" "+f1(ym)+")"});}
-  }
+  /* What the inside of this tower is (its theme), along the middle */
+  if(Ym(6)-ys0>150&&!state.ring&&state.art===null){var ym=(Ym(6)+ys0)/2, th=THEMES[k.c];if(th){fitText(txt(sec,f1(XC+4),f1(ym),"INSIDE · "+th.t.toUpperCase(),"s-note acc",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC+4)+" "+f1(ym)+")"}),9,Ym(6)-ys0-30);}}
+  txt(sec,f1(XC),f1(ys0-8),"PILLOW NEST","s-note",{"text-anchor":"middle"});
 
   /* Level scale and the walkway level */
   var step=L>30?10:5, W=Math.min(10,Math.floor(L/3)), lastQ=W;
@@ -1237,11 +1344,11 @@ function drawSection(){
     txt(row,colX+(b.code.length>4?b.code.length*6.6+6:36),f1(ys[j]),cap,"cap");
   });
 
-  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare, each floor with an outer ring of books and an inner ring of articles filled to their estimated counts, a central flight shaft, a "+t.roof+" roof, and the cloud sea "+alt+" metres down.");
+  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare. The shelves are on the outside walls and face out, articles on each floor's lower shelves and books above them, filled to their estimated counts, with a railed walkway around every level and a stair winding up the outside. Inside, cozy floors"+(THEMES[k.c]?" themed as a "+THEMES[k.c].t.toLowerCase():"")+": window seats, stairs crossing the middle, hammock nets, a slide down and a page updraft up, and a pillow nest under the "+t.roof+" roof. The cloud sea is "+alt+" metres down.");
   var capEl=document.getElementById("sect-cap");capEl.innerHTML="";
   var bEl=document.createElement("b");bEl.textContent="Tower "+k.c+", "+isleName+": ";
   capEl.appendChild(bEl);
-  capEl.appendChild(document.createTextNode(n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare, at "+fmt(state.n)+" articles. Colour shows how full each ring is."+(state.n>CORE?" The dash in the inner ring marks where the curated list ends and the most-read tail begins.":"")+" Every tower is drawn to the same scale, so you can compare them. All estimates."));
+  capEl.appendChild(document.createTextNode(n+" floor"+(n>1?"s":"")+" on about "+L+" levels plus "+SPARE+" spare, at "+fmt(state.n)+" articles. The shelves face out from the outside walls, with a walkway around every level; colour shows how full they are."+(state.n>CORE?" The dash in the articles marks where the curated list ends and the most-read tail begins.":"")+" Inside is cozy space (gold): window seats, crossing stairs, hammock nets, a slide and a page updraft, and a pillow nest on top. Every tower is drawn to the same scale, so you can compare them. All estimates."));
 }
 
 /* ---------- Pickers ---------- */
@@ -1318,8 +1425,9 @@ function renderInfo(){
     var rows=[];
     if(state.ex){var ex=EXAMPLES[state.ex];rows.push(["Example",ex.t+" ("+ex.kind+"). "+ex.where]);}
     rows.push(["Levels",lvls+" (estimate) · balcony and plaque at "+lv(band.from)]);
-    rows.push(["Inner ring",est(band.a)+" articles, as slim volumes. Curated list order, then most-read first."]);
-    rows.push(["Outer ring",est(band.b)+" books, as thick volumes. By call number, then author."]);
+    rows.push(["Articles",est(band.a)+", as slim volumes on the floor's lower shelves, facing out. Curated list order, then most-read first."]);
+    rows.push(["Books",est(band.b)+", as thick volumes on the shelves above them. By call number, then author."]);
+    if(THEMES[k.c]){rows.push(["Inside",THEMES[k.c].t+". "+THEMES[k.c].d]);}
     rows.push(["List",k.lit?"Literature floor by language or form (proposal)":"Vital Articles, Level 5 · "+k.t+(k.one?"":" · "+band.cap)]);
     rows.push(["Links","Read-the-book, author and subject links, and article links. Each jump extends the trail."]);
     rows.push(["Tower","Tower "+k.c+" · "+k.t]);
@@ -1333,6 +1441,7 @@ function renderInfo(){
       ["Isle",isle.name+" · +"+alt+" m above the cloud sea"],
       ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the dome, bearing "+Math.round(brg)+"°"],
       ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
+      ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+(THEMES_SEEN[k.c]?"":" (new proposal)"):"Cozy floors"],
       ["Floors",k.lit?k.subs.length+" floors by language or form (proposal)":(k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each")],
       ["Levels","about "+L+" + "+SPARE+" spare (estimate)"],
       ["Reach",t.reach]
@@ -1496,7 +1605,7 @@ function renderArticleCard(cap){
   }
   setInfo("Article · v1 collection",ART.titles[i],[
     ["Address",addressOf(i)],
-    ["Shelf","#"+p.toLocaleString("en-US")+" of "+list.length.toLocaleString("en-US")+" on this floor"+", inner ring"],
+    ["Shelf","#"+p.toLocaleString("en-US")+" of "+list.length.toLocaleString("en-US")+" on this floor"+", lower shelves (facing out)"],
     ["Wikipedia",a],
     ["Neighbours",nb]
   ],"Shelf order follows Wikipedia's Vital Articles lists, as in the v1 build. Pick a neighbour to walk along the shelf.");

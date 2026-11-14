@@ -206,6 +206,8 @@ footer a{color:var(--line)}
 #plan .tw-butt{fill:var(--paper);stroke:var(--line);stroke-width:1.1}
 #plan .tw-ring{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8}
 #plan .tw-shaft{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:.8;stroke-dasharray:2 2}
+#plan .tw-walk{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8;stroke-dasharray:2 2}
+#plan .tw-in{fill:var(--accent);fill-opacity:.14;stroke:none;pointer-events:none}
 #plan .tw-letter{font-family:var(--display);font-weight:700;font-size:21px;fill:var(--line);text-anchor:middle;pointer-events:none}
 #plan .hit{fill:transparent}
 #plan .tick{stroke:var(--line);stroke-opacity:.42;stroke-width:.7;pointer-events:none}
@@ -262,6 +264,16 @@ footer a{color:var(--line)}
 #section .roof{fill:color-mix(in srgb,var(--line) 6%,var(--paper));stroke:var(--line);stroke-width:1.3}
 #section .roof-line{fill:none;stroke:var(--line);stroke-width:1}
 #section .shaft-arrow{stroke:var(--beam);stroke-width:1.2;stroke-dasharray:4 4}
+#section .band.in{fill:color-mix(in srgb,var(--accent) 5%,var(--paper))}
+#section .band.in.alt{fill:color-mix(in srgb,var(--accent) 10%,var(--paper))}
+#section .walk{fill:none;stroke:var(--line);stroke-opacity:.6;stroke-width:1}
+#section .stair-o{stroke:var(--line);stroke-opacity:.35;stroke-width:.8}
+#section .stair-i{stroke:var(--accent);stroke-opacity:.75;stroke-width:1.3;stroke-dasharray:1.2 1.6}
+#section .net{fill:none;stroke:var(--accent);stroke-opacity:.8;stroke-width:1;stroke-dasharray:2 1.5}
+#section .slide{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:1.4;stroke-linecap:round}
+#section .cushion{fill:var(--accent);fill-opacity:.55}
+#section .nest{fill:color-mix(in srgb,var(--accent) 35%,var(--paper));stroke:var(--accent);stroke-width:1}
+#section .shelf{fill:color-mix(in srgb,var(--line) 22%,var(--paper));pointer-events:none}
 #section .stub{fill:none;stroke:var(--line);stroke-width:1}
 #section .leader{fill:none;stroke:var(--line);stroke-opacity:.35;stroke-width:.7}
 #section .leader.sel{stroke:var(--accent);stroke-opacity:1;stroke-width:1.2}
@@ -294,7 +306,7 @@ footer a{color:var(--line)}
     <dl class="tb-cells">
       <div><dt>Sheets</dt><dd>A-101 Archipelago plan · A-201 Tower section</dd></div>
       <div><dt>Towers</dt><dd>11 topics · 32 floor lists</dd></div>
-      <div><dt>Revision</dt><dd>0.3 · 2026-11-14</dd></div>
+      <div><dt>Revision</dt><dd>0.3.2 · 2026-11-14</dd></div>
       <div><dt>Design</dt><dd>Jane</dd></div>
     </dl>
   </header>
@@ -330,7 +342,7 @@ footer a{color:var(--line)}
       <button type="button" class="tog" data-layer="flight" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M1 8 Q10 0 19 5" fill="none" stroke="#e3eeff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/><path d="M17 1.5L23 6L16.5 8z" fill="#e3eeff"/></svg>Wind currents</button>
       <button type="button" class="tog" data-layer="npc" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/></svg>NPC routes</button>
       <button type="button" class="tog" data-layer="below" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#e3eeff" stroke-opacity=".6" stroke-width="2" stroke-dasharray="5 3"/></svg>Below cloud</button>
-      <button type="button" class="tog" data-layer="bays" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M2 2v6M7 2v6M12 2v6M17 2v6M22 2v6" stroke="#e3eeff" stroke-width="1.4"/></svg>Shelf rings</button>
+      <button type="button" class="tog" data-layer="bays" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M2 2v6M7 2v6M12 2v6M17 2v6M22 2v6" stroke="#e3eeff" stroke-width="1.4"/></svg>Outside shelves</button>
     </div>
   </section>
 
@@ -377,10 +389,21 @@ footer a{color:var(--line)}
         <li>Setting: a cloud academy at night, inspired by the hidden library in <i>Avatar</i> and reworked as an original place. Asymmetric layout, not a ring.</li>
         <li>NPCs with a Spirited Away kind of energy. Original designs only.</li>
         <li>Pictures only for visitors with "Allow Untrusted URLs" on. Everyone else still gets every book's text.</li>
+        <li>The books go on the towers' outside walls, facing out, as in the first concept art. The insides are cozy space for lying around and talking, each themed by its tower's topic.</li>
         <li>Credits: one QR code and a link to a hosted credits page. No credits boards in the world.</li>
         <li>PCVR is the beauty target. Quest gets the same world, with the modeled detail baked into textures.</li>
         <li>A Fable 5.2 agent does most of the modeling, later. Upload is always Jane's.</li>
       </ul>
+    </section>
+
+    <section class="panel prose" aria-labelledby="inside-h">
+      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Decided</span></h2>
+      <p>The books are on the outside, so every tower's inside is free for lying around, cuddling and talking, with a theme from its topic. Jane: "could the inside just be like cuddle stuff and stairs going across sections".</p>
+      <ul>
+        <li><b>In every tower</b> <span class="tag pro">Proposed</span>: window seats built into the back of the shelf wall, where the books glow through like stained glass; stairs crossing the open middle between floors; hammock nets across it; a slide down and a page updraft up; a pillow nest on top under glass.</li>
+        <li><b>Themes</b> <span class="tag pro">Proposed</span>: People, a portrait parlour. History, a hearth hall. Geography, a map room with a glowing floor map. Arts, a studio loft with a small stage. Philosophy and religion, a quiet pool. Everyday life, a kitchen hearth. Society, a talking pit. Biology and health, a greenhouse of moss beds and fern hammocks. Physical sciences, a planetarium. Technology, a clockwork den. Mathematics, geometry steps.</li>
+      </ul>
+      <p class="sub">Jane liked the map room, quiet pool, kitchen hearth, greenhouse and planetarium; the other six are new. One shared furniture set with a few hero props per tower keeps Quest light. Each tower's card above has the details; the draft v0.4.1 has the full table.</p>
     </section>
 
     <section class="panel prose" aria-labelledby="how-h">
@@ -442,7 +465,7 @@ footer a{color:var(--line)}
     <section class="panel prose" aria-labelledby="look-h">
       <h2 class="panel-h" id="look-h">Look and build</h2>
       <ul>
-        <li>Look: likely Jane's original ChatGPT concept art. A cloud library at night, lantern-lit bridges, glowing dream diaries drifting up. Jane's word is "likely", so it is not final.</li>
+        <li>Look: likely Jane's original ChatGPT concept art. A cloud library at night, lantern-lit bridges, glowing dream diaries drifting up. Jane's word is "likely", so it is not final. Its shelves on the towers' outside walls are decided. <span class="tag dec">Decided</span></li>
         <li>PCVR is the beauty target. Quest gets the same world, with the modeled detail baked into textures. <span class="tag dec">Decided</span></li>
         <li>A Fable 5.2 agent does most of the modeling, later. <span class="tag dec">Decided</span></li>
         <li>Upload is always Jane's. <span class="tag dec">Decided</span></li>
@@ -462,6 +485,8 @@ footer a{color:var(--line)}
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 12 Q14 1 27 7" fill="none" stroke="#e3eeff" stroke-width="1.6" stroke-dasharray="1 4" stroke-linecap="round"/><path d="M25 3L32 8L24.5 10.5z" fill="#e3eeff"/></svg>Wind current for flying</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3.5" stroke-linecap="round"/></svg>NPC route</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><rect x="2" y="3" width="30" height="10" fill="url(#lg-h)" stroke="#e3eeff" stroke-width="1"/></svg>Sealed, or spare room to grow</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="2" width="30" height="12" fill="#ffc266" fill-opacity=".16"/><rect x="4" y="9" width="9" height="3" rx="1.5" fill="#ffc266" fill-opacity=".6"/><path d="M14 13 L30 3" stroke="#ffc266" stroke-width="1.3" stroke-dasharray="1.2 1.6"/></svg>Inside: cozy floors, window seats, crossing stairs, hammock nets</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 12 H8 V10 M8 12 L12 4 M26 12 H32 V10" fill="none" stroke="#e3eeff" stroke-opacity=".6" stroke-width="1"/></svg>Walkway around every level, stair up the outside</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><rect x="2" y="3" width="30" height="10" fill="#ffc266"/></svg>Your current selection</li>
     </ul>
   </section>
@@ -469,6 +494,7 @@ footer a{color:var(--line)}
   <footer>
     <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Wikipedia text is CC BY-SA 4.0.</p>
     <p>Isle groupings, heights, roofs and floor bands are proposals. Book counts set the real tower heights, so the skyline will be uneven.</p>
+    <p>v0.3.2 · 2026-11-14: the shelves move to the towers' outside walls, facing out, with a walkway around every level; the insides become cozy floors themed by topic (Jane's call).</p>
     <p>v0.3 · 2026-11-14: a Wikipedia rabbit-hole archive replaces the Library of Congress catalog. 11 topic towers instead of 21 LC classes; catalog cards, call-number order, the Sorting Rock and the Watch Rocks are gone.</p>
     <p>Shared for ideas. Tell Jane what you would add.</p>
   </footer>
@@ -550,6 +576,22 @@ Object.keys(ISLES).forEach(function(id){var I=ISLES[id];ZONES[id]={t:I.name,k:"I
 var TR=19, LEVELS=29, SPARE=3, PER=48, WALK_L=10;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
+/* Inside each tower: cozy space themed by its topic (Jane liked the idea, 14 Nov; 3, 5, 6, 8 and 9 are the ones she saw). */
+var THEMES={
+  "1":{t:"Portrait parlour",d:"Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces)."},
+  "2":{t:"Hearth hall",d:"A big old fireplace, a timeline rug that winds across the floor, and stone benches heaped with blankets."},
+  "3":{t:"Map room",d:"A giant glowing floor map with beanbags to sprawl on, and globe lamps."},
+  "4":{t:"Studio loft",d:"A small stage for music and open mic, floor cushions for the audience, easels around the edge."},
+  "5":{t:"Quiet pool",d:"A still reflecting pool ringed with floor cushions and candles. The hush floor."},
+  "6":{t:"Kitchen hearth",d:"A big kitchen with a long table, a kettle on the fire, couches and quilts. The tea cart lives here."},
+  "7":{t:"Talking pit",d:"A sunken round pit of cushions for group talks late into the night."},
+  "8":{t:"Greenhouse",d:"Moss beds, fern-leaf hammocks and softly glowing fungi."},
+  "9":{t:"Planetarium",d:"Floor mattresses under a slowly turning star ceiling."},
+  "10":{t:"Clockwork den",d:"Slow brass gears turning in the walls, armchairs, a toy train looping the floor."},
+  "11":{t:"Geometry steps",d:"Stepped platforms in nested shapes with wool mats, and drifting polyhedron lamps."}
+};
+var THEMES_SEEN={"3":1,"5":1,"6":1,"8":1,"9":1};
+
 var state={cls:"8",sub:"8.2",art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
 
 function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k]);}}if(parent){parent.appendChild(e);}return e;}
@@ -730,13 +772,14 @@ function buildPlan(){
     if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
     if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
     else{el("circle",{r:TR,"class":"tw-shell"},g);}
-    el("circle",{r:15,"class":"tw-ring"},g);
-    el("circle",{r:9,"class":"tw-shaft"},g);
+    el("circle",{r:TR-4,"class":"tw-in"},g);
     txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
     el("circle",{r:26,"class":"hit"},g);
     towerEls[c]=g;
-    var bg=el("g",{transform:"translate("+t.x+" "+t.y+")"},bays);
-    for(var s=0;s<PER;s++){var a1=pol(10,s*7.5),a2=pol(14.3,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick"},bg);}
+    /* Shelves face out (Jane, 14 Nov): one tick per bay around the outside of the shell, then the walkway ring */
+    var bg=el("g",{transform:"translate("+t.x+" "+t.y+")"},bays), rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
+    for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick"},bg);}
+    el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
   });
 
   /* Example reading trail: each hop is a book flying to the reader */
@@ -901,12 +944,16 @@ function drawSection(){
 
   /* Plinth, bands, levels */
   el("rect",{x:X0,y:f1(Ym(6)),width:f1(X3-X0),height:f1(6*S),"class":"s-base"},sec);
+  /* The shelf walls (X0..X1, X2..X3) face OUT, onto a walkway around every level (Jane, 14 Nov).
+     The inside (X1..X2) is cozy space, drawn further down. */
   var bandsG=el("g",null,sec);
   B.forEach(function(b,j){
     var yb=Ym(6+3*b.from), yt=Ym(6+3*(b.to+1)), sel=(state.sub===b.code);
     var c="band"+(j%2?" alt":"")+(sel?" sel":"");
+    el("rect",{x:f1(X1),y:f1(yt),width:f1(X2-X1),height:f1(yb-yt),"class":"band in"+(j%2?" alt":""),"data-cls":k.c,"data-sub":b.code},bandsG);
     [X0,X2].forEach(function(x){
       el("rect",{x:f1(x),y:f1(yt),width:f1(WALL),height:f1(yb-yt),"class":c,"data-cls":k.c,"data-sub":b.code},bandsG);
+      el("rect",{x:f1(x===X0?x:x+WALL-4),y:f1(yt+1),width:4,height:f1(Math.max(0,yb-yt-2)),"class":"shelf"},bandsG);
     });
   });
   var lvG=el("g",null,sec);
@@ -914,6 +961,13 @@ function drawSection(){
     var yy=f1(Ym(6+3*L));
     el("line",{x1:X0,y1:yy,x2:f1(X1),y2:yy,"class":"lvl"},lvG);
     el("line",{x1:f1(X2),y1:yy,x2:f1(X3),y2:yy,"class":"lvl"},lvG);
+  }
+  /* A railed walkway around the outside of every level, and a stair winding up the outside (drawn on the left face) */
+  var wkG=el("g",{"class":"nohit"},sec);
+  for(var Lw=0;Lw<LEVELS+SPARE;Lw++){
+    var yw0=Ym(6+3*Lw), yw1=Ym(6+3*(Lw+1));
+    el("path",{d:"M"+f1(X0-5)+" "+f1(yw0)+" H"+X0+" M"+f1(X0-5)+" "+f1(yw0)+" V"+f1(yw0-1.8)+" M"+f1(X3)+" "+f1(yw0)+" H"+f1(X3+5)+" V"+f1(yw0-1.8),"class":"walk"},wkG);
+    el("line",{x1:f1(X0-5),y1:f1(yw0),x2:f1(X0-1),y2:f1(yw1),"class":"stair-o"},wkG);
   }
   B.forEach(function(b){
     var yb=Ym(6+3*b.from), sel=(state.sub===b.code);
@@ -940,9 +994,36 @@ function drawSection(){
     }
   }
 
-  /* Flight shaft */
-  el("line",{x1:f1(XC),y1:f1(Ym(10)),x2:f1(XC),y2:f1(Ym(88)),"class":"shaft-arrow","marker-end":"url(#sarr)"},sec);
-  if(state.art===null){txt(sec,f1(XC-5),f1(Ym(50)),"FLIGHT SHAFT · LIFT","s-note beam",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC-5)+" "+f1(Ym(50))+")"});}
+  /* Inside: cozy floors. Window seats against the backs of the shelves, stairs crossing the open middle between floors,
+     hammock nets across it, a slide down and a page updraft up the middle, and a pillow nest on top. */
+  var inG=el("g",{"class":"nohit"},sec);
+  B.forEach(function(b,j){
+    var yb=Ym(6+3*b.from), yt=Ym(6+3*(b.to+1)), hp=yb-yt;
+    if(hp>=6){
+      el("rect",{x:f1(X1+1.5),y:f1(yb-3),width:7,height:2.4,rx:1.2,"class":"cushion"},inG);
+      el("rect",{x:f1(X2-8.5),y:f1(yb-3),width:7,height:2.4,rx:1.2,"class":"cushion"},inG);
+    }
+    if(j%2===1&&hp>=8){
+      var l2r=(j%4===1), xs=l2r?X1+10:X2-10, xe=l2r?X2-24:X1+24;
+      el("line",{x1:f1(xs),y1:f1(yb-0.5),x2:f1(xe),y2:f1(yt+0.5),"class":"stair-i"},inG);
+    }
+    if(j%3===2&&hp>=6){
+      var yn=yt+Math.min(hp*0.35,6);
+      el("path",{d:"M"+f1(X1)+" "+f1(yn)+" Q"+f1(XC)+" "+f1(yn+Math.min(hp*0.5,8))+" "+f1(X2)+" "+f1(yn),"class":"net"},inG);
+    }
+  });
+  var yIn0=Ym(6)-4, yIn1=ys0+10;
+  if(yIn0-yIn1>40){
+    var sd2="M"+f1(XC-8)+" "+f1(yIn1);
+    for(var yy2=yIn1,sgn=1;yy2<yIn0;yy2+=14,sgn=-sgn){sd2+=" Q"+f1(XC-8+sgn*8)+" "+f1(Math.min(yIn0,yy2+7))+" "+f1(XC-8)+" "+f1(Math.min(yIn0,yy2+14));}
+    el("path",{d:sd2,"class":"slide"},inG);
+    el("line",{x1:f1(XC+11),y1:f1(yIn0),x2:f1(XC+11),y2:f1(yIn1),"class":"shaft-arrow","marker-end":"url(#sarr)"},inG);
+  }
+  el("path",{d:"M"+f1(X1+5)+" "+f1(ys0-5)+" Q"+f1(XC)+" "+f1(ys0+4)+" "+f1(X2-5)+" "+f1(ys0-5)+" Z","class":"nest"},inG);
+  [[-13,-3.5],[-4,-2.5],[5,-3],[13,-3.5]].forEach(function(c){el("circle",{cx:f1(XC+c[0]),cy:f1(ys0+c[1]),r:2.1,"class":"cushion"},inG);});
+  txt(sec,f1(XC),f1(ys0-8),"PILLOW NEST","s-note",{"text-anchor":"middle"});
+  if(state.art===null&&THEMES[k.c]){var ym=(Ym(6)+ys0)/2;fitText(txt(sec,f1(XC+4),f1(ym),"INSIDE · "+THEMES[k.c].t.toUpperCase(),"s-note acc",{"text-anchor":"middle",transform:"rotate(-90 "+f1(XC+4)+" "+f1(ym)+")"}),9,Ym(6)-ys0-30);}
+  fitText(txt(sec,8,52,"SHELVES ON THE OUTSIDE, FACING OUT · WALKWAY EVERY LEVEL · COZY INSIDE","s-sub"),9.5,344);
 
   /* Level scale and the L10 bridge level */
   [0,5,10,15,20,25].forEach(function(Lv){txt(sec,4,f1(Ym(6+3*Lv)-2),Lv===WALK_L?"L10 WALK":lv(Lv),"lvltxt");});
@@ -968,13 +1049,13 @@ function drawSection(){
   txt(sec,colX,f1(ys1+8),"+3 SPARE LEVELS","s-note");
   txt(sec,colX,f1(ys1+19),"room for new books (proposal)","s-note");
 
-  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor list"+(n>1?"s":"")+" stacked on "+LEVELS+" placeholder levels with "+SPARE+" spare levels and a "+t.roof+" roof, a central flight shaft, a floating rock with root lanterns below, and the cloud sea "+alt+" metres down.");
+  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor list"+(n>1?"s":"")+" stacked on "+LEVELS+" placeholder levels with "+SPARE+" spare levels and a "+t.roof+" roof. The shelves are on the outside walls and face out, with a railed walkway around every level and a stair winding up the outside. Inside, cozy floors"+(THEMES[k.c]?" themed as a "+THEMES[k.c].t.toLowerCase():"")+": window seats, stairs crossing the middle, hammock nets, a slide down and a page updraft up, and a pillow nest on top. Below, a floating rock with root lanterns, and the cloud sea "+alt+" metres down.");
   var capEl=document.getElementById("sect-cap");capEl.innerHTML="";
   var bEl=document.createElement("b");bEl.textContent="Tower "+k.c+", "+isleName+": ";
   capEl.appendChild(bEl);
-  capEl.appendChild(document.createTextNode(k.one
+  capEl.appendChild(document.createTextNode((k.one
     ?"one floor list on "+LEVELS+" levels plus "+SPARE+" spare. Wikipedia keeps this topic on one page; its section headings could split it into floors (proposal). Heights are placeholders until the build counts the books."
-    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a balcony and a glowing sign. Heights are placeholders until the build counts the books."));
+    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a glowing sign on its walkway. Heights are placeholders until the build counts the books.")+" The shelves face out from the outside walls; inside is cozy space (gold)."));
 }
 
 /* ---------- Pickers ---------- */
@@ -1049,7 +1130,9 @@ function renderInfo(){
     var lvls=lv(band.from)+(band.to>band.from?"–"+lv(band.to):"");
     var baked="Baked into the world: the building, this sign and every book's address. Fetched only when someone opens a book: its text.";
     setInfo("Floor · tower "+k.c+" · "+isle.name, band.code+" · "+band.cap,[
-      ["Floor",lvls+" (placeholder) · balcony and sign at "+lv(band.from)],
+      ["Floor",lvls+" (placeholder) · walkway and sign at "+lv(band.from)],
+      ["Shelves","On the outside wall, facing out, along a railed walkway"],
+      ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d:"Cozy space"],
       ["List","Vital Articles, Level 5 · "+k.t+(k.one?"":" · "+band.cap)],
       ["Books","Counted by the build. Related books stand side by side."],
       ["Opening","One book per fetch from midnight-archive-vrc.github.io. The book's 5 s flight to you covers the download."],
@@ -1064,7 +1147,8 @@ function renderInfo(){
       ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
       ["Floors",k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each"],
       ["Levels",lv(0)+"–"+lv(LEVELS-1)+" (placeholder) + "+lv(LEVELS)+"–"+lv(LEVELS+SPARE-1)+" spare"],
-      ["Shelves","A ring of "+PER+" bays per level around a flight shaft (v0.2 geometry)"],
+      ["Shelves","On the outside walls, facing out: "+PER+" bays per level, with a railed walkway around every level and a stair winding up the outside"],
+      ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+(THEMES_SEEN[k.c]?"":" (new proposal)"):"Cozy space"],
       ["Reach",t.reach]
     ],"Pick a floor to see what it holds. Book counts set the real tower heights, so the skyline will be uneven. Isle, shape and position are proposals.");
     cap.textContent="Selected: tower "+k.c+", "+k.t+", on "+isle.name+".";
