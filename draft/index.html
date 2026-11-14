@@ -301,6 +301,9 @@ footer a{color:var(--line)}
 #plan .tw-shaft{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:.8;stroke-dasharray:2 2}
 #plan .tw-walk{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8;stroke-dasharray:2 2}
 #plan .tw-in{fill:var(--accent);fill-opacity:.14;stroke:none;pointer-events:none}
+#plan .tw-plaza{fill:color-mix(in srgb,var(--line) 6%,var(--paper));stroke:var(--line);stroke-opacity:.6;stroke-width:1;stroke-dasharray:3 2}
+#plan .tw-bridge{stroke:var(--line);stroke-width:2.4;stroke-linecap:round}
+#plan .tower.sel .tw-plaza{stroke:var(--accent);stroke-opacity:1}
 #plan .tw-letter{font-family:var(--display);font-weight:700;font-size:21px;fill:var(--line);text-anchor:middle;pointer-events:none}
 #plan .hit{fill:transparent}
 #plan .tick-v{stroke:var(--vol);stroke-width:.8;pointer-events:none}
@@ -768,7 +771,7 @@ var CORE=50000, BOOKS_TOTAL=75000, BOOKS_UNPLACED=5300;
 
 /* ---------- The archipelago (plan x east, plan y south, metres from the centre of the academy). All of it is a proposal. ---------- */
 var TOWERS={
-  "1":{x:180,y:-105,isle:"chron",shell:"buttress",roof:"spire",reach:"Lantern Way from History, then on to Geography."},
+  "1":{x:180,y:-105,isle:"chron",shell:"round",roof:"spire",reach:"Lantern Way from History, then on to Geography.",cluster:3},
   "2":{x:110,y:-170,isle:"chron",shell:"round",roof:"crenel",reach:"Lantern Way from the academy's north-east side, then on to People."},
   "3":{x:215,y:0,isle:"wayfarer",shell:"octagon",roof:"lantern",reach:"Lantern Way between People and Society. A map balcony over the cloud sea."},
   "4":{x:-105,y:160,isle:"lyric",shell:"round",roof:"bell",reach:"The high arch from Everyday life, the south-west bridge from the academy, and Lyric Isle walkways to Literature."},
@@ -1037,17 +1040,31 @@ function buildPlan(){
   Object.keys(TOWERS).forEach(function(c){
     var t=TOWERS[c], k=cls(c), sc=sOf(c), tr="translate("+t.x+" "+t.y+") scale("+sc.toFixed(3)+")";
     var g=el("g",{"class":"tower","data-cls":c,transform:tr,tabindex:"0",role:"button","aria-label":"Tower "+c+", "+k.t+", about "+est(items(k)).slice(1)+" items"},tw);
-    el("circle",{cx:3,cy:6,r:TR,"class":"tw-shadow"},g);
-    if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
-    if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
-    else{el("circle",{r:TR,"class":"tw-shell"},g);}
-    el("circle",{r:TR-4,"class":"tw-in"},g);
+    var bg=el("g",{transform:tr},bays);
+    if(t.cluster){
+      /* People: one tower built as three sub-towers on a shared plaza, joined by sky bridges (Jane, 14 Nov) */
+      el("circle",{cx:3,cy:6,r:TR+8,"class":"tw-shadow"},g);
+      el("circle",{r:TR+7,"class":"tw-plaza"},g);
+      var cp=[0,1,2].map(function(i){return pol(13.5,i*120+30);});
+      for(var bi=0;bi<3;bi++){var p0=cp[bi],p1=cp[(bi+1)%3];el("line",{x1:f1(p0[0]),y1:f1(p0[1]),x2:f1(p1[0]),y2:f1(p1[1]),"class":"tw-bridge"},g);}
+      cp.forEach(function(p){
+        el("circle",{cx:f1(p[0]),cy:f1(p[1]),r:9,"class":"tw-shell"},g);
+        el("circle",{cx:f1(p[0]),cy:f1(p[1]),r:5.5,"class":"tw-in"},g);
+        for(var s=0;s<24;s++){var a1=pol(9.4,s*15),a2=pol(11,s*15);el("line",{x1:f1(p[0]+a1[0]),y1:f1(p[1]+a1[1]),x2:f1(p[0]+a2[0]),y2:f1(p[1]+a2[1]),"class":(s%4===3?"tick-b":"tick-v")},bg);}
+      });
+    }else{
+      el("circle",{cx:3,cy:6,r:TR,"class":"tw-shadow"},g);
+      if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
+      if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
+      else{el("circle",{r:TR,"class":"tw-shell"},g);}
+      el("circle",{r:TR-4,"class":"tw-in"},g);
+      var rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
+      for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":(s%4===3?"tick-b":"tick-v")},bg);}
+      el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
+    }
     txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
     el("circle",{r:26,"class":"hit"},g);
     towerEls[c]=g;
-    var bg=el("g",{transform:tr},bays), rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
-    for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":(s%4===3?"tick-b":"tick-v")},bg);}
-    el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
   });
 
   /* Example reading trail: each hop is an item flying to the reader */

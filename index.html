@@ -227,6 +227,9 @@ footer a{color:var(--line)}
 #plan .tw-shaft{fill:none;stroke:var(--line);stroke-opacity:.5;stroke-width:.8;stroke-dasharray:2 2}
 #plan .tw-walk{fill:none;stroke:var(--line);stroke-opacity:.55;stroke-width:.8;stroke-dasharray:2 2}
 #plan .tw-in{fill:var(--accent);fill-opacity:.14;stroke:none;pointer-events:none}
+#plan .tw-plaza{fill:color-mix(in srgb,var(--line) 6%,var(--paper));stroke:var(--line);stroke-opacity:.6;stroke-width:1;stroke-dasharray:3 2}
+#plan .tw-bridge{stroke:var(--line);stroke-width:2.4;stroke-linecap:round}
+#plan .tower.sel .tw-plaza{stroke:var(--accent);stroke-opacity:1}
 #plan .tw-letter{font-family:var(--display);font-weight:700;font-size:21px;fill:var(--line);text-anchor:middle;pointer-events:none}
 #plan .hit{fill:transparent}
 #plan .tick{stroke:var(--line);stroke-opacity:.42;stroke-width:.7;pointer-events:none}
@@ -324,7 +327,7 @@ footer a{color:var(--line)}
     </div>
     <dl class="tb-cells">
       <div><dt>What</dt><dd>A cloud library at night where every book is a Wikipedia article</dd></div>
-      <div><dt>Towers</dt><dd>11 topics, one tower each</dd></div>
+      <div><dt>Towers</dt><dd>11 topics, one tower each; People is three sub-towers</dd></div>
       <div><dt>Status</dt><dd>In design · not released</dd></div>
       <div><dt>By</dt><dd>Doghouse Devs</dd></div>
     </dl>
@@ -446,7 +449,7 @@ footer a{color:var(--line)}
       <h2 class="panel-h" id="col-h">What's on the shelves</h2>
       <dl>
         <dt>Books</dt><dd>The ~500,000 most-read English Wikipedia articles. <span class="tag dec">Settled</span> The test world starts with Wikipedia's ~50,000 Vital Articles, a list editors chose to cover all knowledge. <span class="tag tb">Prototype</span></dd>
-        <dt>Towers</dt><dd>One per top topic, 11 in all: People, History, Geography, Arts, Philosophy and religion, Everyday life, Society and social sciences, Biological and health sciences, Physical sciences, Technology, Mathematics.</dd>
+        <dt>Towers</dt><dd>One per top topic, 11 in all (People is built as three sub-towers): People, History, Geography, Arts, Philosophy and religion, Everyday life, Society and social sciences, Biological and health sciences, Physical sciences, Technology, Mathematics.</dd>
         <dt>Floors</dt><dd>One floor per sub-list, so related books stand side by side.</dd>
         <dt>Licence</dt><dd>Wikipedia text is CC BY-SA 4.0. Each book shows a short source line, and one QR code leads to the full credits.</dd>
       </dl>
@@ -472,6 +475,7 @@ footer a{color:var(--line)}
       <ul>
         <li>The look follows the concept art at the top: a cloud library at night, lantern-lit bridges, glowing books drifting up.</li>
         <li>Books on the towers' outside walls, cozy insides. <span class="tag dec">Settled</span></li>
+        <li>People, the biggest topic, is one tower built as three sub-towers on a shared plaza, joined by sky bridges: Arts and entertainment; Writers, thinkers and leaders; Science, sports and more. Click it on the map. <span class="tag dec">Settled</span></li>
         <li>A real 3D place you can walk and fly through, with an uneven skyline: each tower's height comes from how many books it holds. <span class="tag dec">Settled</span></li>
         <li>Built for PC VR first. Quest gets the same world, with the fine detail painted into textures. <span class="tag dec">Settled</span></li>
         <li>Characters with a gentle, Spirited Away kind of energy, all original designs, like the spirit dog above. <span class="tag dec">Settled</span></li>
@@ -529,7 +533,11 @@ var CLASSES=[
 
 /* ---------- The archipelago (plan x east, plan y south, metres from the centre of the academy). All of it is a proposal. ---------- */
 var TOWERS={
-  "1":{x:180,y:-105,isle:"chron",shell:"buttress",roof:"spire",reach:"Lantern Way from History, then on to Geography."},
+  "1":{x:180,y:-105,isle:"chron",shell:"round",roof:"spire",reach:"Lantern Way from History, then on to Geography.",
+       /* People is ONE tower built as three sub-towers on a shared plaza, joined by sky bridges (Jane, 14 Nov) */
+       cluster:[{n:"Arts and entertainment",subs:["1.2","1.3"],f:91,d:"artists, musicians, composers, entertainers, directors"},
+                {n:"Writers, thinkers and leaders",subs:["1.1","1.4","1.5","1.6","1.7"],f:73,d:"writers, philosophers, historians, religious figures, politicians, military people and activists"},
+                {n:"Science, sports and more",subs:["1.8","1.9","1.10"],f:74,d:"scientists, inventors, sports figures and everyone else"}]},
   "2":{x:110,y:-170,isle:"chron",shell:"round",roof:"crenel",reach:"Lantern Way from the academy's north-east side, then on to People."},
   "3":{x:215,y:0,isle:"wayfarer",shell:"octagon",roof:"lantern",reach:"Lantern Way between People and Society. A map balcony over the cloud sea."},
   "4":{x:-122,y:158,isle:"lyric",shell:"round",roof:"bell",reach:"The high arch from Everyday life, the south-west bridge from the academy, and the Lantern Way on to Observatory Isle."},
@@ -769,18 +777,33 @@ function buildPlan(){
   Object.keys(TOWERS).forEach(function(c){
     var t=TOWERS[c], k=cls(c);
     var g=el("g",{"class":"tower","data-cls":c,transform:"translate("+t.x+" "+t.y+")",tabindex:"0",role:"button","aria-label":"Tower "+c+", "+k.s},tw);
-    el("circle",{cx:3,cy:6,r:TR,"class":"tw-shadow"},g);
-    if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
-    if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
-    else{el("circle",{r:TR,"class":"tw-shell"},g);}
-    el("circle",{r:TR-4,"class":"tw-in"},g);
-    txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
+    var bg=el("g",{transform:"translate("+t.x+" "+t.y+")"},bays);
+    if(t.cluster){
+      /* the People cluster: a shared plaza, three sub-towers in a triangle, sky bridges between them */
+      el("circle",{cx:3,cy:6,r:TR+8,"class":"tw-shadow"},g);
+      el("circle",{r:TR+7,"class":"tw-plaza"},g);
+      var cp=[0,1,2].map(function(i){return pol(13.5,i*120+30);});
+      for(var bi=0;bi<3;bi++){var p0=cp[bi],p1=cp[(bi+1)%3];el("line",{x1:f1(p0[0]),y1:f1(p0[1]),x2:f1(p1[0]),y2:f1(p1[1]),"class":"tw-bridge"},g);}
+      cp.forEach(function(p){
+        el("circle",{cx:f1(p[0]),cy:f1(p[1]),r:9,"class":"tw-shell"},g);
+        el("circle",{cx:f1(p[0]),cy:f1(p[1]),r:5.5,"class":"tw-in"},g);
+        for(var s=0;s<24;s++){var a1=pol(9.4,s*15),a2=pol(11,s*15);el("line",{x1:f1(p[0]+a1[0]),y1:f1(p[1]+a1[1]),x2:f1(p[0]+a2[0]),y2:f1(p[1]+a2[1]),"class":"tick"},bg);}
+      });
+      txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
+    }else{
+      el("circle",{cx:3,cy:6,r:TR,"class":"tw-shadow"},g);
+      if(t.shell==="buttress"){[15,75,135,195,255,315].forEach(function(a){el("rect",{x:-3,y:-TR-4.5,width:6,height:7,transform:"rotate("+a+")","class":"tw-butt"},g);});}
+      if(t.shell==="octagon"){var o=[];for(var a=22.5;a<360;a+=45){o.push(pol(TR+1,a).map(f1).join(","));}el("polygon",{points:o.join(" "),"class":"tw-shell"},g);}
+      else{el("circle",{r:TR,"class":"tw-shell"},g);}
+      el("circle",{r:TR-4,"class":"tw-in"},g);
+      txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
+      /* Shelves face out: one tick per bay around the outside of the shell, then the walkway ring */
+      var rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
+      for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick"},bg);}
+      el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
+    }
     el("circle",{r:26,"class":"hit"},g);
     towerEls[c]=g;
-    /* Shelves face out: one tick per bay around the outside of the shell, then the walkway ring */
-    var bg=el("g",{transform:"translate("+t.x+" "+t.y+")"},bays), rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
-    for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick"},bg);}
-    el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
   });
 
   /* Example reading trail: each hop is a book flying to the reader */
@@ -1053,7 +1076,8 @@ function drawSection(){
   capEl.appendChild(bEl);
   capEl.appendChild(document.createTextNode((k.one
     ?"one floor list on "+LEVELS+" levels plus "+SPARE+" spare. Wikipedia keeps this topic on one page; its section headings could split it into floors (proposal). Heights are rough until the books are counted."
-    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a glowing sign on its walkway. Heights are rough until the books are counted.")+" The shelves face out from the outside walls; inside is cozy space (gold)."));
+    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a glowing sign on its walkway. Heights are rough until the books are counted.")+" The shelves face out from the outside walls; inside is cozy space (gold)."
+    +(t.cluster?" People stands as three sub-towers joined by sky bridges (see the map); drawn here as one stack of its floors.":"")));
 }
 
 /* ---------- Pickers ---------- */
@@ -1135,20 +1159,20 @@ function renderInfo(){
       ["Books","Counted by the build. Related books stand side by side."],
       ["Opening","One book per load. The book's few-second flight to you covers the wait."],
       ["Links","Highlighted links fly books here from any tower. The trail follows."],
-      ["Tower","Tower "+k.c+" · "+k.t]
+      ["Tower","Tower "+k.c+" · "+k.t+(function(){var cl=TOWERS[k.c].cluster;if(!cl)return "";for(var i=0;i<cl.length;i++){if(cl[i].subs.indexOf(band.code)>=0)return " · sub-tower "+cl[i].n;}return "";})()]
     ], k.one?"Wikipedia keeps this topic on one page. Its section headings could split it into floors (proposal). "+baked:baked);
     cap.textContent="Selected: floor "+band.code+" "+band.cap+", tower "+k.c+" on "+isle.name+", "+lvls+".";
   }else{
     setInfo("Tower "+k.c+" · "+isle.name, k.t,[
       ["Isle",isle.name+" · +"+alt+" m above the cloud sea"],
       ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the academy centre, bearing "+Math.round(brg)+"°"],
-      ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
+      ["Tower",t.cluster?"One tower built as three sub-towers on a shared plaza, joined by sky bridges at several heights; the spires lean toward each other at the top":{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"]].concat(t.cluster?t.cluster.map(function(s,i){return ["Sub-tower "+(i+1),s.n+": "+s.d+" (about "+s.f+" floors at 500,000 books)"];}):[]).concat([
       ["Floors",k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each"],
       ["Levels",lv(0)+"–"+lv(LEVELS-1)+" (rough) + "+lv(LEVELS)+"–"+lv(LEVELS+SPARE-1)+" spare"],
       ["Shelves","On the outside walls, facing out: "+PER+" bays per level, with a railed walkway around every level and a stair winding up the outside"],
       ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+" (proposal)":"Cozy space"],
       ["Reach",t.reach]
-    ],"Pick a floor to see what it holds. Book counts set the real tower heights, so the skyline will be uneven. Isle, shape and position are proposals.");
+    ]),"Pick a floor to see what it holds. Book counts set the real tower heights, so the skyline will be uneven. Isle, shape and position are proposals.");
     cap.textContent="Selected: tower "+k.c+", "+k.t+", on "+isle.name+".";
   }
 }
