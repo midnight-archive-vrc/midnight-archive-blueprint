@@ -1,11 +1,12 @@
 # Midnight Archive: Blueprint
 
-An interactive blueprint for Midnight Archive, a boundless library world in VRChat. It's a cloud academy at night where every book is a real catalog record and the shelves load their data as moonlight.
+An interactive blueprint for The Midnight Archive, a rabbit-hole archive world in VRChat. It's a cloud library at night where every book is a readable English Wikipedia article. Open a book, follow its links, and each linked book flies off its shelf to you while a glowing trail draws your path between the shelves.
 
-The live page is linked in this repo's About section (GitHub Pages). It works on phones.
+Live page: https://midnight-archive-vrc.github.io/midnight-archive-blueprint/ (works on phones).
 
-- **Archipelago plan:** 21 towers, one per Library of Congress class, on floating isles around the academy. The Lantern Way bridges them in call-number order.
-- **Tower section:** each subheader is a floor. Pick one to see its bay addresses.
-- **Layers:** moon-threads (data loading), wind currents for flying, NPC routes, and everything below the cloud sea.
+- **Archipelago plan:** 11 towers, one per top topic of Wikipedia's Vital Articles (Level 5), on floating isles around the academy. Lantern-lit bridges loop past every isle.
+- **Tower section:** each Wikipedia sub-list is a floor. Pick one to see what it holds.
+- **Layers:** an example reading trail, wind currents for flying, NPC routes, and everything below the cloud sea.
+- **Notes:** what Jane has decided, what the tech testbed is building now, later layers (dream books, messages in bottles), and the narration idea.
 
-Headers and subheaders come from the Library of Congress Classification Outline. Isle groupings and tower heights are a first proposal.
+v0.3 (2026-11-14) replaced the Library of Congress catalog of v0.2 with Wikipedia. Isle groupings, heights and floor bands are proposals.
