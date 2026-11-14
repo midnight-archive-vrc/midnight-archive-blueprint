@@ -467,7 +467,7 @@ footer a{color:var(--line)}
     </div>
     <figure class="drawing">
       <svg id="plan" viewBox="-255 -255 510 510" role="img" aria-label="Plan of the archipelago: the academy isle at the centre, and isles of different sizes and heights holding 12 topic towers, each drawn larger the more items it holds, linked by lantern-lit bridges, with an example reading trail, under a rising moon."></svg>
-      <figcaption>North up, metres from the Orrery Dome. Tower size shows its estimated items, articles plus books. <span id="plan-cap"></span></figcaption>
+      <figcaption>North up, metres from the centre of the academy. Tower size shows its estimated items, articles plus books. <span id="plan-cap"></span></figcaption>
     </figure>
     <div class="layers" role="group" aria-label="Layers">
       <button type="button" class="tog" data-layer="trail" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-width="2" stroke-dasharray="4 3"/></svg>Example trail</button>
@@ -766,7 +766,7 @@ var CLASSES=[
 ];
 var CORE=50000, BOOKS_TOTAL=75000, BOOKS_UNPLACED=5300;
 
-/* ---------- The archipelago (plan x east, plan y south, metres from the Orrery Dome). All of it is a proposal. ---------- */
+/* ---------- The archipelago (plan x east, plan y south, metres from the centre of the academy). All of it is a proposal. ---------- */
 var TOWERS={
   "1":{x:180,y:-105,isle:"chron",shell:"buttress",roof:"spire",reach:"Lantern Way from History, then on to Geography."},
   "2":{x:110,y:-170,isle:"chron",shell:"round",roof:"crenel",reach:"Lantern Way from the academy's north-east side, then on to People."},
@@ -782,7 +782,7 @@ var TOWERS={
   "12":{x:-170,y:172,isle:"lyric",shell:"buttress",roof:"dome",reach:"Lyric Isle walkways from Arts; Lantern Way on to Observatory Isle."}
 };
 var ISLES={
-  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate."},
+  academy:{name:"Academy Isle",alt:24,classes:"None. The games live here.",n:"The heart of the archipelago and home of the games: the Games Hall in the middle, the Race Hall, the Daily Race board, the Trivia Room, and the entrance."},
   high:{name:"High Isle",alt:70,classes:"5 Philosophy and religion",n:"The highest rock, alone above the rest. Reached by the Long Stair or by flight."},
   chron:{name:"Chronicle Chain",alt:"46 and 38",classes:"2 History, 1 People",n:"History and the people in it, on two rocks stepping down toward the present: History +46, People +38 m."},
   wayfarer:{name:"Wayfarer's Rock",alt:18,classes:"3 Geography",n:"Geography on a lone rock with a map balcony over the cloud sea."},
@@ -803,17 +803,15 @@ var ROCKS=[
 
 /* ---------- Places (proposals carried over from v0.3) ---------- */
 var ZONES={
-  landing:{t:"Approach Landing",k:"Place · spawn",rows:[["Where","South of the archipelago"],["Baked","Language lectern, paw-print trail"]],n:"Frame the postcard view of the towers here. The Long Bridge curves north to the Registrar's Gate."},
-  bridge:{t:"Long Bridge",k:"Place · path",rows:[["Runs","Approach Landing to the Registrar's Gate"],["Crosses","Under the high arch between Everyday life and Arts"]],n:"The first walk in, with lantern posts and the isles rising on both sides."},
+  landing:{t:"Approach Landing",k:"Place · spawn",rows:[["Where","South of the archipelago"],["Baked","Language lectern, paw-print trail"]],n:"Frame the postcard view of the towers here. The Long Bridge curves north to the academy entrance."},
+  bridge:{t:"Long Bridge",k:"Place · path",rows:[["Runs","Approach Landing to the academy entrance"],["Crosses","Under the high arch between Everyday life and Arts"]],n:"The first walk in, with lantern posts and the isles rising on both sides."},
   lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts and Literature, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. Links and the trail do the exploring; the Way is for strolling."},
-  longstair:{t:"Long Stair",k:"Path · academy to High Isle",rows:[["Climb","From the Lecture Hall up to High Isle (+70 m)"],["Rest","A reading gazebo floats beside the halfway turn"]],n:"The slow way to Philosophy and religion. Everyone else flies."},
-  broken:{t:"Broken span",k:"Path · sealed",rows:[["From","The Storm Wing, east"],["State","Snapped off in the storm, debris below"]],n:"Restoring the Storm Wing rebuilds this bridge toward the Chronicle Chain."},
-  gate:{t:"Registrar's Gate",k:"Place · academy",rows:[["NPC","The Registrar, a stern badger"],["You do","Sign the ledger, get a library card"]],n:"The ledger line is a word-picker message, so it works without a keyboard and leaves no room for trolls."},
-  dome:{t:"Orrery Dome",k:"Place · academy atrium",rows:[["Position","Origin (0, 0) · atrium floor at +24 m"],["Does","The brass dial shows any date's moon"]],n:"Each book flies to you from its own shelf, so the dome is a meeting place, not the data hub."},
-  westwing:{t:"West wing",k:"Place · west wing · open",rows:[["State","Not decided yet"]],n:"Room for a future place in the academy."},
-  lecture:{t:"Lecture Hall",k:"Place · north wing",rows:[["Does","Lectern boosts the speaker to the whole room"],["Events","Weekly Midnight Lectures, posted on the event board"]],n:"The Long Stair to High Isle starts behind it."},
-  storm:{t:"Storm Wing",k:"Place · east wing · sealed",rows:[["State","Sealed. Lightning blew its pages into the sky."],["Restores","By pages returned, counted across everyone in the instance"]],n:"Bringing friends literally rebuilds it, and its broken bridge with it."},
-  lofts:{t:"Loft nooks",k:"Place · upper gallery",rows:[["Who","One nook for each player present"],["Holds","Your finds and favourite books"]],n:"Uses The Collection's alcove assignment and the NIGHT RENT lit-drawer bed."},
+  longstair:{t:"Long Stair",k:"Path · academy to High Isle",rows:[["Climb","From the academy up to High Isle (+70 m)"],["Rest","A reading gazebo floats beside the halfway turn"]],n:"The slow way to Philosophy and religion. Everyone else flies."},
+  games:{t:"Games Hall",k:"Place · academy, the middle",rows:[["Does","Where races start and finish; the scoreboard of the instance"],["Status","Planned"]],n:"Everyone gathers here: press Start and the race begins for the whole instance."},
+  race:{t:"Race Hall",k:"Place · academy, north",rows:[["Game","Wiki Race: same start and target book for everyone, link buttons only"],["Status","Planned"]],n:"Your gold trail is your route; at the end everyone sees each other's paths."},
+  daily:{t:"Daily Race",k:"Place · academy, west",rows:[["Game","One race a day for every visitor, always solvable, with a par"],["Status","Planned"]],n:"Picked ahead of time from the real link map of the shelves."},
+  trivia:{t:"Trivia Room",k:"Place · academy, east",rows:[["Game","Mystery book (title blanked, 4 choices) and Which tower?"],["Status","Planned"]],n:"Only Wikipedia's own text, no AI-written questions."},
+  entrance:{t:"Entrance",k:"Place · academy, south",rows:[["From","The Long Bridge from the Approach Landing"]],n:"The way in from the spawn."},
   gazebo:{t:"Reading gazebo",k:"Place · small floating rock",rows:[["Seats","Two or three readers"],["Sound","Voices fall off fast, so it stays quiet"]],n:"Four of them drift between the isles. Good spots to hide with a book."},
   tram:{t:"Lantern tram",k:"Path · under the cloud surface",rows:[["Runs","A wandering loop beneath the isles"],["Stops","Six, spread beneath the isles"]],n:"Patron spirits ride in each night, then drift up into the library."}
 };
@@ -991,7 +989,6 @@ function buildPlan(){
   el("path",{d:sd,"class":"deck-i"},br);
   for(var s2=0.06;s2<0.97;s2+=0.06){var p0=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2-0.01),p1=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2+0.01);var dx=p1[0]-p0[0],dy=p1[1]-p0[1],L=Math.hypot(dx,dy)||1;var m=cubicAt(STAIR[0],STAIR[1],STAIR[2],STAIR[3],s2);el("line",{x1:f1(m[0]-dy/L*2.6),y1:f1(m[1]+dx/L*2.6),x2:f1(m[0]+dy/L*2.6),y2:f1(m[1]-dx/L*2.6),"class":"stair"},br);}
   var bd="M68 2 Q92 -16 114 -12";
-  reg("broken",el("path",{d:bd,"class":"deck-o","data-zone":"broken"},br));
   el("path",{d:bd,"class":"deck-i"},br);
   el("path",{d:"M113 -17 L118 -13 L112 -10 L117 -6","class":"stair"},br);
   [[124,-8,1.6],[129,0,1.2],[122,5,1],[133,-12,0.9]].forEach(function(q){el("circle",{cx:q[0],cy:q[1],r:q[2],"class":"debris"},br);});
@@ -1015,12 +1012,11 @@ function buildPlan(){
 
   /* Academy rooms */
   var ac=el("g",null,plan);
-  zoneRect(ac,"lecture",-20,-68,40,32,false,"Lecture Hall");
-  zoneRect(ac,"westwing",-68,-18,32,36,false,"West wing, open");
-  zoneRect(ac,"storm",36,-18,32,36,true,"Storm Wing, sealed");
-  zoneRect(ac,"gate",-12,36,24,22,false,"Registrar's Gate");
-  reg("lofts",el("circle",{cx:0,cy:0,r:34,"class":"gallery","data-zone":"lofts",tabindex:"0",role:"button","aria-label":"Loft nooks, upper gallery"},ac));
-  reg("dome",el("circle",{cx:0,cy:0,r:26,"class":"zone-fill","data-zone":"dome",tabindex:"0",role:"button","aria-label":"Orrery Dome"},ac));
+  zoneRect(ac,"race",-20,-68,40,32,false,"Race Hall");
+  zoneRect(ac,"daily",-68,-18,32,36,false,"Daily Race");
+  zoneRect(ac,"trivia",36,-18,32,36,false,"Trivia Room");
+  zoneRect(ac,"entrance",-12,36,24,22,false,"Entrance");
+  reg("games",el("circle",{cx:0,cy:0,r:26,"class":"zone-fill","data-zone":"games",tabindex:"0",role:"button","aria-label":"Games Hall"},ac));
   for(var d=0;d<360;d+=30){var q=pol(26,d);el("line",{x1:0,y1:0,x2:f1(q[0]),y2:f1(q[1]),"class":"rib"},ac);}
   el("circle",{cx:0,cy:0,r:6,"class":"oculus"},ac);
 
@@ -1084,12 +1080,10 @@ function buildPlan(){
   txt(names,0,234,"SPAWN","lbl",{"text-anchor":"middle",style:"font-size:10px"});
 
   /* Academy close-up labels */
-  [["LECTURE",0,-54],["HALL",0,-45],["WEST",-52,-2],["WING",-52,7],["STORM",52,-6],["WING",52,2],["SEALED",52,10],["ORRERY DOME",0,2.5]].forEach(function(l){txt(names,l[1],l[2],l[0],"lbl zl vis-d",{"text-anchor":"middle"});});
-  txt(names,15,49,"REGISTRAR'S GATE","lbl zl vis-d");
-  txt(names,26,33,"LOFT NOOKS","lbl zl mute vis-d");
+  [["RACE",0,-54],["HALL",0,-45],["DAILY",-52,-2],["RACE",-52,7],["TRIVIA",52,-2],["ROOM",52,7],["GAMES HALL",0,2.5]].forEach(function(l){txt(names,l[1],l[2],l[0],"lbl zl vis-d",{"text-anchor":"middle"});});
+  txt(names,15,49,"ENTRANCE","lbl zl vis-d");
   txt(names,5,72,"LONG BRIDGE","lbl zl mute vis-d");
   txt(names,-7,-86,"LONG STAIR","lbl zl mute vis-d",{"text-anchor":"end"});
-  txt(names,109,-19,"BROKEN SPAN","lbl zl mute vis-d",{"text-anchor":"end"});
   txt(names,70,-80,"LANTERN WAY","lbl zl mute vis-d",{"text-anchor":"end"});
   txt(names,-42,38,"Academy Isle +24","isle-lbl zl vis-d",{"text-anchor":"middle"});
 
@@ -1097,7 +1091,6 @@ function buildPlan(){
   txt(npc,0,20,"Old Index","lbl zl npc vis-d",{"text-anchor":"middle"});
   txt(npc,32,-22,"Tea cart","lbl zl npc vis-d");
   txt(npc,-52,16.5,"Margin","lbl zl npc vis-d",{"text-anchor":"middle"});
-  txt(npc,3,55,"Registrar","lbl zl npc vis-d");
 
   /* Below-cloud labels last, so nothing draws over them */
   var belowLbl=el("g",{"class":"layer layer-below"},plan);
@@ -1439,7 +1432,7 @@ function renderInfo(){
       ["Articles",est(A)+" (estimate): "+est(core)+" from the curated list"+(tail>0?", "+est(tail)+" more most-read":"")],
       ["Books",est(k.books)+" from Project Gutenberg (rough guess)"],
       ["Isle",isle.name+" · +"+alt+" m above the cloud sea"],
-      ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the dome, bearing "+Math.round(brg)+"°"],
+      ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the academy centre, bearing "+Math.round(brg)+"°"],
       ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
       ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+(THEMES_SEEN[k.c]?"":" (new proposal)"):"Cozy floors"],
       ["Floors",k.lit?k.subs.length+" floors by language or form (proposal)":(k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each")],
