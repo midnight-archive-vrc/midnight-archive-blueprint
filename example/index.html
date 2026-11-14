@@ -201,7 +201,7 @@ function open(item,addTrail){
   } else {
     el('bmeta').innerHTML=esc(item.authors.join(', '))+' · <a href="https://www.gutenberg.org/ebooks/'+item.id+'">Project Gutenberg #'+item.id+'</a> · public domain in the USA · '+(item.fiction?'shelved in the Literature tower, cross-linked from this floor':'shelved on this floor (outer ring)');
     el('whereami').textContent=item.fiction?'cross-link · Literature tower':'outer ring · Animals floor';
-    el('fetch').innerHTML='What the world loaded: the opening chapters (one text file, ~'+item.kb+' KB) from midnight-archive-vrc.github.io. Whether whole books are hosted is still Jane\'s choice (see the blueprint).';
+    el('fetch').innerHTML='What the world loaded: the opening chapters (one text file, ~'+item.kb+' KB) from the archive\'s web host. Whether whole books are hosted is still open (see the working notes).';
   }
   plate(item); renderPage();
   if(addTrail&&trail[trail.length-1]!==item.title){trail.push(item.title);drawTrail();}

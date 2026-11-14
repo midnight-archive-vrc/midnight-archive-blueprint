@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Midnight Archive Blueprint (draft v0.4.1)</title>
+<title>The Midnight Archive · Working notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -397,29 +397,29 @@ footer a{color:var(--line)}
 <main>
   <header class="titleblock">
     <div class="tb-main">
-      <p class="tb-kicker"><b>Draft</b> · rabbit-hole archive · books and articles · VRChat</p>
+      <p class="tb-kicker"><b>Working notes</b> · books and articles · VRChat · Doghouse Devs</p>
       <h1>Midnight Archive</h1>
     </div>
     <dl class="tb-cells">
       <div><dt>Sheets</dt><dd>C-101 Shelving rules · A-101 Plan · A-201 Section</dd></div>
       <div><dt>Towers</dt><dd>12 topics · 41 floor lists</dd></div>
       <div><dt>Revision</dt><dd>0.4.1 draft · 2026-11-14</dd></div>
-      <div><dt>Design</dt><dd>Jane</dd></div>
+      <div><dt>By</dt><dd>Doghouse Devs</dd></div>
     </dl>
   </header>
 
   <section class="panel intro prose" aria-labelledby="intro-h">
-    <h2 class="panel-h" id="intro-h">How everything gets shelved <span>draft v0.4.1 · not the live plan</span></h2>
-    <p>This draft shows one way to sort two kinds of things into one archive: Wikipedia articles, and full public-domain books from Project Gutenberg. Everything here is a proposal unless it is tagged Decided. The live plan is <a href="../">v0.3</a>.</p>
-    <p>The shelves are on the towers' outside walls and face the sky, with a railed walkway around every level and a stair winding up the outside. <span class="tag dec">Decided</span> Articles become slim volumes on a floor's lower shelves. Books become thick volumes on the shelves just above them. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
-    <p>The inside of each tower holds no books. It is cozy space for lying around and talking, themed by the tower's topic. <span class="tag dec">Decided</span> What goes in is proposed below.</p>
-    <p>Books: Project Gutenberg has about 75,000 public-domain books. Its catalog gives each one a Library of Congress class, subject headings, an author and a language. Nothing is downloaded yet. <span class="tag pro">Proposed</span></p>
-    <p>Articles: the ~500,000 most-read Wikipedia articles. <span class="tag dec">Decided</span> v1 in the testbed uses the ~50k Vital Articles as a first step.</p>
+    <h2 class="panel-h" id="intro-h">How everything gets shelved <span>working notes · v0.4.1</span></h2>
+    <p>This draft shows one way to sort two kinds of things into one archive: Wikipedia articles, and full public-domain books from Project Gutenberg. Everything here is a proposal unless it is tagged Settled. The main blueprint, with the concept art, is <a href="../">here</a>.</p>
+    <p>The shelves are on the towers' outside walls and face the sky, with a railed walkway around every level and a stair winding up the outside. <span class="tag dec">Settled</span> Articles become slim volumes on a floor's lower shelves. Books become thick volumes on the shelves just above them. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
+    <p>The inside of each tower holds no books. It is cozy space for lying around and talking, themed by the tower's topic. <span class="tag dec">Settled</span> What goes in is proposed below.</p>
+    <p>Books: Project Gutenberg has about 75,000 public-domain books. Its catalog gives each one a Library of Congress class, subject headings, an author and a language. Nothing is downloaded yet. <span class="tag pro">Proposal</span></p>
+    <p>Articles: the ~500,000 most-read Wikipedia articles. <span class="tag dec">Settled</span> The test world starts with the ~50k Vital Articles.</p>
     <p class="sub">Every drawing and count on this page is for ~500,000 articles, and every count is an estimate.</p>
     <ul class="key" aria-label="Status key">
-      <li><span class="tag dec">Decided</span>Jane said yes.</li>
-      <li><span class="tag tb">Testbed</span>Being built now in the tech testbed (v1).</li>
-      <li><span class="tag pro">Proposed</span>A suggestion, not settled.</li>
+      <li><span class="tag dec">Settled</span>Decided.</li>
+      <li><span class="tag tb">Prototype</span>Working now in a test world.</li>
+      <li><span class="tag pro">Proposal</span>A suggestion, not settled.</li>
       <li><span class="tag idea">Idea</span>Saved idea only. Not designed or decided.</li>
     </ul>
   </section>
@@ -428,13 +428,13 @@ footer a{color:var(--line)}
     <div class="sheet-head">
       <span class="sheet-no">C-101</span>
       <h2 id="flow-h">Shelving rules</h2>
-      <span class="tag pro">Proposed</span>
+      <span class="tag pro">Proposal</span>
     </div>
     <div class="flow">
       <div class="lane">
         <h3>An article <span>slim volume · lower shelves</span></h3>
         <ol class="steps">
-          <li><b>1 · Source</b>Wikipedia: the ~500,000 most-read articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
+          <li><b>1 · Source</b>Wikipedia: the ~500,000 most-read articles. The test world starts with the ~50k Vital Articles.</li>
           <li><b>2 · Tower</b>Its Vital Articles top topic. Articles outside that list: a topic model picks the tower.</li>
           <li><b>3 · Floor</b>Its Vital Articles sub-list.</li>
           <li><b>4 · Shelf</b>The lower shelves of that floor's outside wall.</li>
@@ -520,7 +520,7 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose" aria-labelledby="map-h">
-      <h2 class="panel-h" id="map-h">Library of Congress class to tower <span class="tag pro">Proposed</span></h2>
+      <h2 class="panel-h" id="map-h">Library of Congress class to tower <span class="tag pro">Proposal</span></h2>
       <div class="tablewrap">
         <table class="map">
           <thead><tr><th scope="col">LoC class</th><th scope="col">What it holds</th><th scope="col">Tower</th></tr></thead>
@@ -547,7 +547,7 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose" aria-labelledby="floors-h">
-      <h2 class="panel-h" id="floors-h">Floors and order <span class="tag pro">Proposed</span></h2>
+      <h2 class="panel-h" id="floors-h">Floors and order <span class="tag pro">Proposal</span></h2>
       <ul>
         <li><b>Floors are sub-topics.</b> Articles use the Vital Articles sub-lists, as in v0.3.</li>
         <li><b>Literature floors:</b> English, American, French, German, Classical (Greek and Latin), Other languages, Poetry, Drama, Children's. A book goes to its language floor unless it is poetry, drama or for children.</li>
@@ -560,9 +560,9 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose wide" aria-labelledby="inside-h">
-      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Decided</span> cozy, themed by topic</h2>
-      <p>With the books on the outside, every tower's inside is free for lying around, cuddling and talking. Jane: "could the inside just be like cuddle stuff and stairs going across sections".</p>
-      <p><b>In every tower</b> <span class="tag pro">Proposed</span></p>
+      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Settled</span> cozy, themed by topic</h2>
+      <p>With the books on the outside, every tower's inside is free for lying around, cuddling and talking.</p>
+      <p><b>In every tower</b> <span class="tag pro">Proposal</span></p>
       <ul>
         <li><b>Window seats</b> built into the back of the shelf wall, each big enough for two. The backs of the books glow through small gaps like stained glass.</li>
         <li><b>Stairs crossing the open middle</b> between floors, meeting at landings piled with pillows.</li>
@@ -570,20 +570,20 @@ footer a{color:var(--line)}
         <li><b>A slide</b> spiralling down the middle for the quick way down, and <b>a page updraft</b>: step into a column of drifting glowing pages and float slowly up.</li>
         <li><b>A pillow nest</b> on the top floor, under glass, with the moon overhead.</li>
       </ul>
-      <p><b>A theme per tower</b> <span class="tag pro">Proposed</span> Built from one shared furniture set plus a few hero props each, so Quest stays light.</p>
+      <p><b>A theme per tower</b> <span class="tag pro">Proposal</span> Built from one shared furniture set plus a few hero props each, so Quest stays light.</p>
       <div class="tablewrap">
         <table class="map">
           <thead><tr><th scope="col">Tower</th><th scope="col">Inside</th><th scope="col">Status</th></tr></thead>
           <tbody>
             <tr><td>1 People</td><td><b>Portrait parlour.</b> Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces).</td><td>New</td></tr>
             <tr><td>2 History</td><td><b>Hearth hall.</b> A big old fireplace, a timeline rug that winds across the floor, stone benches heaped with blankets.</td><td>New</td></tr>
-            <tr><td>3 Geography</td><td><b>Map room.</b> A giant glowing floor map with beanbags to sprawl on, and globe lamps.</td><td>Jane liked</td></tr>
+            <tr><td>3 Geography</td><td><b>Map room.</b> A giant glowing floor map with beanbags to sprawl on, and globe lamps.</td><td>Favourite</td></tr>
             <tr><td>4 Arts</td><td><b>Studio loft.</b> A small stage for music and open mic, floor cushions for the audience, easels around the edge.</td><td>New</td></tr>
-            <tr><td>5 Philosophy and religion</td><td><b>Quiet pool.</b> A still reflecting pool ringed with floor cushions and candles. The hush floor.</td><td>Jane liked</td></tr>
-            <tr><td>6 Everyday life</td><td><b>Kitchen hearth.</b> A big kitchen with a long table, a kettle on the fire, couches and quilts. The tea cart lives here.</td><td>Jane liked</td></tr>
+            <tr><td>5 Philosophy and religion</td><td><b>Quiet pool.</b> A still reflecting pool ringed with floor cushions and candles. The hush floor.</td><td>Favourite</td></tr>
+            <tr><td>6 Everyday life</td><td><b>Kitchen hearth.</b> A big kitchen with a long table, a kettle on the fire, couches and quilts. The tea cart lives here.</td><td>Favourite</td></tr>
             <tr><td>7 Society</td><td><b>Talking pit.</b> A sunken round pit of cushions for group talks late into the night.</td><td>New</td></tr>
-            <tr><td>8 Biological and health</td><td><b>Greenhouse.</b> Moss beds, fern-leaf hammocks, softly glowing fungi.</td><td>Jane liked</td></tr>
-            <tr><td>9 Physical sciences</td><td><b>Planetarium.</b> Floor mattresses under a slowly turning star ceiling.</td><td>Jane liked</td></tr>
+            <tr><td>8 Biological and health</td><td><b>Greenhouse.</b> Moss beds, fern-leaf hammocks, softly glowing fungi.</td><td>Favourite</td></tr>
+            <tr><td>9 Physical sciences</td><td><b>Planetarium.</b> Floor mattresses under a slowly turning star ceiling.</td><td>Favourite</td></tr>
             <tr><td>10 Technology</td><td><b>Clockwork den.</b> Slow brass gears turning in the walls, armchairs, a toy train looping the floor.</td><td>New</td></tr>
             <tr><td>11 Mathematics</td><td><b>Geometry steps.</b> Stepped platforms in nested shapes with wool mats, drifting polyhedron lamps.</td><td>New</td></tr>
             <tr><td>12 Literature</td><td><b>Story bunks.</b> Stacked blanket-fort bunks with reading lamps, and a story circle of armchairs.</td><td>New</td></tr>
@@ -594,7 +594,7 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose xl" aria-labelledby="xl-h">
-      <h2 class="panel-h" id="xl-h">Cross-links <span class="tag pro">Proposed</span></h2>
+      <h2 class="panel-h" id="xl-h">Cross-links <span class="tag pro">Proposal</span></h2>
       <svg viewBox="0 0 340 172" role="img" aria-label="Example of cross-links: the Moby-Dick article links to the Moby-Dick book with read the book; the book links to the Herman Melville article as its author and to subject articles from its subject headings; articles also link to each other.">
         <defs><marker id="xarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1L10 5L0 9z" fill="#e3eeff"/></marker></defs>
         <rect class="node v" x="4" y="8" width="150" height="44" rx="2"/>
@@ -623,7 +623,7 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose" aria-labelledby="way-h">
-      <h2 class="panel-h" id="way-h">Wayfinding <span class="tag pro">Proposed</span></h2>
+      <h2 class="panel-h" id="way-h">Wayfinding <span class="tag pro">Proposal</span></h2>
       <ul>
         <li><b>Tower signs</b> with the topic name, seen from far away. Tower size already tells you how much is inside.</li>
         <li><b>Floor plaques</b> at each floor's balcony.</li>
@@ -634,12 +634,12 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose wide" aria-labelledby="budget-h">
-      <h2 class="panel-h" id="budget-h">Storage budget <span>choices for Jane, not decided</span></h2>
+      <h2 class="panel-h" id="budget-h">Storage budget <span>choices, not decided</span></h2>
       <dl>
         <dt>Text</dt><dd>Text that every visitor can read must sit on a trusted host. GitHub Pages is the trusted host that can hold this much. Each Pages site holds 1 GB. A few sites in the org are fine; dozens are not.</dd>
         <dt>Articles</dt><dd>About 2 KB per article lead, so ~500,000 articles ≈ 1 GB, a whole site. Longer article text costs more.</dd>
         <dt>Books</dt><dd>A full Gutenberg book is very roughly 300 to 400 KB of text. All 75,000 come to about 25 to 30 GB. That does not fit.</dd>
-        <dt>Pictures</dt><dd>Only for visitors with "Allow Untrusted URLs" on, served from Cloudflare. <span class="tag dec">Decided</span></dd>
+        <dt>Pictures</dt><dd>Only for visitors with "Allow Untrusted URLs" on. <span class="tag dec">Settled</span></dd>
       </dl>
       <p class="series" style="margin-top:12px"><span><span class="sw v"></span>Article text</span><span><span class="sw t"></span>Search and link tables</span><span><span class="sw b"></span>Complete books</span><span><span class="sw o"></span>Opening chapters</span><span>Each box is one 1 GB GitHub Pages site.</span></p>
       <div id="budget"></div>
@@ -647,7 +647,7 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose wide" aria-labelledby="ex-h">
-      <h2 class="panel-h" id="ex-h">Three examples, end to end <span class="tag pro">Proposed</span></h2>
+      <h2 class="panel-h" id="ex-h">Three examples, end to end <span class="tag pro">Proposal</span></h2>
       <div class="exs">
         <article class="ex bk">
           <h3>Moby-Dick <span>book</span></h3>
@@ -687,18 +687,18 @@ footer a{color:var(--line)}
     </section>
 
     <section class="panel prose" aria-labelledby="dec-h">
-      <h2 class="panel-h" id="dec-h">Decided so far <span class="tag dec">Decided</span></h2>
+      <h2 class="panel-h" id="dec-h">Settled so far <span class="tag dec">Settled</span></h2>
       <ul>
         <li>A rabbit-hole archive of readable Wikipedia articles, still called The Midnight Archive.</li>
-        <li>About 500,000 most-read Wikipedia articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
-        <li>Pictures only for visitors with "Allow Untrusted URLs" on, served from Cloudflare.</li>
+        <li>About 500,000 most-read Wikipedia articles. The test world starts with the ~50k Vital Articles.</li>
+        <li>Pictures only for visitors with "Allow Untrusted URLs" on.</li>
         <li>The books go on the towers' outside walls, facing out, as in the first concept art. The insides are cozy space for lying around and talking, each themed by its tower's topic.</li>
-        <li>Credits through one QR code and a hosted page. PCVR is the beauty target; Quest gets the detail baked into textures. Upload is always Jane's.</li>
+        <li>Credits through one QR code and a hosted page. PCVR is the beauty target; Quest gets the detail baked into textures.</li>
       </ul>
     </section>
 
     <section class="panel prose" aria-labelledby="open-h">
-      <h2 class="panel-h" id="open-h">Open questions for Jane</h2>
+      <h2 class="panel-h" id="open-h">Open questions</h2>
       <ul>
         <li>Complete books: option A, option B, or something else?</li>
         <li>Is a 12th tower for Literature right, or should books share the Arts tower?</li>
@@ -734,10 +734,10 @@ footer a{color:var(--line)}
   </section>
 
   <footer>
-    <p>Draft v0.4.1 · 2026-11-14: the shelves move to the towers' outside walls and face the sky, with walkways around every level; the insides become cozy floors themed by topic (Jane's call). v0.4 added Project Gutenberg books, a 12th tower for Literature, everything drawn for ~500,000 articles (Jane's call), tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
+    <p>Working notes v0.4.1 · 14 November 2026 · Doghouse Devs. These go deeper than the <a href="../">main blueprint</a>: full public-domain books from Project Gutenberg, a Literature tower, and storage.</p>
     <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Books would come from <a href="https://www.gutenberg.org/">Project Gutenberg</a>. Wikipedia text is CC BY-SA 4.0.</p>
     <p>Isle groupings, heights, roofs, floors and every count are proposals or estimates. Book counts set the real tower heights, so the skyline will be uneven.</p>
-    <p>Shared for ideas. Tell Jane what you would add.</p>
+    <p>Shared for ideas. Tell us what you would add.</p>
   </footer>
 </main>
 
@@ -830,7 +830,7 @@ var EXAMPLES={
 var TR=19, SPARE=3, PER=48, PER_VOL=PER*100, PER_BOOK=PER*40;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
-/* Inside each tower: cozy space themed by its topic (Jane liked the idea, 14 Nov; 3, 5, 6, 8 and 9 are the ones she saw). */
+/* Inside each tower: cozy space themed by its topic (proposals). */
 var THEMES={
   "1":{t:"Portrait parlour",d:"Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces)."},
   "2":{t:"Hearth hall",d:"A big old fireplace, a timeline rug that winds across the floor, and stone benches heaped with blankets."},
@@ -1138,7 +1138,7 @@ function updatePlan(){
 var sec=document.getElementById("section");
 var YG=480, SX=3.4, PXL=Math.min(10.2,315/(LMAX+2)), SY=PXL/3;
 function Ym(m){return YG-m*SY;}
-/* One shelf wall per side, facing OUT (Jane, 14 Nov): X0..XA and XB..X3. Between them, the cozy inside. */
+/* One shelf wall per side, facing OUT: X0..XA and XB..X3. Between them, the cozy inside. */
 var OW=4*SX;
 var X0=64, X3=X0+2*OW+24*SX, XA=X0+OW, XB=X3-OW, XC=(X0+X3)/2;
 

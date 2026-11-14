@@ -3,7 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Midnight Archive Blueprint</title>
+<title>The Midnight Archive · Blueprint</title>
+<meta name="description" content="A cloud library at night in VRChat where every book is a readable Wikipedia article, and every link flies another book to you. Concept art and an interactive blueprint by Doghouse Devs.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Midnight Archive · Blueprint">
+<meta property="og:description" content="A cloud library at night in VRChat where every book is a readable Wikipedia article, and every link flies another book to you.">
+<meta property="og:url" content="https://midnight-archive-vrc.github.io/midnight-archive-blueprint/">
+<meta property="og:image" content="https://midnight-archive-vrc.github.io/midnight-archive-blueprint/art/share-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,11 +47,21 @@ main{
   max-width:1180px;margin:0 auto;padding:16px;
   display:grid;gap:14px;
   grid-template-columns:minmax(0,1fr);
-  grid-template-areas:"tb" "intro" "plan" "pick" "sect" "info" "notes" "legend" "foot";
+  grid-template-areas:"tb" "intro" "art" "plan" "pick" "sect" "info" "notes" "legend" "foot";
 }
 @media (min-width:900px){
-  main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"tb tb" "intro intro" "plan sect" "pick info" "notes notes" "legend foot";align-items:start}
+  main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"tb tb" "intro intro" "art art" "plan sect" "pick info" "notes notes" "legend foot";align-items:start}
 }
+/* Concept art */
+.art{grid-area:art}
+.gallery{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:640px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.gallery .hero{grid-column:1/-1}}
+@media (min-width:900px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}.gallery .hero{grid-column:span 2;grid-row:span 2}}
+.gallery figure{margin:0;border:1px solid var(--hair);background:color-mix(in srgb,var(--line) 3%,var(--paper))}
+.gallery a{display:block}
+.gallery img{display:block;width:100%;height:auto;aspect-ratio:1672/941}
+.gallery figcaption{min-height:0;padding:7px 9px 9px;font-size:12px}
+.gallery .hero figcaption{font-size:13px}
 h1,h2,h3{text-wrap:balance}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--beam);outline-offset:2px}
@@ -300,28 +319,41 @@ footer a{color:var(--line)}
 <main>
   <header class="titleblock">
     <div class="tb-main">
-      <p class="tb-kicker">Rabbit-hole archive · floating archipelago · VRChat</p>
-      <h1>Midnight Archive</h1>
+      <p class="tb-kicker">A VRChat world in design · Doghouse Devs</p>
+      <h1>The Midnight Archive</h1>
     </div>
     <dl class="tb-cells">
-      <div><dt>Sheets</dt><dd>A-101 Archipelago plan · A-201 Tower section</dd></div>
-      <div><dt>Towers</dt><dd>11 topics · 32 floor lists</dd></div>
-      <div><dt>Revision</dt><dd>0.3.2 · 2026-11-14</dd></div>
-      <div><dt>Design</dt><dd>Jane</dd></div>
+      <div><dt>What</dt><dd>A cloud library at night where every book is a Wikipedia article</dd></div>
+      <div><dt>Towers</dt><dd>11 topics, one tower each</dd></div>
+      <div><dt>Status</dt><dd>In design · not released</dd></div>
+      <div><dt>By</dt><dd>Doghouse Devs</dd></div>
     </dl>
   </header>
 
   <section class="panel intro prose" aria-labelledby="intro-h">
-    <h2 class="panel-h" id="intro-h">A rabbit-hole archive <span>what changed in v0.3</span></h2>
-    <p>The Midnight Archive is a cloud library at night in VRChat. It is a rabbit-hole archive: every book is a readable English Wikipedia article, and the name stays The Midnight Archive. <span class="tag dec">Decided</span></p>
-    <p>Open a book, read it, and follow its links. Each linked book flies off its shelf to you, and a glowing trail draws your path between the shelves. <span class="tag tb">Testbed</span></p>
-    <p>Version 0.2 shelved Library of Congress catalog cards. Jane dropped them: you could not explore deeper from a catalog card. The towers now follow Wikipedia's own topic tree.</p>
+    <h2 class="panel-h" id="intro-h">Fall down a rabbit hole</h2>
+    <p>The Midnight Archive is a library floating on clouds at night, in VRChat. Every book on its shelves is a real, readable Wikipedia article.</p>
+    <p>Open a book and follow its links. Each linked book flies off its shelf, from whatever tower it lives in, straight to you. A glowing trail draws the path you took through the archive, so you can see how far down the hole you went.</p>
+    <p>The books line the outside of tall towers on floating isles, joined by lantern-lit bridges. Inside, each tower is a cozy place to lie around and talk, themed by its topic.</p>
+    <p class="sub">This page is the blueprint: concept art, a map you can click, and a cut through each tower. Nothing here is final.</p>
     <ul class="key" aria-label="Status key">
-      <li><span class="tag dec">Decided</span>Jane said yes.</li>
-      <li><span class="tag tb">Testbed</span>Being built now in the tech testbed (v1).</li>
-      <li><span class="tag pro">Proposed</span>A suggestion, not settled.</li>
-      <li><span class="tag idea">Idea</span>Saved idea only. Not designed or decided.</li>
+      <li><span class="tag dec">Settled</span>Decided.</li>
+      <li><span class="tag tb">Prototype</span>Working now in a test world.</li>
+      <li><span class="tag pro">Proposal</span>A suggestion, not settled.</li>
+      <li><span class="tag idea">Idea</span>Saved for later.</li>
     </ul>
+  </section>
+
+  <section class="panel art" aria-labelledby="art-h">
+    <h2 class="panel-h" id="art-h">Concept art <span>for mood, not final art · made with ChatGPT</span></h2>
+    <div class="gallery">
+      <figure class="hero"><a href="art/archive-exterior.jpg"><img src="art/archive-exterior.jpg" width="1672" height="941" alt="Night view of the archive: round towers whose walls are glowing bookshelves, on floating isles above violet clouds, joined by lantern-lit arched bridges, with spiral stairs, a huge moon and books drifting through the air. Visitors with fox, robot, ghost and dog avatars walk the bridges."></a><figcaption>The archive at night: towers of glowing shelves on floating isles, lantern bridges over the cloud sea, books drifting in the air.</figcaption></figure>
+      <figure><a href="art/tower-outside.jpg"><img src="art/tower-outside.jpg" width="1672" height="941" loading="lazy" alt="A tall round library tower whose outside walls are glowing bookshelves, with railed walkways around every floor, a spiral stair wrapping the outside, lit rooms with sofas between the shelves, and a blossom tree on top."></a><figcaption>Books on the outside: a walkway around every floor and a stair winding up the tower.</figcaption></figure>
+      <figure><a href="art/tower-inside.jpg"><img src="art/tower-inside.jpg" width="1672" height="941" loading="lazy" alt="Inside a tower: a tall round hall with floor cushions, a fireplace and tea, hammock nets strung across the open middle, and stairs crossing between the floors under hanging lanterns."></a><figcaption>Inside a tower: cushions, a fireplace, hammock nets across the middle, stairs crossing between floors.</figcaption></figure>
+      <figure><a href="art/dream-hearth-1.jpg"><img src="art/dream-hearth-1.jpg" width="1672" height="941" loading="lazy" alt="The Dream Hearth: visitors write in open books by a fireplace, and their dreams rise out of the pages as glowing shapes, a whale swimming up a staircase, a house in a bubble, a string of moons."></a><figcaption>The Dream Hearth: dreams written into blank books rise out of the pages as light.</figcaption></figure>
+      <figure><a href="art/dream-hearth-2.jpg"><img src="art/dream-hearth-2.jpg" width="1672" height="941" loading="lazy" alt="Another view of the Dream Hearth: writing desks, cushions and armchairs, with a glowing whale, an underwater house and floating moons rising toward the shelves."></a><figcaption>Another view of the Dream Hearth.</figcaption></figure>
+      <figure><a href="art/spirit-dog.jpg"><img src="art/spirit-dog.jpg" width="1672" height="941" loading="lazy" alt="Character sheet of a spirit dog made of soft moonlight, with a leather satchel and a small lantern on its collar: running with a glowing book in its mouth, front, side and back views, and happy, curious and sleepy faces."></a><figcaption>The spirit dog, an archive helper who fetches books for visitors.</figcaption></figure>
+    </div>
   </section>
 
   <section class="sheet plan-sheet" aria-labelledby="plan-h">
@@ -379,97 +411,65 @@ footer a{color:var(--line)}
   </section>
 
   <div class="notes">
-    <section class="panel prose" aria-labelledby="dec-h">
-      <h2 class="panel-h" id="dec-h">Decided by Jane <span class="tag dec">Decided</span></h2>
-      <ul>
-        <li>A rabbit-hole archive of readable Wikipedia articles, still called The Midnight Archive. No Library of Congress catalog cards.</li>
-        <li>Light world file. The world ships the building; book text is fetched only when someone opens a book.</li>
-        <li>Slow lookups hide behind animation, so something always moves while you wait.</li>
-        <li>A real 3D space you can fly through.</li>
-        <li>Setting: a cloud academy at night, inspired by the hidden library in <i>Avatar</i> and reworked as an original place. Asymmetric layout, not a ring.</li>
-        <li>NPCs with a Spirited Away kind of energy. Original designs only.</li>
-        <li>Pictures only for visitors with "Allow Untrusted URLs" on. Everyone else still gets every book's text.</li>
-        <li>The books go on the towers' outside walls, facing out, as in the first concept art. The insides are cozy space for lying around and talking, each themed by its tower's topic.</li>
-        <li>Credits: one QR code and a link to a hosted credits page. No credits boards in the world.</li>
-        <li>PCVR is the beauty target. Quest gets the same world, with the modeled detail baked into textures.</li>
-        <li>A Fable 5.2 agent does most of the modeling, later. Upload is always Jane's.</li>
-      </ul>
-    </section>
-
     <section class="panel prose" aria-labelledby="inside-h">
-      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Decided</span></h2>
-      <p>The books are on the outside, so every tower's inside is free for lying around, cuddling and talking, with a theme from its topic. Jane: "could the inside just be like cuddle stuff and stairs going across sections".</p>
+      <h2 class="panel-h" id="inside-h">Inside the towers <span class="tag dec">Settled</span></h2>
+      <p>The books are on the outside, so the inside of every tower is free for lying around, cuddling and talking, with a theme from its topic.</p>
       <ul>
-        <li><b>In every tower</b> <span class="tag pro">Proposed</span>: window seats built into the back of the shelf wall, where the books glow through like stained glass; stairs crossing the open middle between floors; hammock nets across it; a slide down and a page updraft up; a pillow nest on top under glass.</li>
-        <li><b>Themes</b> <span class="tag pro">Proposed</span>: People, a portrait parlour. History, a hearth hall. Geography, a map room with a glowing floor map. Arts, a studio loft with a small stage. Philosophy and religion, a quiet pool. Everyday life, a kitchen hearth. Society, a talking pit. Biology and health, a greenhouse of moss beds and fern hammocks. Physical sciences, a planetarium. Technology, a clockwork den. Mathematics, geometry steps.</li>
+        <li><b>In every tower</b> <span class="tag pro">Proposal</span>: window seats built into the back of the shelf wall, where the books glow through like stained glass; stairs crossing the open middle between floors; hammock nets strung across it; a slide down and a page updraft up; a pillow nest on top, under glass.</li>
+        <li><b>Themes</b> <span class="tag pro">Proposal</span>: People, a portrait parlour. History, a hearth hall. Geography, a map room with a glowing floor map. Arts, a studio loft with a small stage. Philosophy and religion, a quiet pool. Everyday life, a kitchen hearth. Society, a talking pit. Biology and health, a greenhouse of moss beds and fern hammocks. Physical sciences, a planetarium. Technology, a clockwork den. Mathematics, geometry steps.</li>
       </ul>
-      <p class="sub">Jane liked the map room, quiet pool, kitchen hearth, greenhouse and planetarium; the other six are new. One shared furniture set with a few hero props per tower keeps Quest light. Each tower's card above has the details; the draft v0.4.1 has the full table.</p>
+      <p class="sub">Pick a tower above to see its theme. One shared set of furniture with a few special pieces per tower keeps the world light enough for Quest.</p>
     </section>
 
     <section class="panel prose" aria-labelledby="how-h">
-      <h2 class="panel-h" id="how-h">How exploring works <span class="tag tb">Testbed</span></h2>
+      <h2 class="panel-h" id="how-h">How exploring works <span class="tag tb">Prototype</span></h2>
       <ol>
         <li>Open a book and read the article.</li>
         <li>Links to other books in the archive are highlighted in the text, and listed as buttons under each page.</li>
-        <li>Press one. That book flies off its shelf to you and opens. The 5 second flight covers the download.</li>
+        <li>Press one. That book flies off its shelf to you and opens. The flight covers the few seconds it takes to load.</li>
         <li>A glowing trail draws your path between the shelves, so you can see how far down the hole you went.</li>
         <li>Back returns to the book before. Title search finds any book in the archive.</li>
       </ol>
-      <p class="sub">The trail on sheet A-101 is a made-up example, not a real reading path.</p>
+      <p class="sub">This already works in a plain grey test world. The trail on the map above is a made-up example.</p>
     </section>
 
     <section class="panel prose" aria-labelledby="col-h">
-      <h2 class="panel-h" id="col-h">The v1 collection <span class="tag tb">Testbed</span></h2>
+      <h2 class="panel-h" id="col-h">What's on the shelves</h2>
       <dl>
-        <dt>Source</dt><dd>Wikipedia's Vital Articles, Level 5: about 50,000 articles chosen by editors to cover all knowledge.</dd>
+        <dt>Books</dt><dd>The ~500,000 most-read English Wikipedia articles. <span class="tag dec">Settled</span> The test world starts with Wikipedia's ~50,000 Vital Articles, a list editors chose to cover all knowledge. <span class="tag tb">Prototype</span></dd>
         <dt>Towers</dt><dd>One per top topic, 11 in all: People, History, Geography, Arts, Philosophy and religion, Everyday life, Society and social sciences, Biological and health sciences, Physical sciences, Technology, Mathematics.</dd>
-        <dt>Floors</dt><dd>One floor per sub-list. Related books stand side by side.</dd>
-        <dt>Language</dt><dd>English Wikipedia.</dd>
-        <dt>Licence</dt><dd>Wikipedia text is CC BY-SA 4.0. Each book shows a short source tag; the full list sits on the hosted credits page.</dd>
+        <dt>Floors</dt><dd>One floor per sub-list, so related books stand side by side.</dd>
+        <dt>Licence</dt><dd>Wikipedia text is CC BY-SA 4.0. Each book shows a short source line, and one QR code leads to the full credits.</dd>
       </dl>
-      <p class="sub">Floor names come from Wikipedia's Level 5 sub-pages. Wikipedia renames and splits those pages now and then, so the build sets the final floors. Topics kept on one page (History, Arts, Philosophy and religion, Technology, Mathematics) show one floor list here for now.</p>
     </section>
 
     <section class="panel prose" aria-labelledby="host-h">
-      <h2 class="panel-h" id="host-h">Hosting and size <span class="tag tb">Testbed</span></h2>
-      <dl>
-        <dt>Text</dt><dd>Loads at runtime from GitHub Pages on the neutral site midnight-archive-vrc.github.io. VRChat trusts that host, so it works for every visitor.</dd>
-        <dt>Fetches</dt><dd>One book per fetch, about one fetch every 5 seconds per visitor.</dd>
-        <dt>World</dt><dd>Stays tiny. The current testbed world, with 34,900 baked URLs, is a 0.8 MB download.</dd>
-        <dt>Hosted</dt><dd>Roughly 100 to 300 MB of text for 50,000 articles. That is an estimate until the build finishes. GitHub Pages allows 1 GB per site.</dd>
-        <dt>Pictures</dt><dd>Only with "Allow Untrusted URLs" on. <span class="tag dec">Decided</span></dd>
-        <dt>Format</dt><dd>JSON written so VRChat's own parser can read it: brackets inside the text are escaped.</dd>
-      </dl>
+      <h2 class="panel-h" id="host-h">A light world <span class="tag tb">Prototype</span></h2>
+      <p>The world file holds only the buildings. A book's text streams in from the web when someone opens it, so the download stays tiny: the test world, with the address of every book baked in, is under 1 MB.</p>
+      <p>VRChat loads about one book every five seconds per visitor. Animations, like the flying book, cover the wait, so something is always moving.</p>
+      <p>Pictures in the books are an extra for visitors who turn on "Allow Untrusted URLs". Everyone else still gets every book's text. <span class="tag dec">Settled</span></p>
     </section>
 
     <section class="panel prose" aria-labelledby="later-h">
-      <h2 class="panel-h" id="later-h">Later layers <span>part of the vision, not built</span></h2>
+      <h2 class="panel-h" id="later-h">Later layers <span>part of the vision, not built yet</span></h2>
       <ul>
-        <li><b>Dream books.</b> A visitor writes a dream into a blank book. Overnight it gets an interpretation, and Jane approves it before it appears. Approved dreams become books on the shelves.</li>
-        <li><b>Dreams that open rabbit holes.</b> A dream's words link into the archive like any article. A dream about an octopus links to the Octopus book. <span class="tag pro">Proposed</span></li>
-        <li><b>Messages in bottles.</b> Someone leaves a message. Days later it reaches one later visitor, who can reply once. Where the bottles live in the archive is still open.</li>
-        <li><b>Picture walls.</b> Public-domain photos and maps, for example from the Library of Congress, as an optional extra for visitors with untrusted URLs on. <span class="tag pro">Proposed</span> Optional.</li>
-      </ul>
-      <p class="sub">Jane wants dream books and bottles in the archive. How they work in detail is still a proposal.</p>
-    </section>
-
-    <section class="panel prose" aria-labelledby="voice-h">
-      <h2 class="panel-h" id="voice-h">Narration <span class="tag idea">Idea</span></h2>
-      <p>Not decided. Two ways a book could be read aloud:</p>
-      <ul>
-        <li><b>Stitched word clips.</b> A local voice model records the 10,000 or so most common words once. The world plays them back to back with no gaps. It would sound like an announcer, not an audiobook, and rare words and names would be missing. The voice would come from one of Jane's existing voice setups, not Kokoro.</li>
-        <li><b>Real recordings.</b> Each visitor's own local video player streams a reading from YouTube or SoundCloud. Only VRChat's allowlisted video hosts work without the untrusted setting.</li>
+        <li><b>Dream books.</b> A visitor writes a dream into a blank book. Overnight it gets an interpretation, and each one is checked by hand before it appears. Approved dreams become books on the shelves.</li>
+        <li><b>Dreams that open rabbit holes.</b> A dream's words link into the archive like any article: a dream about an octopus links to the Octopus book. <span class="tag pro">Proposal</span></li>
+        <li><b>Messages in bottles.</b> Someone leaves a message. Days later it reaches one later visitor, who can reply once. Where the bottles wash up in the archive is still open.</li>
+        <li><b>Picture walls.</b> Public-domain photos and maps as an extra for visitors with untrusted URLs on. <span class="tag pro">Proposal</span></li>
+        <li><b>Narration.</b> Books read aloud, either by stitching together recorded words or by streaming real recordings. <span class="tag idea">Idea</span></li>
       </ul>
     </section>
 
     <section class="panel prose" aria-labelledby="look-h">
       <h2 class="panel-h" id="look-h">Look and build</h2>
       <ul>
-        <li>Look: likely Jane's original ChatGPT concept art. A cloud library at night, lantern-lit bridges, glowing dream diaries drifting up. Jane's word is "likely", so it is not final. Its shelves on the towers' outside walls are decided. <span class="tag dec">Decided</span></li>
-        <li>PCVR is the beauty target. Quest gets the same world, with the modeled detail baked into textures. <span class="tag dec">Decided</span></li>
-        <li>A Fable 5.2 agent does most of the modeling, later. <span class="tag dec">Decided</span></li>
-        <li>Upload is always Jane's. <span class="tag dec">Decided</span></li>
-        <li>Isle, place and NPC names carry over from v0.2. Which towers share an isle, the heights and the roofs are new in v0.3. All of it is a proposal. <span class="tag pro">Proposed</span></li>
+        <li>The look follows the concept art at the top: a cloud library at night, lantern-lit bridges, glowing books drifting up.</li>
+        <li>Books on the towers' outside walls, cozy insides. <span class="tag dec">Settled</span></li>
+        <li>A real 3D place you can walk and fly through, with an uneven skyline: each tower's height comes from how many books it holds. <span class="tag dec">Settled</span></li>
+        <li>Built for PC VR first. Quest gets the same world, with the fine detail painted into textures. <span class="tag dec">Settled</span></li>
+        <li>Characters with a gentle, Spirited Away kind of energy, all original designs, like the spirit dog above. <span class="tag dec">Settled</span></li>
+        <li>Which towers share an isle, their heights, roofs and the place names are working proposals. <span class="tag pro">Proposal</span></li>
       </ul>
     </section>
   </div>
@@ -492,11 +492,11 @@ footer a{color:var(--line)}
   </section>
 
   <footer>
+    <p><b>The Midnight Archive</b> by Doghouse Devs. Blueprint, 14 November 2026. Everything here is a work in progress.</p>
+    <p>Concept art made with ChatGPT image generation, for mood only. The world itself will be built and modelled separately.</p>
     <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Wikipedia text is CC BY-SA 4.0.</p>
-    <p>Isle groupings, heights, roofs and floor bands are proposals. Book counts set the real tower heights, so the skyline will be uneven.</p>
-    <p>v0.3.2 · 2026-11-14: the shelves move to the towers' outside walls, facing out, with a walkway around every level; the insides become cozy floors themed by topic (Jane's call).</p>
-    <p>v0.3 · 2026-11-14: a Wikipedia rabbit-hole archive replaces the Library of Congress catalog. 11 topic towers instead of 21 LC classes; catalog cards, call-number order, the Sorting Rock and the Watch Rocks are gone.</p>
-    <p>Shared for ideas. Tell Jane what you would add.</p>
+    <p>Want more detail? The <a href="draft/">working notes</a> look at adding full public-domain books from Project Gutenberg, a Literature tower, and how much space it all takes.</p>
+    <p>Shared for ideas. Tell us what you would add.</p>
   </footer>
 </main>
 
@@ -536,7 +536,7 @@ var TOWERS={
   "11":{x:-205,y:-70,isle:"observatory",shell:"octagon",roof:"spire",reach:"Observatory walkways."}
 };
 var ISLES={
-  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Dream Hearth, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate. The two class spires of v0.2 are gone."},
+  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Dream Hearth, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate."},
   high:{name:"High Isle",alt:70,classes:"5 Philosophy and religion",n:"The highest rock, alone above the rest. Reached by the Long Stair or by flight."},
   chron:{name:"Chronicle Chain",alt:"46 and 38",classes:"2 History, 1 People",n:"History and the people in it, on two rocks stepping down toward the present: History +46, People +38 m."},
   wayfarer:{name:"Wayfarer's Rock",alt:18,classes:"3 Geography",n:"Geography on a lone rock with a map balcony over the cloud sea."},
@@ -554,15 +554,15 @@ var ROCKS=[
   ["landing",0,229,23,21,17]
 ];
 
-/* ---------- Places (proposals carried over from v0.2) ---------- */
+/* ---------- Places (working proposals) ---------- */
 var ZONES={
   landing:{t:"Approach Landing",k:"Place · spawn",rows:[["Where","South of the archipelago"],["Baked","Language lectern, paw-print trail"]],n:"Frame the postcard view of the towers here. The Long Bridge curves north to the Registrar's Gate."},
   bridge:{t:"Long Bridge",k:"Place · path",rows:[["Runs","Approach Landing to the Registrar's Gate"],["Crosses","Under the high arch between Everyday life and Arts"]],n:"The first walk in, with lantern posts and the isles rising on both sides."},
-  lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. In v0.2 it followed call-number order; now links and the trail do the exploring, and the Way is for strolling."},
+  lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. Links and the trail do the exploring; the Way is for strolling."},
   longstair:{t:"Long Stair",k:"Path · academy to High Isle",rows:[["Climb","From the Lecture Hall up to High Isle (+70 m)"],["Rest","A reading gazebo floats beside the halfway turn"]],n:"The slow way to Philosophy and religion. Everyone else flies."},
   broken:{t:"Broken span",k:"Path · sealed",rows:[["From","The Storm Wing, east"],["State","Snapped off in the storm, debris below"]],n:"Restoring the Storm Wing rebuilds this bridge toward the Chronicle Chain."},
   gate:{t:"Registrar's Gate",k:"Place · academy",rows:[["NPC","The Registrar, a stern badger"],["You do","Sign the ledger, get a library card"]],n:"The ledger line is a word-picker message, so it works without a keyboard and leaves no room for trolls."},
-  dome:{t:"Orrery Dome",k:"Place · academy atrium",rows:[["Position","Origin (0, 0) · atrium floor at +24 m"],["Does","The brass dial shows any date's moon"]],n:"In v0.2 every data beam started here. In the rabbit-hole archive each book flies to you from its own shelf, so the dome is a meeting place, not the data hub."},
+  dome:{t:"Orrery Dome",k:"Place · academy atrium",rows:[["Position","Origin (0, 0) · atrium floor at +24 m"],["Does","The brass dial shows any date's moon"]],n:"Each book flies to you from its own shelf, so the dome is a meeting place at the heart of the academy."},
   hearth:{t:"Dream Hearth",k:"Place · west wing",rows:[["NPCs","Margin keeps solo readers company"],["Does","Journals whose words rise as line drawings; midnight oil fills while you idle"],["Later","Where dream books would be written and read"]],n:"The concept art's hearth scenes. Reuse the NIGHT RENT rug and pouf for the cushions."},
   lecture:{t:"Lecture Hall",k:"Place · north wing",rows:[["Does","Lectern boosts the speaker to the whole room"],["Events","Weekly Midnight Lectures, posted on the event board"]],n:"The Long Stair to High Isle starts behind it."},
   storm:{t:"Storm Wing",k:"Place · east wing · sealed",rows:[["State","Sealed. Lightning blew its pages into the sky."],["Restores","By pages returned, counted across everyone in the instance"]],n:"Bringing friends literally rebuilds it, and its broken bridge with it."},
@@ -576,7 +576,7 @@ Object.keys(ISLES).forEach(function(id){var I=ISLES[id];ZONES[id]={t:I.name,k:"I
 var TR=19, LEVELS=29, SPARE=3, PER=48, WALK_L=10;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
-/* Inside each tower: cozy space themed by its topic (Jane liked the idea, 14 Nov; 3, 5, 6, 8 and 9 are the ones she saw). */
+/* Inside each tower: cozy space themed by its topic (proposals). */
 var THEMES={
   "1":{t:"Portrait parlour",d:"Deep sofas and one huge shared quilt under walls of small glowing portrait frames (silhouettes, not real faces)."},
   "2":{t:"Hearth hall",d:"A big old fireplace, a timeline rug that winds across the floor, and stone benches heaped with blankets."},
@@ -590,7 +590,6 @@ var THEMES={
   "10":{t:"Clockwork den",d:"Slow brass gears turning in the walls, armchairs, a toy train looping the floor."},
   "11":{t:"Geometry steps",d:"Stepped platforms in nested shapes with wool mats, and drifting polyhedron lamps."}
 };
-var THEMES_SEEN={"3":1,"5":1,"6":1,"8":1,"9":1};
 
 var state={cls:"8",sub:"8.2",art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
 
@@ -776,7 +775,7 @@ function buildPlan(){
     txt(g,0,0,c,"tw-letter",{dy:"0.35em"});
     el("circle",{r:26,"class":"hit"},g);
     towerEls[c]=g;
-    /* Shelves face out (Jane, 14 Nov): one tick per bay around the outside of the shell, then the walkway ring */
+    /* Shelves face out: one tick per bay around the outside of the shell, then the walkway ring */
     var bg=el("g",{transform:"translate("+t.x+" "+t.y+")"},bays), rO=(t.shell==="octagon"?TR+1.6:TR+0.6);
     for(var s=0;s<PER;s++){var a1=pol(rO,s*7.5),a2=pol(rO+2.4,s*7.5);el("line",{x1:f1(a1[0]),y1:f1(a1[1]),x2:f1(a2[0]),y2:f1(a2[1]),"class":"tick"},bg);}
     el("circle",{r:rO+4.6,"class":"tw-walk"},bg);
@@ -944,7 +943,7 @@ function drawSection(){
 
   /* Plinth, bands, levels */
   el("rect",{x:X0,y:f1(Ym(6)),width:f1(X3-X0),height:f1(6*S),"class":"s-base"},sec);
-  /* The shelf walls (X0..X1, X2..X3) face OUT, onto a walkway around every level (Jane, 14 Nov).
+  /* The shelf walls (X0..X1, X2..X3) face OUT, onto a walkway around every level.
      The inside (X1..X2) is cozy space, drawn further down. */
   var bandsG=el("g",null,sec);
   B.forEach(function(b,j){
@@ -1049,13 +1048,13 @@ function drawSection(){
   txt(sec,colX,f1(ys1+8),"+3 SPARE LEVELS","s-note");
   txt(sec,colX,f1(ys1+19),"room for new books (proposal)","s-note");
 
-  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor list"+(n>1?"s":"")+" stacked on "+LEVELS+" placeholder levels with "+SPARE+" spare levels and a "+t.roof+" roof. The shelves are on the outside walls and face out, with a railed walkway around every level and a stair winding up the outside. Inside, cozy floors"+(THEMES[k.c]?" themed as a "+THEMES[k.c].t.toLowerCase():"")+": window seats, stairs crossing the middle, hammock nets, a slide down and a page updraft up, and a pillow nest on top. Below, a floating rock with root lanterns, and the cloud sea "+alt+" metres down.");
+  sec.setAttribute("aria-label","Section through tower "+k.c+", "+k.t+", on "+isleName+": "+n+" floor list"+(n>1?"s":"")+" stacked on about "+LEVELS+" levels with "+SPARE+" spare levels and a "+t.roof+" roof. The shelves are on the outside walls and face out, with a railed walkway around every level and a stair winding up the outside. Inside, cozy floors"+(THEMES[k.c]?" themed as a "+THEMES[k.c].t.toLowerCase():"")+": window seats, stairs crossing the middle, hammock nets, a slide down and a page updraft up, and a pillow nest on top. Below, a floating rock with root lanterns, and the cloud sea "+alt+" metres down.");
   var capEl=document.getElementById("sect-cap");capEl.innerHTML="";
   var bEl=document.createElement("b");bEl.textContent="Tower "+k.c+", "+isleName+": ";
   capEl.appendChild(bEl);
   capEl.appendChild(document.createTextNode((k.one
-    ?"one floor list on "+LEVELS+" levels plus "+SPARE+" spare. Wikipedia keeps this topic on one page; its section headings could split it into floors (proposal). Heights are placeholders until the build counts the books."
-    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a glowing sign on its walkway. Heights are placeholders until the build counts the books.")+" The shelves face out from the outside walls; inside is cozy space (gold)."));
+    ?"one floor list on "+LEVELS+" levels plus "+SPARE+" spare. Wikipedia keeps this topic on one page; its section headings could split it into floors (proposal). Heights are rough until the books are counted."
+    :n+" floor lists on "+LEVELS+" levels plus "+SPARE+" spare. Each Wikipedia sub-list starts a new floor with a glowing sign on its walkway. Heights are rough until the books are counted.")+" The shelves face out from the outside walls; inside is cozy space (gold)."));
 }
 
 /* ---------- Pickers ---------- */
@@ -1130,12 +1129,12 @@ function renderInfo(){
     var lvls=lv(band.from)+(band.to>band.from?"–"+lv(band.to):"");
     var baked="Baked into the world: the building, this sign and every book's address. Fetched only when someone opens a book: its text.";
     setInfo("Floor · tower "+k.c+" · "+isle.name, band.code+" · "+band.cap,[
-      ["Floor",lvls+" (placeholder) · walkway and sign at "+lv(band.from)],
+      ["Floor",lvls+" (rough) · walkway and sign at "+lv(band.from)],
       ["Shelves","On the outside wall, facing out, along a railed walkway"],
       ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d:"Cozy space"],
       ["List","Vital Articles, Level 5 · "+k.t+(k.one?"":" · "+band.cap)],
       ["Books","Counted by the build. Related books stand side by side."],
-      ["Opening","One book per fetch from midnight-archive-vrc.github.io. The book's 5 s flight to you covers the download."],
+      ["Opening","One book per load. The book's few-second flight to you covers the wait."],
       ["Links","Highlighted links fly books here from any tower. The trail follows."],
       ["Tower","Tower "+k.c+" · "+k.t]
     ], k.one?"Wikipedia keeps this topic on one page. Its section headings could split it into floors (proposal). "+baked:baked);
@@ -1146,9 +1145,9 @@ function renderInfo(){
       ["Position","x "+f1(t.x)+" · z "+f1(-t.y)+" m (Unity) · "+Math.round(dist)+" m from the dome, bearing "+Math.round(brg)+"°"],
       ["Tower",{round:"Round",octagon:"Octagonal",buttress:"Buttressed"}[t.shell]+" shell, "+{spire:"spire",dome:"dome",crenel:"crenellated",lantern:"glass lantern",bell:"bell"}[t.roof]+" roof"],
       ["Floors",k.one?"1 list. Wikipedia keeps this topic on one page.":k.subs.length+" sub-lists, one floor each"],
-      ["Levels",lv(0)+"–"+lv(LEVELS-1)+" (placeholder) + "+lv(LEVELS)+"–"+lv(LEVELS+SPARE-1)+" spare"],
+      ["Levels",lv(0)+"–"+lv(LEVELS-1)+" (rough) + "+lv(LEVELS)+"–"+lv(LEVELS+SPARE-1)+" spare"],
       ["Shelves","On the outside walls, facing out: "+PER+" bays per level, with a railed walkway around every level and a stair winding up the outside"],
-      ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+(THEMES_SEEN[k.c]?"":" (new proposal)"):"Cozy space"],
+      ["Inside",THEMES[k.c]?THEMES[k.c].t+". "+THEMES[k.c].d+" (proposal)":"Cozy space"],
       ["Reach",t.reach]
     ],"Pick a floor to see what it holds. Book counts set the real tower heights, so the skyline will be uneven. Isle, shape and position are proposals.");
     cap.textContent="Selected: tower "+k.c+", "+k.t+", on "+isle.name+".";
