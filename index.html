@@ -56,7 +56,7 @@ main{
 .art{grid-area:art}
 .gallery{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:640px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.gallery .hero{grid-column:1/-1}}
-@media (min-width:900px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}.gallery .hero{grid-column:span 2;grid-row:span 2}}
+@media (min-width:900px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}.gallery .hero{grid-column:1/-1}}
 .gallery figure{margin:0;border:1px solid var(--hair);background:color-mix(in srgb,var(--line) 3%,var(--paper))}
 .gallery a{display:block}
 .gallery img{display:block;width:100%;height:auto;aspect-ratio:1672/941}
@@ -350,8 +350,6 @@ footer a{color:var(--line)}
       <figure class="hero"><a href="art/archive-exterior.jpg"><img src="art/archive-exterior.jpg" width="1672" height="941" alt="Night view of the archive: round towers whose walls are glowing bookshelves, on floating isles above violet clouds, joined by lantern-lit arched bridges, with spiral stairs, a huge moon and books drifting through the air. Visitors with fox, robot, ghost and dog avatars walk the bridges."></a><figcaption>The archive at night: towers of glowing shelves on floating isles, lantern bridges over the cloud sea, books drifting in the air.</figcaption></figure>
       <figure><a href="art/tower-outside.jpg"><img src="art/tower-outside.jpg" width="1672" height="941" loading="lazy" alt="A tall round library tower whose outside walls are glowing bookshelves, with railed walkways around every floor, a spiral stair wrapping the outside, lit rooms with sofas between the shelves, and a blossom tree on top."></a><figcaption>Books on the outside: a walkway around every floor and a stair winding up the tower.</figcaption></figure>
       <figure><a href="art/tower-inside.jpg"><img src="art/tower-inside.jpg" width="1672" height="941" loading="lazy" alt="Inside a tower: a tall round hall with floor cushions, a fireplace and tea, hammock nets strung across the open middle, and stairs crossing between the floors under hanging lanterns."></a><figcaption>Inside a tower: cushions, a fireplace, hammock nets across the middle, stairs crossing between floors.</figcaption></figure>
-      <figure><a href="art/dream-hearth-1.jpg"><img src="art/dream-hearth-1.jpg" width="1672" height="941" loading="lazy" alt="The Dream Hearth: visitors write in open books by a fireplace, and their dreams rise out of the pages as glowing shapes, a whale swimming up a staircase, a house in a bubble, a string of moons."></a><figcaption>The Dream Hearth: dreams written into blank books rise out of the pages as light.</figcaption></figure>
-      <figure><a href="art/dream-hearth-2.jpg"><img src="art/dream-hearth-2.jpg" width="1672" height="941" loading="lazy" alt="Another view of the Dream Hearth: writing desks, cushions and armchairs, with a glowing whale, an underwater house and floating moons rising toward the shelves."></a><figcaption>Another view of the Dream Hearth.</figcaption></figure>
       <figure><a href="art/spirit-dog.jpg"><img src="art/spirit-dog.jpg" width="1672" height="941" loading="lazy" alt="Character sheet of a spirit dog made of soft moonlight, with a leather satchel and a small lantern on its collar: running with a glowing book in its mouth, front, side and back views, and happy, curious and sleepy faces."></a><figcaption>The spirit dog, an archive helper who fetches books for visitors.</figcaption></figure>
     </div>
   </section>
@@ -453,9 +451,6 @@ footer a{color:var(--line)}
     <section class="panel prose" aria-labelledby="later-h">
       <h2 class="panel-h" id="later-h">Later layers <span>part of the vision, not built yet</span></h2>
       <ul>
-        <li><b>Dream books.</b> A visitor writes a dream into a blank book. Overnight it gets an interpretation, and each one is checked by hand before it appears. Approved dreams become books on the shelves.</li>
-        <li><b>Dreams that open rabbit holes.</b> A dream's words link into the archive like any article: a dream about an octopus links to the Octopus book. <span class="tag pro">Proposal</span></li>
-        <li><b>Messages in bottles.</b> Someone leaves a message. Days later it reaches one later visitor, who can reply once. Where the bottles wash up in the archive is still open.</li>
         <li><b>Picture walls.</b> Public-domain photos and maps as an extra for visitors with untrusted URLs on. <span class="tag pro">Proposal</span></li>
         <li><b>Narration.</b> Books read aloud, either by stitching together recorded words or by streaming real recordings. <span class="tag idea">Idea</span></li>
       </ul>
@@ -531,12 +526,12 @@ var TOWERS={
   "6":{x:105,y:170,isle:"commons",shell:"octagon",roof:"dome",reach:"Commons walkways, the south-east bridge from the academy, and the high arch to Arts."},
   "7":{x:175,y:120,isle:"commons",shell:"buttress",roof:"crenel",reach:"Lantern Way from Geography; Commons walkways."},
   "8":{x:-195,y:25,isle:"observatory",shell:"round",roof:"dome",reach:"Lantern Way from Arts; Observatory walkways."},
-  "9":{x:-150,y:-20,isle:"observatory",shell:"round",roof:"spire",reach:"Observatory walkways, and the west bridge from the Dream Hearth."},
+  "9":{x:-150,y:-20,isle:"observatory",shell:"round",roof:"spire",reach:"Observatory walkways, and the west bridge from the academy."},
   "10":{x:-155,y:-105,isle:"observatory",shell:"buttress",roof:"lantern",reach:"Observatory walkways; Lantern Way on to High Isle."},
   "11":{x:-205,y:-70,isle:"observatory",shell:"octagon",roof:"spire",reach:"Observatory walkways."}
 };
 var ISLES={
-  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Dream Hearth, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate."},
+  academy:{name:"Academy Isle",alt:24,classes:"None. The academy rooms only.",n:"The heart: Orrery Dome, Lecture Hall, the sealed Storm Wing, and the Registrar's Gate."},
   high:{name:"High Isle",alt:70,classes:"5 Philosophy and religion",n:"The highest rock, alone above the rest. Reached by the Long Stair or by flight."},
   chron:{name:"Chronicle Chain",alt:"46 and 38",classes:"2 History, 1 People",n:"History and the people in it, on two rocks stepping down toward the present: History +46, People +38 m."},
   wayfarer:{name:"Wayfarer's Rock",alt:18,classes:"3 Geography",n:"Geography on a lone rock with a map balcony over the cloud sea."},
@@ -563,10 +558,10 @@ var ZONES={
   broken:{t:"Broken span",k:"Path · sealed",rows:[["From","The Storm Wing, east"],["State","Snapped off in the storm, debris below"]],n:"Restoring the Storm Wing rebuilds this bridge toward the Chronicle Chain."},
   gate:{t:"Registrar's Gate",k:"Place · academy",rows:[["NPC","The Registrar, a stern badger"],["You do","Sign the ledger, get a library card"]],n:"The ledger line is a word-picker message, so it works without a keyboard and leaves no room for trolls."},
   dome:{t:"Orrery Dome",k:"Place · academy atrium",rows:[["Position","Origin (0, 0) · atrium floor at +24 m"],["Does","The brass dial shows any date's moon"]],n:"Each book flies to you from its own shelf, so the dome is a meeting place at the heart of the academy."},
-  hearth:{t:"Dream Hearth",k:"Place · west wing",rows:[["NPCs","Margin keeps solo readers company"],["Does","Journals whose words rise as line drawings; midnight oil fills while you idle"],["Later","Where dream books would be written and read"]],n:"The concept art's hearth scenes. Reuse the NIGHT RENT rug and pouf for the cushions."},
+  westwing:{t:"West wing",k:"Place · west wing · open",rows:[["State","Not decided yet"]],n:"Room for a future place in the academy."},
   lecture:{t:"Lecture Hall",k:"Place · north wing",rows:[["Does","Lectern boosts the speaker to the whole room"],["Events","Weekly Midnight Lectures, posted on the event board"]],n:"The Long Stair to High Isle starts behind it."},
   storm:{t:"Storm Wing",k:"Place · east wing · sealed",rows:[["State","Sealed. Lightning blew its pages into the sky."],["Restores","By pages returned, counted across everyone in the instance"]],n:"Bringing friends literally rebuilds it, and its broken bridge with it."},
-  lofts:{t:"Loft nooks",k:"Place · upper gallery",rows:[["Who","One nook for each player present"],["Holds","Your finds, your favourite dream drawing"]],n:"Uses The Collection's alcove assignment and the NIGHT RENT lit-drawer bed."},
+  lofts:{t:"Loft nooks",k:"Place · upper gallery",rows:[["Who","One nook for each player present"],["Holds","Your finds and favourite books"]],n:"Uses The Collection's alcove assignment and the NIGHT RENT lit-drawer bed."},
   gazebo:{t:"Reading gazebo",k:"Place · small floating rock",rows:[["Seats","Two or three readers"],["Sound","Voices fall off fast, so it stays quiet"]],n:"Four of them drift between the isles. Good spots to hide with a book."},
   tram:{t:"Lantern tram",k:"Path · under the cloud surface",rows:[["Runs","A wandering loop beneath the isles"],["Stops","Six, spread beneath the isles"]],n:"Patron spirits ride in each night, then drift up into the library."}
 };
@@ -743,7 +738,7 @@ function buildPlan(){
   /* Academy rooms */
   var ac=el("g",null,plan);
   zoneRect(ac,"lecture",-20,-68,40,32,false,"Lecture Hall");
-  zoneRect(ac,"hearth",-68,-18,32,36,false,"Dream Hearth");
+  zoneRect(ac,"westwing",-68,-18,32,36,false,"West wing, open");
   zoneRect(ac,"storm",36,-18,32,36,true,"Storm Wing, sealed");
   zoneRect(ac,"gate",-12,36,24,22,false,"Registrar's Gate");
   reg("lofts",el("circle",{cx:0,cy:0,r:34,"class":"gallery","data-zone":"lofts",tabindex:"0",role:"button","aria-label":"Loft nooks, upper gallery"},ac));
@@ -810,7 +805,7 @@ function buildPlan(){
   txt(names,0,234,"SPAWN","lbl",{"text-anchor":"middle",style:"font-size:10px"});
 
   /* Academy close-up labels */
-  [["LECTURE",0,-54],["HALL",0,-45],["DREAM",-52,-2],["HEARTH",-52,7],["STORM",52,-6],["WING",52,2],["SEALED",52,10],["ORRERY DOME",0,2.5]].forEach(function(l){txt(names,l[1],l[2],l[0],"lbl zl vis-d",{"text-anchor":"middle"});});
+  [["LECTURE",0,-54],["HALL",0,-45],["WEST",-52,-2],["WING",-52,7],["STORM",52,-6],["WING",52,2],["SEALED",52,10],["ORRERY DOME",0,2.5]].forEach(function(l){txt(names,l[1],l[2],l[0],"lbl zl vis-d",{"text-anchor":"middle"});});
   txt(names,15,49,"REGISTRAR'S GATE","lbl zl vis-d");
   txt(names,26,33,"LOFT NOOKS","lbl zl mute vis-d");
   txt(names,5,72,"LONG BRIDGE","lbl zl mute vis-d");
