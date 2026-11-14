@@ -148,11 +148,6 @@ figcaption b{color:var(--line);font-weight:500}
 .key .tag{margin-right:6px}
 .panel-h .tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
 
-/* Article-count switch */
-.scale-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:12px 0 4px;padding:10px;border:1px solid var(--line);border-radius:2px}
-.scale-ctl .seg{margin-left:0}
-.scale-ctl .lab{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.08em;text-transform:uppercase}
-.scale-note{flex:1 1 240px;font-size:12.5px;color:var(--muted)}
 
 /* C-101 shelving rules */
 .flow{padding:12px;display:grid;gap:12px}
@@ -407,16 +402,8 @@ footer a{color:var(--line)}
     <p>This draft shows one way to sort two kinds of things into one archive: Wikipedia articles, and full public-domain books from Project Gutenberg. Everything here is a proposal unless it is tagged Decided. The live plan is <a href="../">v0.3</a>.</p>
     <p>Articles become slim volumes on the inner ring of a floor. Books become thick volumes on the outer ring of the same floor. Both use one subject map, so a topic's books stand next to its articles, and links run between them.</p>
     <p>Books: Project Gutenberg has about 75,000 public-domain books. Its catalog gives each one a Library of Congress class, subject headings, an author and a language. Nothing is downloaded yet. <span class="tag pro">Proposed</span></p>
-    <div class="scale-ctl">
-      <span class="lab" id="scale-lab">Wikipedia articles</span>
-      <div class="seg" role="group" aria-labelledby="scale-lab">
-        <button type="button" data-scale="50000" aria-pressed="false">50k</button>
-        <button type="button" data-scale="100000" aria-pressed="true">100k</button>
-        <button type="button" data-scale="500000" aria-pressed="false">500k</button>
-      </div>
-      <span class="scale-note" id="scale-note" aria-live="polite"></span>
-    </div>
-    <p class="sub">The switch rescales the towers on both sheets, the census and the storage budget. Every count on this page is an estimate.</p>
+    <p>Articles: the ~500,000 most-read Wikipedia articles. <span class="tag dec">Decided</span> v1 in the testbed uses the ~50k Vital Articles as a first step.</p>
+    <p class="sub">Every drawing and count on this page is for ~500,000 articles, and every count is an estimate.</p>
     <ul class="key" aria-label="Status key">
       <li><span class="tag dec">Decided</span>Jane said yes.</li>
       <li><span class="tag tb">Testbed</span>Being built now in the tech testbed (v1).</li>
@@ -435,7 +422,7 @@ footer a{color:var(--line)}
       <div class="lane">
         <h3>An article <span>slim volume · inner ring</span></h3>
         <ol class="steps">
-          <li><b>1 · Source</b>Wikipedia. v1: Vital Articles, Level 5. Later: the most-read articles.</li>
+          <li><b>1 · Source</b>Wikipedia: the ~500,000 most-read articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
           <li><b>2 · Tower</b>Its Vital Articles top topic. Articles outside that list: a topic model picks the tower.</li>
           <li><b>3 · Floor</b>Its Vital Articles sub-list.</li>
           <li><b>4 · Shelf</b>Inner ring of that floor.</li>
@@ -464,11 +451,6 @@ footer a{color:var(--line)}
       <div class="seg" role="group" aria-label="Plan view">
         <button type="button" id="view-site" data-view="site" aria-pressed="true">Whole site</button>
         <button type="button" id="view-academy" data-view="academy" aria-pressed="false">Academy</button>
-      </div>
-      <div class="seg" role="group" aria-label="Wikipedia articles">
-        <button type="button" data-scale="50000" aria-pressed="false">50k</button>
-        <button type="button" data-scale="100000" aria-pressed="true">100k</button>
-        <button type="button" data-scale="500000" aria-pressed="false">500k</button>
       </div>
     </div>
     <figure class="drawing">
@@ -519,7 +501,7 @@ footer a{color:var(--line)}
   <div class="notes">
     <section class="panel prose wide" aria-labelledby="census-h">
       <h2 class="panel-h" id="census-h">Tower census <span id="census-sub">estimates</span></h2>
-      <p class="series"><span><span class="sw v"></span>Articles (inner ring)</span><span><span class="sw b"></span>Books (outer ring)</span><span>Bars share one scale across all three article counts. Click a row to pick that tower.</span></p>
+      <p class="series"><span><span class="sw v"></span>Articles (inner ring)</span><span><span class="sw b"></span>Books (outer ring)</span><span>Click a row to pick that tower.</span></p>
       <div class="census" id="census"></div>
       <p class="sub" id="census-total"></p>
       <p class="sub">How these were guessed: article shares follow Wikipedia's Level 5 quotas for the curated 50k, and a guess at what most-read articles are about (lots of people, films, music, places) for the rest. Book counts are a rough guess at Gutenberg's split by Library of Congress class; most of its books are fiction, poetry and drama. The real numbers come from the builds.</p>
@@ -609,7 +591,7 @@ footer a{color:var(--line)}
       <h2 class="panel-h" id="budget-h">Storage budget <span>choices for Jane, not decided</span></h2>
       <dl>
         <dt>Text</dt><dd>Text that every visitor can read must sit on a trusted host. GitHub Pages is the trusted host that can hold this much. Each Pages site holds 1 GB. A few sites in the org are fine; dozens are not.</dd>
-        <dt>Articles</dt><dd>About 2 KB per article lead: 50k ≈ 0.1 GB, 100k ≈ 0.2 GB, 500k ≈ 1 GB. Longer article text costs more (the v1 build estimates 100 to 300 MB for its 50k).</dd>
+        <dt>Articles</dt><dd>About 2 KB per article lead, so ~500,000 articles ≈ 1 GB, a whole site. Longer article text costs more.</dd>
         <dt>Books</dt><dd>A full Gutenberg book is very roughly 300 to 400 KB of text. All 75,000 come to about 25 to 30 GB. That does not fit.</dd>
         <dt>Pictures</dt><dd>Only for visitors with "Allow Untrusted URLs" on, served from Cloudflare. <span class="tag dec">Decided</span></dd>
       </dl>
@@ -662,7 +644,7 @@ footer a{color:var(--line)}
       <h2 class="panel-h" id="dec-h">Decided so far <span class="tag dec">Decided</span></h2>
       <ul>
         <li>A rabbit-hole archive of readable Wikipedia articles, still called The Midnight Archive.</li>
-        <li>A scale-up beyond the v1 list. Jane approved about 500,000 most-read articles ("works for me"); her latest message says 100,000. Which number is still open.</li>
+        <li>About 500,000 most-read Wikipedia articles. v1 in the testbed uses the ~50k Vital Articles as a first step.</li>
         <li>Pictures only for visitors with "Allow Untrusted URLs" on, served from Cloudflare.</li>
         <li>Credits through one QR code and a hosted page. PCVR is the beauty target; Quest gets the detail baked into textures. Upload is always Jane's.</li>
       </ul>
@@ -671,7 +653,6 @@ footer a{color:var(--line)}
     <section class="panel prose" aria-labelledby="open-h">
       <h2 class="panel-h" id="open-h">Open questions for Jane</h2>
       <ul>
-        <li>100,000 or 500,000 articles?</li>
         <li>Complete books: option A, option B, or something else?</li>
         <li>Is a 12th tower for Literature right, or should books share the Arts tower?</li>
         <li>Literature floors: by language first, or by form (poetry, drama) first?</li>
@@ -702,7 +683,7 @@ footer a{color:var(--line)}
   </section>
 
   <footer>
-    <p>Draft v0.4 · 2026-11-14: adds Project Gutenberg books, a 12th tower for Literature, an article-count switch (50k, 100k, 500k), two shelf rings per floor, tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
+    <p>Draft v0.4 · 2026-11-14: adds Project Gutenberg books, a 12th tower for Literature, everything drawn for ~500,000 articles (Jane's call), two shelf rings per floor, tower sizes and a storage budget. Not the live plan; the live plan is <a href="../">v0.3</a>.</p>
     <p>Towers and floors follow Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level/5">Vital Articles, Level 5</a>. Books would come from <a href="https://www.gutenberg.org/">Project Gutenberg</a>. Wikipedia text is CC BY-SA 4.0.</p>
     <p>Isle groupings, heights, roofs, floors and every count are proposals or estimates. Book counts set the real tower heights, so the skyline will be uneven.</p>
     <p>Shared for ideas. Tell Jane what you would add.</p>
@@ -798,7 +779,7 @@ var EXAMPLES={
 var TR=19, SPARE=3, PER=48, PER_VOL=PER*100, PER_BOOK=PER*40;
 var IDX={}; CLASSES.forEach(function(k,i){IDX[k.c]=i;});
 var VIEWS={site:"-255 -255 510 510",academy:"-110 -110 220 220"};
-var state={n:100000,cls:"8",sub:"8.2",ring:null,ex:null,art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
+var state={n:500000,cls:"8",sub:"8.2",ring:null,ex:null,art:null,zone:null,view:"site",filter:"",layers:{trail:true,flight:false,npc:false,below:true,bays:true}};
 
 function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k]);}}if(parent){parent.appendChild(e);}return e;}
 function txt(parent,x,y,s,cls,extra){var t=el("text",Object.assign({x:x,y:y,"class":cls},extra||{}),parent);t.textContent=s;return t;}
@@ -1084,7 +1065,7 @@ function updatePlan(){
   }
 }
 
-/* ---------- Tower section (one vertical scale for every tower and every article count) ---------- */
+/* ---------- Tower section (one vertical scale for every tower, so they compare) ---------- */
 var sec=document.getElementById("section");
 var YG=480, SX=3.4, PXL=Math.min(10.2,315/(LMAX+2)), SY=PXL/3;
 function Ym(m){return YG-m*SY;}
@@ -1391,7 +1372,7 @@ function renderBudget(){
   var wrap=document.getElementById("budget");wrap.innerHTML="";
   var art=state.n*GB_ART, tbl=state.n>=500000?0.2:0.1, base=[["vol",art],["tbl",tbl]];
   var rows=[
-    {name:"Articles only",desc:"The articles at the chosen count, with no books.",segs:base},
+    {name:"Articles only",desc:"The ~500,000 articles, with no books.",segs:base},
     {name:"Option A",choice:true,desc:"About 2,000 complete classics in full, plus the opening chapter of the other ~73,000 books. Works for every visitor.",segs:base.concat([["book",2000*GB_BOOK],["open",73000*GB_OPEN]])},
     {name:"Option B",choice:true,desc:"The opening chapter of all ~75,000 books here, for everyone. Complete texts on Cloudflare R2, readable only by visitors with untrusted URLs on.",segs:base.concat([["open",75000*GB_OPEN]]),r2:75000*GB_BOOK},
     {name:"Every book in full on GitHub Pages",bad:true,desc:"Does not fit. It would take dozens of sites.",segs:base.concat([["book",75000*GB_BOOK]])}
@@ -1423,15 +1404,6 @@ function renderBudget(){
   });
 }
 
-var SCALE_NOTES={
-  50000:'v1: Wikipedia\'s Vital Articles, Level 5 (curated). <span class="tag tb">Testbed</span>',
-  100000:'The number in Jane\'s latest message. Assumed here: the curated 50k plus the next 50k most-read articles.',
-  500000:'The approved scale-up: about 500,000 most-read articles, assumed to include the curated 50k. <span class="tag dec">Decided</span>'
-};
-function syncScale(){
-  document.querySelectorAll("[data-scale]").forEach(function(b){b.setAttribute("aria-pressed",Number(b.dataset.scale)===state.n?"true":"false");});
-  document.getElementById("scale-note").innerHTML=SCALE_NOTES[state.n];
-}
 function syncExamples(){document.querySelectorAll("[data-ex]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.ex===state.ex?"true":"false");});}
 
 /* ---------- Article search (the v1 collection: Wikipedia's Vital Articles, Level 5) ----------
@@ -1564,7 +1536,6 @@ function clearEx(){state.ex=null;state.ring=null;state.art=null;}
 function pickClass(c){clearEx();state.cls=c;state.sub=null;state.zone=null;if(state.view==="academy"){setView("site");}render(true);}
 function pickSub(c,s){clearEx();state.cls=c;state.sub=s;state.zone=null;state.filter="";filterIn.value="";if(state.view==="academy"){setView("site");}render(true);}
 function pickZone(z){clearEx();state.zone=z;render(false);}
-function setScale(n){state.n=n;syncScale();buildPlan();renderCensus();renderBudget();render(false);}
 function showExample(id){
   var ex=EXAMPLES[id];
   state.ex=id;state.ring=ex.ring;state.art=null;state.cls=ex.cls;state.sub=ex.sub;state.zone=null;state.filter="";filterIn.value="";
@@ -1580,7 +1551,6 @@ censusEl.addEventListener("click",function(e){var b=e.target.closest(".crow");if
 filterIn.addEventListener("input",function(){state.filter=filterIn.value;renderSubChips();});
 document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){setView(b.dataset.view);updatePlan();});});
 document.querySelectorAll("[data-layer]").forEach(function(b){b.addEventListener("click",function(){var k=b.dataset.layer;state.layers[k]=!state.layers[k];b.setAttribute("aria-pressed",state.layers[k]?"true":"false");updatePlan();});});
-document.querySelectorAll("[data-scale]").forEach(function(b){b.addEventListener("click",function(){setScale(Number(b.dataset.scale));});});
 document.querySelectorAll("[data-ex]").forEach(function(b){b.addEventListener("click",function(){showExample(b.dataset.ex);});});
 
 function activate(t){
@@ -1597,7 +1567,6 @@ function activate(t){
 
 buildPlan();
 buildClassChips();
-syncScale();
 renderCensus();
 renderBudget();
 render(true);
