@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The book is the reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0b22;--bg2:#141235;--vi:#2a2160;--ink:#e9e5f7;--muted:#a9a4cc;--amber:#ffc266;--moon:#fff3cf;--gold:#ffd27a;--brass:#c9a35a;--brass2:#8a6a33;--walnut:#2a1a12;--line:rgba(233,229,247,.14);--m:1}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg));background-color:var(--bg);
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+.wrap{max-width:1500px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 10px}
+header h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:38px;letter-spacing:.03em;margin:0;line-height:1.1}
+header p{color:var(--muted);margin:8px 0 0;max-width:86ch}
+header p b{color:var(--ink);font-weight:600}
+
+/* ---------- the stage ---------- */
+.sceneOuter{position:relative;width:100%;aspect-ratio:1200/680;border-radius:14px;overflow:hidden;background:#0c0b22;
+  border:1px solid rgba(201,163,90,.35);box-shadow:0 20px 60px rgba(0,0,0,.55);user-select:none;-webkit-user-select:none}
+.scene{position:absolute;left:0;top:0;width:1200px;height:680px;transform-origin:0 0;overflow:hidden}
+.layer{position:absolute;inset:0;transition:opacity calc(.6s * var(--m))}
+.tpL{opacity:0;pointer-events:none}
+.world{position:absolute;inset:0;transition:filter calc(.3s * var(--m))}
+.world svg,.tpL svg{position:absolute;left:0;top:0;display:block}
+.cl{animation:drift 26s ease-in-out infinite alternate}
+.cl.b{animation-duration:34s;animation-direction:alternate-reverse}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50px)}}
+
+/* lantern + bay */
+.lglow{position:absolute;height:420px;background:radial-gradient(closest-side,rgba(255,194,102,.32),rgba(255,194,102,.08) 60%,transparent);pointer-events:none;opacity:0;transition:opacity calc(.5s * var(--m))}
+.lglow.on{opacity:1}
+.bay{transition:filter calc(.5s * var(--m))}
+.bay:not(.act){filter:brightness(.48) saturate(.7);cursor:pointer}
+.bay:not(.act):hover{filter:brightness(.66) saturate(.8)}
+.bay.narrow{padding:24px 10px 44px}
+.bay.narrow .plaque{font-size:8px;letter-spacing:.08em;padding:4px 6px}
+.lantern{position:absolute;left:calc(50% - 14px);top:-74px;width:28px;height:40px;border:2px solid #c9a35a;border-radius:6px 6px 4px 4px;background:radial-gradient(circle at 50% 60%,#fff3cf,#ffc266 45%,#b06a1e);box-shadow:0 0 26px 8px rgba(255,194,102,.45)}
+.lantern::before{content:"";position:absolute;left:11px;top:-24px;width:2px;height:22px;background:#8a6a33}
+.lantern::after{content:"";position:absolute;left:-6px;top:-6px;width:36px;height:6px;border-radius:3px;background:#c9a35a}
+.bay{position:absolute;padding:24px 22px 44px;border-radius:8px 8px 4px 4px;
+  background:radial-gradient(130% 60% at 50% 0%,rgba(255,194,102,.22),transparent 70%),linear-gradient(180deg,#3b2416,#1d110a);
+  box-shadow:0 0 0 3px #c9a35a inset,0 0 0 9px #2a1a12 inset,0 0 0 10px #8a6a33 inset,0 0 80px rgba(255,194,102,.25),0 30px 60px rgba(0,0,0,.6)}
+.shelf{position:relative;height:118px;margin-bottom:6px;display:flex;align-items:flex-end;gap:2px;padding:0 4px;border-bottom:10px solid #5b3a22;box-shadow:0 7px 8px -5px rgba(0,0,0,.8)}
+.shelf::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:2px;background:#c9a35a;opacity:.7}
+.sp{position:relative;flex:none;border-radius:2px 2px 1px 1px;cursor:pointer;transform-origin:50% 100%;
+  background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(255,255,255,.13) 38%,rgba(0,0,0,.28)),var(--c);
+  transition:transform calc(.35s * var(--m)) cubic-bezier(.3,.1,.2,1),opacity calc(.2s * var(--m)),box-shadow calc(.35s * var(--m))}
+.sp::before,.sp::after{content:"";position:absolute;left:0;right:0;height:3px;background:#c9a35a;opacity:.75}
+.sp::before{top:10px}.sp::after{bottom:12px}
+.sp b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(180deg);writing-mode:vertical-rl;font:600 8px Cinzel,serif;letter-spacing:.12em;color:#e0bd72;white-space:nowrap}
+.sp:hover{transform:translateY(-3px)}
+.sp.glow{box-shadow:0 0 0 1px #ffd27a,0 0 16px 4px rgba(255,210,122,.55);animation:pulse 2.2s ease-in-out infinite}
+.sp.glow b{font-size:9px;color:#ffe3a3}
+@keyframes pulse{50%{box-shadow:0 0 0 1px #ffd27a,0 0 26px 8px rgba(255,210,122,.8)}}
+.sp.out{transform:translateY(6px) scale(1.14);box-shadow:0 12px 20px rgba(0,0,0,.65),0 0 24px rgba(255,210,122,.6);z-index:3;animation:none}
+.sp.gone{opacity:0}
+.sp.wig{animation:wig calc(.45s * var(--m))}
+@keyframes wig{30%{transform:translateY(-5px) rotate(-3deg)}65%{transform:translateY(-2px) rotate(2deg)}}
+.plaque{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);font:600 10px Cinzel,serif;letter-spacing:.18em;color:#2a1a12;
+  background:linear-gradient(180deg,#d9b46a,#a07a3a);padding:4px 12px;border-radius:2px;box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;white-space:nowrap}
+
+/* ---------- the held book ---------- */
+.held{position:absolute;left:0;top:0;width:0;height:0;perspective:1600px;opacity:0;pointer-events:none}
+.held.on{opacity:1;pointer-events:auto}
+.book3d{position:absolute;left:-300px;top:-200px;width:600px;height:400px;transform-style:preserve-3d;z-index:1}
+.book3d>*{position:absolute;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.book3d{--l1:#2c6672;--l2:#1a3f47;--l3:#10282e;--lc:#1f4d57}
+.leather{background:radial-gradient(120% 80% at 30% 20%,var(--l1),var(--l2) 60%,var(--l3));box-shadow:inset 0 0 0 1px #0a1a1e,inset 0 0 30px rgba(0,0,0,.5)}
+.board{left:300px;top:-8px;width:308px;height:416px;border-radius:0 6px 6px 0;transform:translateZ(-1px)}
+.spf{left:230px;top:-8px;width:70px;height:416px;transform-origin:100% 50%;transform:rotateY(-90deg);
+  background:linear-gradient(#c9a35a,#c9a35a) 0 44px/100% 3px no-repeat,linear-gradient(#c9a35a,#c9a35a) 0 52px/100% 1px no-repeat,
+  linear-gradient(#c9a35a,#c9a35a) 0 362px/100% 1px no-repeat,linear-gradient(#c9a35a,#c9a35a) 0 368px/100% 3px no-repeat,
+  linear-gradient(90deg,rgba(0,0,0,.4),rgba(255,255,255,.12) 40%,rgba(0,0,0,.35)),var(--lc)}
+.spf b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(180deg);writing-mode:vertical-rl;font:600 24px Cinzel,serif;letter-spacing:.2em;color:#e0bd72}
+.pg{position:absolute;top:0;width:300px;height:400px;overflow:hidden;color:#2b2118;font-family:"EB Garamond",serif;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 0 34px rgba(120,80,30,.22)}
+.pg::after{content:"";position:absolute;inset:0;background:#3a2208;opacity:var(--sh,0);pointer-events:none}
+.lside{background:linear-gradient(90deg,#efe0bf 0%,#f3e7cc 70%,#dcc597 100%);border-radius:3px 0 0 3px}
+.rside{background:linear-gradient(90deg,#d6bd8c 0%,#f0e3c5 18%,#f3e7cc 100%);border-radius:0 3px 3px 0}
+.posL{left:0;transform:translateZ(4px);visibility:hidden}
+.posR{left:300px;transform:translateZ(1px)}
+.leaf{left:300px;top:0;width:300px;height:400px;transform-origin:0 50%;transform-style:preserve-3d;display:none;backface-visibility:visible!important}
+.leaf .pg{left:0}
+.leaf .bkf{transform:rotateY(180deg)}
+.cover{left:300px;top:-8px;width:308px;height:416px;transform-origin:0 50%;transform-style:preserve-3d;transform:translateZ(3px) rotateY(0deg);backface-visibility:visible!important}
+.cover>div{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.cf{border-radius:0 6px 6px 0}
+.cb{transform:rotateY(180deg);border-radius:6px 0 0 6px}
+.cb .inset{position:absolute;left:8px;top:8px;width:300px;height:400px;overflow:hidden}
+.cframe{position:absolute;inset:18px 18px 18px 24px;border:2px solid #c9a35a;outline:1px solid #8a6a33;outline-offset:-8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ctitle{font:600 31px/1.15 Cinzel,serif;letter-spacing:.14em;color:#e0bd72;text-shadow:0 1px 0 #0008;text-align:center;padding:0 10px}
+.ctitle.long{font-size:23px}
+.crule{width:96px;height:1px;background:#c9a35a}
+.cdesc{font:500 11px Cinzel,serif;letter-spacing:.22em;color:#c9a35a}
+.cast{top:0;height:400px;width:0;opacity:0;pointer-events:none}
+.castR{left:300px;transform:translateZ(2px);background:linear-gradient(90deg,rgba(40,20,5,.75),rgba(40,20,5,.15) 70%,transparent)}
+.castL{left:300px;transform:translateZ(5px);background:linear-gradient(270deg,rgba(40,20,5,.75),rgba(40,20,5,.15) 70%,transparent)}
+
+/* page contents */
+.win{position:absolute;left:22px;top:24px;width:256px;height:336px;overflow:hidden}
+.flow{width:256px;height:336px;column-count:1;column-gap:40px;column-fill:auto;text-align:justify;hyphens:auto;-webkit-hyphens:auto;line-height:1.45;color:#2b2118}
+.flow p{margin:0}.flow p+p{text-indent:1.4em}
+.flow p:first-child::first-letter{float:left;font-family:"Cormorant Garamond",serif;font-size:3.2em;line-height:.8;padding:5px 6px 0 0;color:#7a2b1c;font-weight:700}
+.folio{position:absolute;bottom:13px;left:0;right:0;text-align:center;font:600 12px "Cormorant Garamond",serif;color:#8a6a46;letter-spacing:.12em}
+.blank{position:absolute;inset:0;display:grid;place-items:center;color:#b8975e;font-size:18px;letter-spacing:.5em}
+.curl{position:absolute;right:0;bottom:0;width:30px;height:30px;border-top-left-radius:5px;
+  background:linear-gradient(135deg,transparent 50%,#c8ad7c 50%,#e7d9b8 72%,#f3e7cc);box-shadow:-2px -2px 5px rgba(80,50,20,.22)}
+.lk{color:#7a2b1c;font-weight:600;cursor:pointer;text-decoration:underline dotted #a07a3a;text-underline-offset:3px;
+  background:linear-gradient(180deg,transparent 62%,rgba(255,200,110,.38) 62%)}
+.lk:hover{background:rgba(255,200,110,.45)}
+.tpage{position:absolute;inset:0;padding:26px 22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;font-family:"Cormorant Garamond",serif}
+.tpage .crumb{font:600 9px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7a5a36}
+.tpage .orn{color:#a07a3a;letter-spacing:.4em;font-size:12px;margin-top:6px}
+.tpage h3{font-size:48px;margin:0;font-weight:700;line-height:1}
+.tpage .desc{font-style:italic;font-size:17px;color:#5b4630;line-height:1.2}
+.plate{position:relative;width:176px;height:122px;margin-top:6px;border:3px double #8a6a33;display:grid;place-items:center;
+  background:radial-gradient(circle at 45% 40%,#f1e3c3,#dcc597 75%,#c8aa76)}
+.plate span{position:absolute;bottom:3px;left:0;right:0;font:500 8.5px Inter,sans-serif;letter-spacing:.06em;color:#7a5a36}
+.tpage .shelfc{font:600 9.5px Inter,sans-serif;letter-spacing:.06em;color:#7a5a36;margin-top:auto}
+.tpage .src{font:500 8.5px Inter,sans-serif;color:#9a7a52}
+
+/* hands: palm behind the book, thumb in front */
+.palm,.thumb{position:absolute;top:-24px;width:240px;height:420px;pointer-events:none;opacity:0;
+  transition:left calc(.9s * var(--m)) cubic-bezier(.4,.1,.2,1),opacity calc(.4s * var(--m))}
+.palm{z-index:0}.thumb{z-index:2}
+.hR{left:74px}.hL{left:-234px;transform:scaleX(-1);transform-origin:80px 80px}
+.held.spread .hR{left:228px}.held.spread .hL{left:-388px}
+.held.hands .palm,.held.hands .thumb{opacity:1}
+.hot{position:absolute;top:124px;width:76px;height:76px;z-index:3;cursor:grab;touch-action:none;display:none}
+.hot:active{cursor:grabbing}
+.held.open .hot{display:block}
+.hotR{left:224px}.hotL{left:-300px}
+.hot::after{content:"";position:absolute;bottom:5px;width:22px;height:22px;border-radius:50%;border:2px solid #ffd27a;opacity:.85;animation:ring 1.8s ease-out infinite}
+.hotR::after{right:5px}.hotL::after{left:5px;opacity:.45}
+.hot.off{display:none!important}
+@keyframes ring{0%{transform:scale(.6);opacity:.95}100%{transform:scale(1.5);opacity:0}}
+
+/* overlays on the stage (not scaled) */
+.chip{position:absolute;left:12px;top:12px;font:600 12.5px Inter,sans-serif;color:#ffd27a;background:rgba(42,26,18,.92);border:1px solid #c9a35a;
+  border-radius:999px;padding:6px 12px;opacity:0;transition:opacity calc(.4s * var(--m));pointer-events:none;max-width:calc(100% - 24px)}
+.chip.show{opacity:1}
+.toast{position:absolute;left:50%;bottom:12px;transform:translate(-50%,12px);opacity:0;pointer-events:none;width:max-content;max-width:calc(100% - 24px);
+  background:#2a1a12;border:1px solid #c9a35a;color:#ffd27a;font:500 13px/1.4 Inter,sans-serif;padding:8px 13px;border-radius:8px;text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);transition:opacity calc(.3s * var(--m)),transform calc(.3s * var(--m))}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.tip{position:fixed;display:none;white-space:nowrap;font:600 12px/1.2 Inter,system-ui,sans-serif;padding:5px 9px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:50;pointer-events:none}
+.meas{position:absolute;left:-9999px;top:0;visibility:hidden;font-family:"EB Garamond",serif}
+.meas .flow{overflow:hidden}
+
+/* controls under the stage */
+.hintline{margin:12px 0 0;color:#ffd27a;font-size:14.5px;min-height:1.5em}
+.hintline::before{content:"✦ ";color:#c9a35a}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 0}
+.ctl button{font:600 13px Inter,sans-serif;color:#2a1a12;background:linear-gradient(180deg,#d9b46a,#a07a3a);border:0;border-radius:4px;
+  padding:8px 12px;box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;cursor:pointer;min-height:36px}
+.ctl button:hover:not(:disabled){background:linear-gradient(180deg,#e6c37e,#b0894a)}
+.ctl button:disabled{opacity:.38;cursor:default}
+.ctl button[aria-pressed="true"]{background:linear-gradient(180deg,#ffe3a3,#d9b46a);box-shadow:0 0 0 2px #ffd27a,0 1px 2px #0008}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:2px solid #ffd27a;outline-offset:2px}
+.ctl .lab{color:#c9a35a;font-size:13px;min-width:46px;text-align:center;font-variant-numeric:tabular-nums}
+.ctl .grp{display:flex;gap:6px;align-items:center;padding:4px 8px 4px 4px;border:1px solid rgba(201,163,90,.3);border-radius:6px}
+.ctl label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:13px}
+.ctl input[type=range]{accent-color:#c9a35a;width:140px}
+.ctl .sp2{flex:1 1 0}
+
+/* prose */
+.where{margin:26px 0 0;padding:14px 18px;border-left:3px solid #c9a35a;background:rgba(201,163,90,.08);border-radius:0 10px 10px 0;max-width:110ch}
+.where b{color:#ffd27a}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:22px 0 0}
+.card{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:12px;padding:14px 18px}
+.card h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:25px;margin:0 0 6px;color:#fff3cf}
+.card ul,.card ol{margin:0;padding-left:20px;color:var(--muted)}
+.card li{margin:0 0 6px}
+.card li b{color:var(--ink);font-weight:600}
+.small{color:var(--muted);font-size:13px;margin:18px 0 0}
+footer{padding:22px 0 40px;color:var(--muted);font-size:13px}
+@media (max-width:640px){header h1{font-size:30px}.ctl input[type=range]{width:110px}}
+@media (prefers-reduced-motion:reduce){:root{--m:.12}.cl,.sp.glow,.hot::after{animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gHand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8abe8"/><stop offset=".45" stop-color="#8d80c6"/><stop offset="1" stop-color="#4d4290"/></linearGradient>
+  <linearGradient id="gThumb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfc4f4"/><stop offset="1" stop-color="#9a8dd2"/></linearGradient>
+  <pattern id="pSp" width="40" height="130" patternUnits="userSpaceOnUse"><rect x="1" y="34" width="8" height="96" fill="#7a3a2a"/><rect x="10" y="44" width="7" height="86" fill="#2f4a6b"/><rect x="18" y="30" width="9" height="100" fill="#8a6a33"/><rect x="28" y="40" width="6" height="90" fill="#3d5a2a"/><rect x="35" y="36" width="5" height="94" fill="#6b4a8a"/></pattern>
+  <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07061a"/><stop offset=".42" stop-color="#141235"/><stop offset=".6" stop-color="#2a2160"/><stop offset="1" stop-color="#3b2f7a"/></linearGradient>
+  <radialGradient id="gMoon"><stop offset="0" stop-color="#fff3cf" stop-opacity=".5"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></radialGradient>
+  <filter id="fBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="8"/></filter>
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2416"/><stop offset="1" stop-color="#140b06"/></linearGradient>
+  <linearGradient id="gWall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#170e2c"/><stop offset=".85" stop-color="#22163f"/><stop offset="1" stop-color="#0f0920"/></linearGradient>
+  <linearGradient id="gCyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0c0b22" stop-opacity=".97"/><stop offset=".27" stop-color="#0c0b22" stop-opacity="0"/><stop offset=".73" stop-color="#0c0b22" stop-opacity="0"/><stop offset="1" stop-color="#0c0b22" stop-opacity=".97"/></linearGradient>
+</defs></svg>
+
+<div class="wrap">
+<header>
+  <h1>The book is the reader</h1>
+  <p>You read from the actual book in your hands, not a floating panel. Click a glowing spine and it slides out, rises into your hands and opens into a <b>Brass &amp; Vellum</b> spread you can turn, hold closer and resize. Click another bay along the walkway to make it your active shelf.</p>
+</header>
+
+<section class="demo" aria-label="Interactive demo">
+  <div class="sceneOuter" id="outer">
+    <div class="scene" id="scene">
+      <div class="layer fpL" id="fpL">
+        <div class="world" id="world">
+          <svg viewBox="0 0 1200 680" width="1200" height="680" aria-hidden="true">
+            <rect width="1200" height="680" fill="url(#gSky)"/>
+            <g id="stars"></g>
+            <circle cx="1010" cy="118" r="150" fill="url(#gMoon)"/>
+            <circle cx="1010" cy="118" r="44" fill="#fff3cf"/>
+            <circle cx="996" cy="106" r="8" fill="#eadcae" opacity=".55"/><circle cx="1024" cy="132" r="5" fill="#eadcae" opacity=".5"/>
+            <g>
+              <path d="M818 338 Q862 326 906 338 L884 360 Q862 386 840 360 Z" fill="#1a1440"/>
+              <rect x="848" y="262" width="28" height="78" fill="#1e1748"/><path d="M844 263 L862 230 L880 263 Z" fill="#1e1748"/>
+              <g fill="#ffc266" opacity=".75"><rect x="848" y="276" width="28" height="2.5"/><rect x="848" y="292" width="28" height="2.5"/><rect x="848" y="308" width="28" height="2.5"/><rect x="848" y="324" width="28" height="2.5"/></g>
+            </g>
+            <g transform="translate(1120 322) scale(.5) translate(-862 -300)" opacity=".8">
+              <path d="M818 338 Q862 326 906 338 L884 360 Q862 386 840 360 Z" fill="#1a1440"/>
+              <rect x="848" y="262" width="28" height="78" fill="#1e1748"/><path d="M844 263 L862 230 L880 263 Z" fill="#1e1748"/>
+              <g fill="#ffc266" opacity=".75"><rect x="848" y="280" width="28" height="3"/><rect x="848" y="300" width="28" height="3"/><rect x="848" y="320" width="28" height="3"/></g>
+            </g>
+            <g filter="url(#fBlur)">
+              <g class="cl"><ellipse cx="760" cy="402" rx="130" ry="22" fill="#2f2668"/><ellipse cx="920" cy="394" rx="150" ry="20" fill="#2f2668"/><ellipse cx="1080" cy="400" rx="170" ry="24" fill="#2f2668"/><ellipse cx="1240" cy="396" rx="130" ry="20" fill="#2f2668"/></g>
+              <ellipse cx="1010" cy="420" rx="180" ry="30" fill="#fff3cf" opacity=".16"/>
+              <g class="cl b"><ellipse cx="720" cy="446" rx="160" ry="34" fill="#3d3282"/><ellipse cx="900" cy="436" rx="180" ry="36" fill="#3d3282"/><ellipse cx="1090" cy="450" rx="200" ry="40" fill="#3d3282"/><ellipse cx="1250" cy="440" rx="150" ry="34" fill="#3d3282"/></g>
+              <g class="cl"><ellipse cx="790" cy="508" rx="200" ry="46" fill="#4d4096"/><ellipse cx="1000" cy="498" rx="230" ry="50" fill="#4d4096"/><ellipse cx="1200" cy="512" rx="210" ry="46" fill="#4d4096"/>
+                <ellipse cx="980" cy="474" rx="120" ry="14" fill="#a89be0" opacity=".35"/><ellipse cx="780" cy="486" rx="90" ry="12" fill="#a89be0" opacity=".25"/></g>
+            </g>
+            <path d="M700 476 L1200 510" stroke="#c9a35a" stroke-width="2.5"/>
+            <path d="M700 516 L1200 556" stroke="#c9a35a" stroke-width="1" opacity=".5"/>
+            <g stroke="#c9a35a" stroke-width="1.6" opacity=".9"><path d="M760 480 V558"/><path d="M880 488 V571"/><path d="M1000 496 V583"/><path d="M1120 505 V596"/></g>
+            <path d="M0 562 L700 552 L1200 604 L1200 680 L0 680 Z" fill="url(#gFloor)"/>
+            <path d="M700 552 L1200 604" stroke="#8a6a33" stroke-width="2"/>
+            <g stroke="#0e0703" stroke-width="2" opacity=".55" fill="none"><path d="M0 596 L1200 632"/><path d="M0 632 L1200 660"/><path d="M0 668 L1200 690"/></g>
+            <path d="M0 0 H700 C712 180 712 380 700 552 L0 562 Z" fill="url(#gWall)"/>
+            <ellipse cx="350" cy="320" rx="320" ry="270" fill="#ffc266" opacity=".06"/>
+            <g opacity=".45">
+              <rect x="14" y="-44" width="180" height="104" rx="6" fill="#20130b" stroke="#8a6a33" stroke-width="2"/>
+              <rect x="22" y="-44" width="164" height="96" fill="url(#pSp)" opacity=".5"/>
+              <rect x="214" y="-44" width="350" height="104" rx="6" fill="#20130b" stroke="#8a6a33" stroke-width="2"/>
+              <rect x="224" y="-44" width="330" height="96" fill="url(#pSp)" opacity=".5"/>
+              <rect x="572" y="-44" width="126" height="104" rx="6" fill="#20130b" stroke="#8a6a33" stroke-width="2"/>
+              <rect x="580" y="-44" width="110" height="96" fill="url(#pSp)" opacity=".4"/>
+            </g>
+          </svg>
+          <div class="bay" data-bay="0" style="left:14px;top:110px;width:180px;height:426px">
+            <div class="lantern"></div><div class="shelf"></div><div class="shelf"></div><div class="shelf"></div>
+            <div class="plaque">L12 · Fish</div>
+          </div>
+          <div class="bay act" data-bay="1" style="left:214px;top:96px;width:350px;height:440px">
+            <div class="lantern"></div><div class="shelf"></div><div class="shelf"></div><div class="shelf"></div>
+            <div class="plaque">Biology · L12 · Molluscs</div>
+          </div>
+          <div class="bay narrow" data-bay="2" style="left:572px;top:104px;width:126px;height:432px">
+            <div class="lantern"></div><div class="shelf"></div><div class="shelf"></div><div class="shelf"></div>
+            <div class="plaque">L12 · Crustaceans</div>
+          </div>
+        </div>
+
+        <div class="held" id="held">
+          <svg class="palm hL" viewBox="-80 -80 240 420" width="240" height="420" aria-hidden="true"><path d="M-34 -36 C-18 -60 26 -58 40 -30 C50 -8 48 26 56 58 L118 340 L36 340 L-2 74 C-24 54 -44 10 -34 -36 Z" fill="url(#gHand)" stroke="#4a3f80" stroke-width="2"/><path d="M38 -24 C46 -6 46 18 50 40" stroke="#fff" stroke-opacity=".28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          <svg class="palm hR" viewBox="-80 -80 240 420" width="240" height="420" aria-hidden="true"><path d="M-34 -36 C-18 -60 26 -58 40 -30 C50 -8 48 26 56 58 L118 340 L36 340 L-2 74 C-24 54 -44 10 -34 -36 Z" fill="url(#gHand)" stroke="#4a3f80" stroke-width="2"/><path d="M38 -24 C46 -6 46 18 50 40" stroke="#fff" stroke-opacity=".28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          <div class="book3d" id="book3d">
+            <div class="board leather"></div>
+            <div class="spf"><b id="spfT">OCTOPUS</b></div>
+            <div class="pg rside posR" id="pgR"></div>
+            <div class="cast castR" id="castR"></div>
+            <div class="cover" id="cover">
+              <div class="cf leather"><div class="cframe"><span id="emblem"></span><div class="ctitle" id="cTitle">OCTOPUS</div><div class="crule"></div><div class="cdesc" id="cCode">B-L12-S07</div></div></div>
+              <div class="cb leather"><div class="inset pg lside" id="coverIn"></div></div>
+            </div>
+            <div class="pg lside posL" id="pgL"></div>
+            <div class="cast castL" id="castL"></div>
+            <div class="leaf" id="leaf"><div class="pg rside" id="leafF"></div><div class="pg lside bkf" id="leafB"></div></div>
+          </div>
+          <svg class="thumb hL" viewBox="-80 -80 240 420" width="240" height="420" aria-hidden="true"><path d="M10 2 C2 -12 -20 -28 -36 -28 C-48 -28 -50 -16 -40 -11 C-28 -4 -14 8 4 14 Z" fill="url(#gThumb)" stroke="#4a3f80" stroke-width="2"/><ellipse cx="-34" cy="-20" rx="7" ry="4" fill="#fff" opacity=".35"/></svg>
+          <svg class="thumb hR" viewBox="-80 -80 240 420" width="240" height="420" aria-hidden="true"><path d="M10 2 C2 -12 -20 -28 -36 -28 C-48 -28 -50 -16 -40 -11 C-28 -4 -14 8 4 14 Z" fill="url(#gThumb)" stroke="#4a3f80" stroke-width="2"/><ellipse cx="-34" cy="-20" rx="7" ry="4" fill="#fff" opacity=".35"/></svg>
+          <div class="hot hotL" id="hotL" title="Drag or click to turn back"></div>
+          <div class="hot hotR" id="hotR" title="Drag or click the corner to turn the page"></div>
+        </div>
+      </div>
+
+      <div class="layer tpL" id="tpL">
+        <svg viewBox="0 0 1200 680" width="1200" height="680" aria-hidden="true">
+          <rect width="1200" height="680" fill="url(#gSky)"/>
+          <g id="stars2"></g>
+          <circle cx="200" cy="110" r="140" fill="url(#gMoon)"/><circle cx="200" cy="110" r="40" fill="#fff3cf"/>
+          <g filter="url(#fBlur)">
+            <g class="cl"><ellipse cx="120" cy="560" rx="220" ry="40" fill="#3d3282"/><ellipse cx="1080" cy="556" rx="240" ry="42" fill="#3d3282"/></g>
+            <ellipse cx="200" cy="540" rx="170" ry="26" fill="#fff3cf" opacity=".14"/>
+            <g class="cl b"><ellipse cx="160" cy="630" rx="300" ry="60" fill="#4d4096"/><ellipse cx="1060" cy="636" rx="300" ry="60" fill="#4d4096"/><ellipse cx="600" cy="670" rx="420" ry="50" fill="#4d4096"/></g>
+          </g>
+          <rect x="280" y="-20" width="640" height="620" fill="#1d1440"/>
+          <rect x="300" y="24" width="600" height="120" fill="url(#pSp)" opacity=".5"/>
+          <rect x="300" y="164" width="600" height="120" fill="url(#pSp)" opacity=".5"/>
+          <rect x="300" y="304" width="600" height="120" fill="url(#pSp)" opacity=".5"/>
+          <rect x="300" y="444" width="600" height="120" fill="url(#pSp)" opacity=".45"/>
+          <g stroke="#5b3a22" stroke-width="9"><path d="M290 150 H910 M290 290 H910 M290 430 H910"/></g>
+          <g stroke="#c9a35a" stroke-width="1.5" opacity=".6"><path d="M290 146 H910 M290 286 H910 M290 426 H910"/></g>
+          <ellipse cx="600" cy="350" rx="230" ry="170" fill="#ffc266" opacity=".12"/>
+          <rect x="280" y="-20" width="640" height="620" fill="url(#gCyl)"/>
+          <ellipse cx="600" cy="600" rx="420" ry="46" fill="#140b06"/>
+          <ellipse cx="600" cy="585" rx="420" ry="46" fill="#3b2416"/>
+          <path d="M200 585 A420 46 0 0 0 1000 585" stroke="#8a6a33" stroke-width="2" fill="none" opacity=".7"/>
+          <g id="avatar">
+            <path d="M640 540 C724 540 770 470 742 410 C734 470 712 512 668 520 Z" fill="#6f63ab"/>
+            <path d="M742 410 C752 432 750 452 742 468 C734 450 734 430 742 410 Z" fill="#e9e3ff" opacity=".85"/>
+            <rect x="571" y="498" width="25" height="88" rx="12" fill="#7468b0"/><rect x="604" y="498" width="25" height="88" rx="12" fill="#7468b0"/>
+            <path d="M550 400 C550 372 650 372 650 400 L664 512 C664 530 536 530 536 512 Z" fill="#7b6fb8"/>
+            <path d="M584 392 C600 386 616 392 618 400 L612 500 C600 506 588 500 588 500 Z" fill="#a69be0" opacity=".55"/>
+            <g id="armsDown" fill="none" stroke="#7468b0" stroke-width="22" stroke-linecap="round"><path d="M554 402 Q532 452 542 498"/><path d="M646 402 Q668 452 658 498"/></g>
+            <g id="armsDownPaws" fill="#8d80c6"><circle cx="542" cy="502" r="13"/><circle cx="658" cy="502" r="13"/></g>
+            <path d="M560 316 L546 248 L592 292 Z" fill="#7b6fb8"/><path d="M640 316 L654 248 L608 292 Z" fill="#7b6fb8"/>
+            <path d="M562 302 L554 266 L582 292 Z" fill="#cfc4f4" opacity=".5"/><path d="M638 302 L646 266 L618 292 Z" fill="#cfc4f4" opacity=".5"/>
+            <ellipse cx="600" cy="330" rx="50" ry="46" fill="#7b6fb8"/>
+            <ellipse cx="600" cy="352" rx="23" ry="15" fill="#cfc4f4" opacity=".8"/>
+            <ellipse cx="600" cy="343" rx="6" ry="4" fill="#2a2160"/>
+            <ellipse cx="582" cy="322" rx="4" ry="5" fill="#2a2160"/><ellipse cx="618" cy="322" rx="4" ry="5" fill="#2a2160"/>
+            <path d="M552 318 C556 296 574 284 592 284" stroke="#fff3cf" stroke-opacity=".35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <g id="tpBook">
+              <g fill="none" stroke="#7468b0" stroke-width="22" stroke-linecap="round"><path d="M554 402 Q510 430 506 474"/><path d="M646 402 Q690 430 694 474"/></g>
+              <path id="tpBackC" d="M494 386 L597 373 L597 490 L494 502 Z" fill="#1a3f47" stroke="#0a1a1e" stroke-width="1.5"/>
+              <path id="tpFrontC" d="M603 373 L706 386 L706 502 L603 490 Z" fill="#225560" stroke="#0a1a1e" stroke-width="1.5"/>
+              <rect id="tpSpine" x="596" y="371" width="8" height="121" fill="#10282e"/>
+              <path d="M503 395 L589 384 L589 482 L503 493 Z" fill="none" stroke="#c9a35a" stroke-width="1.3" opacity=".8"/>
+              <path d="M611 384 L697 395 L697 493 L611 482 Z" fill="none" stroke="#c9a35a" stroke-width="1.5"/>
+              <g id="tpTitle" font-family="Cinzel,serif" font-weight="700" font-size="14" letter-spacing="1" fill="#ffd27a" text-anchor="middle"><text x="654" y="441">OCTOPUS</text></g>
+              <path d="M626 452 H682" stroke="#c9a35a" stroke-width="1"/>
+              <text id="tpCode" x="654" y="468" text-anchor="middle" font-family="Cinzel,serif" font-size="7.5" letter-spacing="1.5" fill="#c9a35a">B-L12-S07</text>
+              <circle cx="500" cy="472" r="13" fill="#8d80c6"/><circle cx="700" cy="472" r="13" fill="#8d80c6"/>
+            </g>
+          </g>
+          <path d="M220 540 Q600 600 980 540" stroke="#c9a35a" stroke-width="2.2" fill="none"/>
+          <g stroke="#c9a35a" stroke-width="1.5" opacity=".9"><path d="M300 553 V617"/><path d="M450 565 V628"/><path d="M600 570 V631"/><path d="M750 565 V628"/><path d="M900 553 V617"/></g>
+          <g transform="translate(600 236)">
+            <rect x="-74" y="-17" width="148" height="44" rx="9" fill="#141235" stroke="#c9a35a" opacity=".95"/>
+            <text y="1" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="13" fill="#e9e5f7">Fox</text>
+            <text id="tpSub" y="18" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" fill="#ffd27a">holding Octopus</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="chip" id="chip">Another player's view: Fox on the walkway</div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <p class="hintline" id="hint"></p>
+  <div class="ctl">
+    <button type="button" id="bReset">↺ Reset</button>
+    <div class="grp" role="group" aria-label="Pages"><button type="button" id="bPrev" aria-label="Previous page">‹</button><span class="lab" id="pgLab">spread 1 / 2</span><button type="button" id="bNext" aria-label="Next page">›</button></div>
+    <div class="grp" role="group" aria-label="Text size"><button type="button" id="bSm" title="Smaller text">A−</button><span class="lab" id="szLab">100%</span><button type="button" id="bLg" title="Larger text">A+</button></div>
+    <label>Hold closer <input type="range" id="rClose" min="0" max="100" value="0"></label>
+    <span class="sp2"></span>
+    <button type="button" id="bTP" aria-pressed="false">What others see</button>
+    <button type="button" id="bBack">Put it back</button>
+  </div>
+</section>
+
+<section class="where">
+  <b>Where you read:</b> everywhere except the main hall at the centre of the world, you read from books like this one. The old flat panel lives only on the main hall lectern.
+</section>
+
+<section class="grid">
+  <div class="card">
+    <h2>In VRChat</h2>
+    <ul>
+      <li><b>VR:</b> hold the book with one hand. Flick the page corner with the other hand or the thumbstick. Tap gold words with a fingertip or the laser. Holding it closer is just moving your hand.</li>
+      <li><b>Picking:</b> Pick a book by grabbing or clicking it. A shelf becomes active when you stand next to it or click it.</li>
+      <li><b>Desktop:</b> the held book sits in front of the camera, and you click words and corners.</li>
+      <li><b>Quest:</b> one open book per player, so only one book's pages and text are live per person.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Builds on</h2>
+    <ul>
+      <li>Clickable gold words (overlay hit areas over the words) and the "→ Predation" bubble.</li>
+      <li>A− / A+ text size with re-paging: the spread count changes as the text re-flows.</li>
+      <li>Back history after following a gold word.</li>
+      <li>Grabbable books off a lit bay. Bays light when you stand next to them, never by facing them.</li>
+      <li>Others see the book you hold, title on the cover.</li>
+      <li>Books fetched from GitHub Pages; the ~5 s load hides behind the slide-out, rise and opening (the fetch can start when you step up to the bay).</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Open questions</h2>
+    <ol>
+      <li><b>Flying:</b> does the book stay open in your hands while you fly, or close and hang at your side until you land?</li>
+      <li><b>Pages:</b> two pages, or one big page at a time? Two pages feel like a real book; one big page fits bigger text and longer lines.</li>
+    </ol>
+  </div>
+</section>
+<p class="small">The sample text in the book was written for this mock-up, not copied from Wikipedia.</p>
+<footer>Mock-up for choosing a direction. Made for The Midnight Archive by Doghouse Devs.</footer>
+</div>
+
+<div class="tip" id="tip"></div>
+<div class="meas" id="meas"></div>
+<script>
+(function(){
+'use strict';
+var W=300,H=400,TW=256,G=40,HX=600,HY=440,TILT=10,BASE=14.5;
+var STEPS=[0.8,0.9,1,1.15,1.3,1.5],si=2;
+var RM=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),M=RM?0.12:1;
+document.documentElement.style.setProperty('--m',String(M));
+function $(id){return document.getElementById(id);}
+var outer=$('outer'),scene=$('scene'),world=$('world'),held=$('held'),book=$('book3d'),cover=$('cover'),leaf=$('leaf'),
+    leafF=$('leafF'),leafB=$('leafB'),pgL=$('pgL'),pgR=$('pgR'),coverIn=$('coverIn'),castR=$('castR'),castL=$('castL'),
+    meas=$('meas'),tip=$('tip'),toastEl=$('toast'),hintEl=$('hint'),chip=$('chip'),rng=$('rClose'),hotR=$('hotR'),hotL=$('hotL');
+var FIT=1;
+function fit(){FIT=(outer.clientWidth||1200)/1200;scene.style.transform='scale('+FIT+')';}
+window.addEventListener('resize',fit);fit();
+
+/* ---------- sample books (text written for this mock-up) ---------- */
+function lk(w,t){return '<a class="lk" data-to="'+(t||'')+'" data-w="'+w+'">'+w+'</a>';}
+var PIC={
+  oct:'<svg viewBox="0 0 120 90" width="132" height="96" aria-hidden="true"><g fill="none" stroke="#5b4630" stroke-width="2.2" stroke-linecap="round"><path d="M42 46 C38 14 82 14 78 46" fill="#e6d3ab"/><path d="M44 44 C32 54 20 50 16 62 C14 70 24 72 26 66"/><path d="M50 47 C46 62 36 66 36 76 C36 82 44 82 44 76"/><path d="M57 48 C56 64 54 72 58 80 C60 84 66 82 64 77"/><path d="M64 48 C66 64 72 70 76 78 C78 82 84 80 82 75"/><path d="M71 46 C80 58 92 56 98 66 C101 72 94 76 92 70"/><path d="M77 43 C90 46 100 40 106 48 C109 53 103 57 100 52"/></g><circle cx="53" cy="36" r="3" fill="#5b4630"/><circle cx="67" cy="36" r="3" fill="#5b4630"/></svg>',
+  ang:'<svg viewBox="0 0 120 90" width="132" height="96" aria-hidden="true"><g stroke="#5b4630" stroke-width="2.2" stroke-linecap="round" fill="none"><path d="M24 50 C30 28 70 24 90 40 L106 30 L104 62 L90 54 C72 72 34 72 24 50 Z" fill="#e6d3ab"/><path d="M26 50 L44 50"/><path d="M30 46 L33 50 L36 46 L39 50 L42 46"/><path d="M44 32 C46 14 30 8 22 16"/></g><circle cx="22" cy="18" r="5" fill="#ffd27a" stroke="#8a6a33" stroke-width="1.5"/><circle cx="54" cy="40" r="3" fill="#5b4630"/></svg>',
+  her:'<svg viewBox="0 0 120 90" width="132" height="96" aria-hidden="true"><g stroke="#5b4630" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M50 70 C24 70 22 30 50 26 C76 22 92 46 80 62 C70 74 50 66 52 52 C54 42 66 42 66 52" fill="#e6d3ab"/><path d="M36 64 L26 78 M42 68 L36 82 M30 60 L18 70"/><path d="M28 56 C18 50 12 54 14 60 C16 64 22 62 24 58"/></g><circle cx="30" cy="47" r="2.6" fill="#5b4630"/></svg>'
+};
+var BOOKS={
+  oct:{key:'oct',t:'Octopus',d:'soft-bodied, eight-armed sea animal',code:'B-L12-S07',where:'Biology tower, level 12',
+    crumb:'Biological and health sciences › Animals › Molluscs',c:['#2c6672','#1a3f47','#10282e','#1f4d57'],
+    text:'<p>The octopus is a soft-bodied '+lk('mollusc','Mollusca')+' with eight arms, found in every '+lk('ocean')+'. It belongs to the '+lk('cephalopods','Cephalopod')+', together with '+lk('squid')+' and '+lk('cuttlefish')+'. Octopuses are known for their '+lk('intelligence','Cephalopod intelligence')+': they solve puzzles, use tools and can change colour and texture in an instant to hide from '+lk('predators','Predation')+'. Most kinds live only a year or two.</p>'
+      +'<p>Each arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue '+lk('blood','Hemocyanin')+', and when threatened it squirts a cloud of '+lk('ink','Cephalopod ink')+' and slips through any gap wider than its '+lk('beak')+'.</p>'
+      +'<p>Octopuses mostly live alone, in a den in a crack between rocks or inside an empty '+lk('shell','Seashell')+'. They usually hunt at dusk or at night for '+lk('crabs','Crab')+', clams and small fish, pulling prey apart with their arms and a '+lk('venomous','Venom')+' bite.</p>'
+      +'<p>The brain wraps around the throat like a ring, and about two thirds of an octopus’s '+lk('neurons','Neuron')+' sit in its arms, so each arm can act partly on its own. The skin holds thousands of '+lk('chromatophores','Chromatophore')+', tiny sacs of colour it can open and close in a fraction of a second.</p>'
+      +'<p>A female lays tens of thousands of eggs and guards them for weeks without eating. She dies soon after they hatch, and the young drift in the '+lk('plankton')+' before settling on the sea floor.</p>'},
+  ang:{key:'ang',t:'Anglerfish',d:'deep-sea fish that fishes with a glowing lure',code:'B-L12-S06',where:'Biology tower, level 12',
+    crumb:'Biological and health sciences › Animals › Fish',c:['#3a4a80','#1f2a4f','#121a33','#24305a'],
+    text:'<p>Anglerfish are bony '+lk('fish')+' named for the way they hunt. A spine on the head ends in a lure that glows with '+lk('light made by bacteria','Bioluminescence')+', drawing prey close to a wide mouth full of teeth. Many kinds live in the '+lk('deep sea')+', where in some species the tiny male fuses to a much larger female for life.</p>'},
+  her:{key:'her',t:'Hermit crab',d:'crab that lives in a borrowed shell',code:'B-L12-S08',where:'Biology tower, level 12',
+    crumb:'Biological and health sciences › Animals › Crustaceans',c:['#94503f','#6a2f2a','#40191a','#6a2f2a'],
+    text:'<p>Hermit crabs are '+lk('crustaceans','Crustacean')+' with a soft, curled belly. To protect it they move into empty '+lk('snail')+' shells and carry them everywhere. As a crab grows it needs a bigger shell, and crabs sometimes line up by size to swap homes in a '+lk('chain','Vacancy chain')+'.</p>'}
+};
+var TOWER={Ocean:'Geography','Deep sea':'Geography',Hemocyanin:'Physical sciences','Vacancy chain':'Society'};
+
+/* ---------- stars and shelves ---------- */
+var seed=11;function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+function stars(id,x0,x1,y1,n){var s='';for(var i=0;i<n;i++){s+='<circle cx="'+(x0+rnd()*(x1-x0)).toFixed(1)+'" cy="'+(rnd()*y1).toFixed(1)+'" r="'+(0.5+rnd()*1.2).toFixed(2)+'" fill="#fff3cf" opacity="'+(0.25+rnd()*0.65).toFixed(2)+'"/>';}$(id).innerHTML=s;}
+stars('stars',700,1200,370,70);stars('stars2',0,1200,330,110);
+var PAL=['#5b2a22','#2f4a6b','#3d5a2a','#6b4a8a','#7a5a36','#44303a','#8a6a33','#2b3d4f','#6a2f2a','#4d5a3a'];
+var LAYOUT=[[['Salmon',''],['','ang'],['Eel','']],[['','oct'],['Squid',''],['Nautilus',''],['Cuttlefish','']],[['','her'],['Lobster','']]];
+function rs(){return {w:12+(rnd()*12|0),h:76+(rnd()*26|0),c:PAL[rnd()*PAL.length|0]};}
+function mk(sp){return '<div class="sp'+(sp.key?' glow feat':'')+'" style="width:'+sp.w+'px;height:'+sp.h+'px;--c:'+sp.c+'"'+(sp.key?' data-book="'+sp.key+'"':'')+(sp.name?' data-name="'+sp.name+'"':'')+'>'+(sp.name?'<b>'+sp.name.toUpperCase()+'</b>':'')+'</div>';}
+function buildShelf(bi,si2,inner){
+  var list=[],used=0,i,sp;
+  function add(x){list.push(x);used+=x.w+2;}
+  if(si2===1){
+    for(i=0;i<(bi===2?1:2);i++)add(rs());
+    LAYOUT[bi].forEach(function(x){var bk=BOOKS[x[1]];add({w:bk?22:19,h:bk?104:92+(rnd()*8|0),c:bk?bk.c[3]:PAL[rnd()*PAL.length|0],key:x[1]||'',name:bk?bk.t:x[0]});});
+  }
+  for(;;){sp=rs();if(used+sp.w+2>inner)break;add(sp);}
+  return list.map(mk).join('');
+}
+var bays=[].slice.call(document.querySelectorAll('.bay')),glows=[];
+bays.forEach(function(bay,bi){
+  var inner=bay.clientWidth-(bay.classList.contains('narrow')?20:44)-8;
+  [].forEach.call(bay.querySelectorAll('.shelf'),function(sh,k){sh.innerHTML=buildShelf(bi,k,inner);});
+  var g=document.createElement('div');g.className='lglow';
+  g.style.left=(bay.offsetLeft+bay.offsetWidth/2-200)+'px';g.style.top=(bay.offsetTop-210)+'px';g.style.width='400px';
+  world.insertBefore(g,bays[0]);glows.push(g);
+});
+var activeBay=1;
+function setActive(bi){activeBay=bi;bays.forEach(function(b,i){b.classList.toggle('act',i===bi);glows[i].classList.toggle('on',i===bi);});}
+
+/* ---------- pages ---------- */
+var B=BOOKS.oct,N=1,S=1,s=0,fs=BASE;
+function titleHTML(b){return '<div class="tpage"><div class="crumb">'+b.crumb+'</div><div class="orn">✦ ✦ ✦</div><h3>'+b.t+'</h3><div class="desc">'+b.d+'</div><div class="plate">'+PIC[b.key]+'<span>lead picture</span></div><div class="shelfc">shelf '+b.code+' · '+b.where+'</div><div class="src">Wikipedia · CC BY-SA 4.0 · '+b.t+'</div></div>';}
+function flowHTML(k){return '<div class="win"><div class="flow" style="font-size:'+fs.toFixed(2)+'px;transform:translateX('+(-k*(TW+G))+'px)">'+B.text+'</div></div>';}
+function pageHTML(idx,isR){
+  if(idx<0)return titleHTML(B);
+  if(idx>=N)return '<div class="blank">✦ ✦ ✦</div>';
+  return flowHTML(idx)+'<div class="folio">'+(idx+2)+'</div>'+(isR?'<i class="curl"></i>':'');
+}
+function setFace(el,idx){el.innerHTML=pageHTML(idx,el.classList.contains('rside'));}
+function leftOf(x){return x===0?-1:2*x-1;}
+function rightOf(x){return 2*x;}
+function measure(){
+  fs=BASE*STEPS[si];
+  meas.innerHTML='<div class="flow" style="font-size:'+fs.toFixed(2)+'px">'+B.text+'</div>';
+  var sw=meas.firstChild.scrollWidth;
+  N=Math.max(1,Math.round((sw+G)/(TW+G)));S=1+Math.floor(N/2);
+}
+function tpDress(b){
+  $('tpFrontC').setAttribute('fill',b.c[0]);$('tpBackC').setAttribute('fill',b.c[1]);$('tpSpine').setAttribute('fill',b.c[2]);
+  var lines=b.t.toUpperCase().split(' '),y0=441-(lines.length-1)*8,h='';
+  lines.forEach(function(l,i){h+='<text x="654" y="'+(y0+i*17)+'"'+(l.length>7?' textLength="80" lengthAdjust="spacingAndGlyphs"':'')+'>'+l+'</text>';});
+  $('tpTitle').innerHTML=h;$('tpCode').textContent=b.code;
+}
+function dress(b){
+  B=b;
+  book.style.setProperty('--l1',b.c[0]);book.style.setProperty('--l2',b.c[1]);book.style.setProperty('--l3',b.c[2]);book.style.setProperty('--lc',b.c[3]);
+  var ct=$('cTitle');ct.textContent=b.t.toUpperCase();ct.classList.toggle('long',b.t.length>8);
+  $('cCode').textContent=b.code;$('spfT').textContent=b.t.toUpperCase();
+  $('emblem').innerHTML=PIC[b.key].replace(/#5b4630/g,'#e0bd72').replace(/#e6d3ab/g,'none').replace('width="132" height="96"','width="76" height="56"');
+  coverIn.innerHTML=titleHTML(b);setFace(pgL,-1);measure();s=0;setFace(pgR,0);tpDress(b);
+}
+/* ---------- motion helpers ---------- */
+var timers=[],raf=0,state='shelf',turning=0,curAngle=0,closeV=0,tp=false,SLOT=null,curSpine=null,toastT=0;
+var EASE='cubic-bezier(.4,.1,.2,1)';
+function later(ms,fn){var t=setTimeout(fn,ms);timers.push(t);return t;}
+function tween(ms,fn,done){
+  ms=Math.max(1,ms*M);var t0=null;if(raf)cancelAnimationFrame(raf);
+  function step(now){
+    if(t0===null)t0=now;
+    var k=Math.min(1,(now-t0)/ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;fn(e);
+    if(k<1)raf=requestAnimationFrame(step);else{raf=0;if(done)done();}
+  }
+  raf=requestAnimationFrame(step);
+}
+function setHeld(x,y,sc,ms){
+  held.style.transition=ms?'transform '+Math.round(ms*M)+'ms '+EASE+',opacity '+Math.round(300*M)+'ms':'none';
+  held.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale('+sc.toFixed(3)+')';
+}
+function setBook(open,ry,rx,ms){
+  book.style.transition=ms?'transform '+Math.round(ms*M)+'ms '+EASE:'none';
+  book.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg) translateX('+(open?0:-(W/2+4))+'px)';
+}
+function setCover(a){cover.style.transform='translateZ(3px) rotateY('+a.toFixed(2)+'deg)';}
+function shade(a){
+  if(a===null){castR.style.opacity='0';castL.style.opacity='0';return;}
+  var p=-a/180,k=Math.sin(p*Math.PI),c=Math.cos(p*Math.PI),w;
+  if(c>0){w=c*W+24;castR.style.width=w+'px';castR.style.opacity=(k*.55).toFixed(3);castL.style.opacity='0';}
+  else{w=-c*W+24;castL.style.width=w+'px';castL.style.left=(W-w)+'px';castL.style.opacity=(k*.55).toFixed(3);castR.style.opacity='0';}
+}
+function setLeaf(a){
+  curAngle=a;leaf.style.transform='translateZ(6px) rotateY('+a.toFixed(2)+'deg)';
+  var p=-a/180;
+  leafF.style.setProperty('--sh',(Math.min(1,p*2)*.3).toFixed(3));
+  leafB.style.setProperty('--sh',(Math.min(1,(1-p)*2)*.3).toFixed(3));
+  shade(a);
+}
+function holdPos(){return {x:HX,y:HY-85*closeV,s:1+0.55*closeV};}
+function applyClose(ms){
+  if(state==='open'){var p=holdPos();setHeld(p.x,p.y,p.s,ms);}
+  world.style.filter=closeV>0.001?'blur('+(closeV*4).toFixed(2)+'px) brightness('+(1-closeV*.3).toFixed(2)+')':'';
+}
+
+/* ---------- hints, toast, buttons ---------- */
+var BAYN=['Fish','Molluscs','Crustaceans'],FEAT=['Anglerfish','Octopus','Hermit crab'];
+function hint(t){hintEl.textContent=t;}
+function shelfHint(){return 'The '+BAYN[activeBay]+' bay is lit because '+(activeBay===1?'you stand next to it':'you clicked it, so you can pick from it without walking')+'. Click the glowing '+FEAT[activeBay]+' spine to read it, or click another bay to make it your active shelf.';}
+function openHint(){
+  var t=S>1?'Drag or click the bottom-right page corner to turn (bottom-left turns back); the ‹ › buttons and arrow keys work too.'
+           :'This short sample fits on one spread: press A+ and the text re-flows onto more pages.';
+  return t+' Scroll, or slide Hold closer, to bring the book nearer.'+(B.key==='oct'?' Hover “predators”.':' Hover a gold word.');
+}
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){toastEl.classList.remove('show');},3800);}
+function ui(){
+  var open=state==='open';
+  $('bPrev').disabled=!(open&&s>0&&!turning);$('bNext').disabled=!(open&&s<S-1&&!turning);
+  $('pgLab').textContent='spread '+(s+1)+' / '+S;
+  $('szLab').textContent=Math.round(STEPS[si]*100)+'%';
+  $('bSm').disabled=si===0;$('bLg').disabled=si===STEPS.length-1;
+  $('bBack').disabled=!open;rng.disabled=!open;
+  hotR.classList.toggle('off',!(s<S-1));hotL.classList.toggle('off',!(s>0));
+  var holding=held.classList.contains('on');
+  $('tpBook').style.display=holding?'':'none';
+  $('armsDown').style.display=holding?'none':'';$('armsDownPaws').style.display=holding?'none':'';
+  $('tpSub').textContent=holding?'holding '+B.t:'empty hands';
+}
+function setTP(on){
+  tp=on;
+  $('fpL').style.opacity=on?'0':'1';$('fpL').style.pointerEvents=on?'none':'';$('tpL').style.opacity=on?'1':'0';
+  chip.classList.toggle('show',on);tip.style.display='none';
+  var b=$('bTP');b.setAttribute('aria-pressed',on?'true':'false');b.textContent=on?'Back to your eyes':'What others see';
+  if(on)hint('Other players see Fox holding the book, title readable on the cover. The game already syncs which book you hold.');
+  else if(state==='open')hint(openHint());else if(state==='shelf')hint(shelfHint());
+}
+
+/* ---------- take a book: slide out, rise into hands, open ---------- */
+function pickup(sp){
+  if(state!=='shelf')return;
+  var bk=BOOKS[sp.dataset.book];if(!bk)return;
+  state='busy';curSpine=sp;dress(bk);ui();
+  hint('The book slides out and rises into your hands. In the world its text loads now, hidden behind this.');
+  sp.classList.add('out');
+  later(380*M,function(){
+    var r=sp.getBoundingClientRect(),sr=scene.getBoundingClientRect();
+    SLOT={x:(r.left+r.width/2-sr.left)/FIT,y:(r.top+r.height/2-sr.top)/FIT,s:(r.height/FIT)/(H+16)};
+    held.classList.remove('spread','hands','open');
+    setCover(0);leaf.style.display='none';pgL.style.visibility='hidden';shade(null);
+    setHeld(SLOT.x,SLOT.y,SLOT.s,0);setBook(false,90,0,0);
+    held.classList.add('on');sp.classList.add('gone');ui();
+    void held.offsetWidth;
+    setHeld(HX,HY,1,1100);setBook(false,0,TILT,1100);
+    later(750*M,function(){held.classList.add('hands');});
+    later(1150*M,openBook);
+  });
+}
+function openBook(){
+  setFace(pgR,rightOf(0));
+  setBook(true,0,TILT,1000);held.classList.add('spread');
+  tween(1000,function(e){var a=-180*e;setCover(a);shade(a);},function(){
+    shade(null);setFace(pgL,leftOf(0));pgL.style.visibility='visible';
+    state='open';s=0;held.classList.add('open');ui();if(!tp)hint(openHint());
+  });
+}
+
+/* ---------- page turns: click, drag the corner, arrows ---------- */
+function canTurn(dir){return state==='open'&&!turning&&(dir>0?s<S-1:s>0);}
+function beginTurn(dir){
+  turning=dir;leaf.style.display='block';
+  if(dir>0){setFace(leafF,rightOf(s));setFace(leafB,leftOf(s+1));setFace(pgR,rightOf(s+1));setLeaf(0);}
+  else{setFace(leafB,leftOf(s));setFace(leafF,rightOf(s-1));setFace(pgL,leftOf(s-1));setLeaf(-180);}
+  ui();
+}
+function endTurn(done){
+  var dir=turning;
+  if(done){if(dir>0){s++;setFace(pgL,leftOf(s));}else{s--;setFace(pgR,rightOf(s));}}
+  else if(dir>0)setFace(pgR,rightOf(s));else setFace(pgL,leftOf(s));
+  leaf.style.display='none';shade(null);turning=0;ui();
+}
+function turn(dir){
+  if(!canTurn(dir))return;
+  beginTurn(dir);var from=dir>0?0:-180,to=dir>0?-180:0;
+  tween(720,function(e){setLeaf(from+(to-from)*e);},function(){endTurn(true);});
+}
+function dragStart(e,dir){
+  if(!canTurn(dir))return;
+  e.preventDefault();var el=e.currentTarget;
+  try{el.setPointerCapture(e.pointerId);}catch(err){}
+  beginTurn(dir);
+  var x0=e.clientX,moved=0,span=2*W*FIT*holdPos().s;
+  function mv(ev){
+    var dx=ev.clientX-x0;moved=Math.max(moved,Math.abs(dx));
+    var p=Math.max(0,Math.min(1,(dir>0?-dx:dx)/span));setLeaf(dir>0?-180*p:-180+180*p);
+  }
+  function up(){
+    el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);
+    var a=curAngle,p=dir>0?-a/180:(180+a)/180,to;
+    if(moved<6||p>0.33){to=dir>0?-180:0;tween(80+650*(1-p),function(k){setLeaf(a+(to-a)*k);},function(){endTurn(true);});}
+    else{to=dir>0?0:-180;tween(60+420*p,function(k){setLeaf(a+(to-a)*k);},function(){endTurn(false);});}
+  }
+  el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+}
+hotR.addEventListener('pointerdown',function(e){dragStart(e,1);});
+hotL.addEventListener('pointerdown',function(e){dragStart(e,-1);});
+
+/* ---------- put it back ---------- */
+function putBack(){
+  if(state!=='open'||turning)return;
+  if(tp)setTP(false);
+  state='busy';held.classList.remove('open');ui();
+  hint('The book closes and floats back into its slot.');
+  closeV=0;rng.value='0';setHeld(HX,HY,1,600);world.style.filter='';
+  pgL.style.visibility='hidden';held.classList.remove('spread');setBook(false,0,TILT,900);
+  tween(900,function(e){var a=-180+180*e;setCover(a);shade(a);},function(){
+    shade(null);held.classList.remove('hands');
+    setHeld(SLOT.x,SLOT.y,SLOT.s,1000);setBook(false,90,0,1000);
+    later(1020*M,function(){
+      held.classList.remove('on');curSpine.classList.remove('gone');ui();
+      later(40,function(){
+        curSpine.classList.remove('out');
+        later(380*M,function(){state='shelf';s=0;ui();if(!tp)hint(shelfHint());});
+      });
+    });
+  });
+}
+
+/* ---------- text size re-flow ---------- */
+function resize(d){
+  if(turning||state==='busy')return;
+  si=Math.max(0,Math.min(STEPS.length-1,si+d));
+  measure();if(s>S-1)s=S-1;
+  setFace(pgR,rightOf(state==='open'?s:0));if(state==='open')setFace(pgL,leftOf(s));
+  ui();if(state==='open'&&!tp)hint(openHint());
+}
+
+/* ---------- shelves: click a bay to light it, click a spine to take it ---------- */
+bays.forEach(function(bay,bi){
+  bay.addEventListener('click',function(e){
+    var sp=e.target.closest?e.target.closest('.sp'):null;
+    if(state!=='shelf'){if(state==='open')toast('One open book per player: put this one back first.');return;}
+    if(bi!==activeBay){
+      setActive(bi);if(!tp)hint(shelfHint());
+      if(sp&&sp.dataset.book){later(320*M,function(){pickup(sp);});}
+      else toast('The '+BAYN[bi]+' bay is now your active shelf, without walking over to it.');
+      return;
+    }
+    if(!sp)return;
+    if(sp.dataset.book){pickup(sp);return;}
+    sp.classList.remove('wig');void sp.offsetWidth;sp.classList.add('wig');
+    toast((sp.dataset.name?sp.dataset.name+': ':'')+'in this mock-up only the glowing spines open. In the world every spine does.');
+  });
+});
+
+/* ---------- gold words ---------- */
+document.addEventListener('mouseover',function(e){
+  var a=e.target.closest?e.target.closest('.lk'):null;
+  if(!a||!a.dataset.to||tp){tip.style.display='none';return;}
+  tip.textContent='→ '+a.dataset.to;tip.style.display='block';
+  var r=a.getBoundingClientRect(),tw=tip.offsetWidth;
+  tip.style.left=Math.max(4,Math.min(window.innerWidth-tw-4,r.left+r.width/2-tw/2))+'px';
+  tip.style.top=Math.max(4,r.top-tip.offsetHeight-6)+'px';
+});
+window.addEventListener('scroll',function(){tip.style.display='none';},{passive:true});
+document.addEventListener('click',function(e){
+  var a=e.target.closest?e.target.closest('.lk'):null;if(!a||state!=='open')return;
+  var w=a.dataset.w,name=a.dataset.to||(w.charAt(0).toUpperCase()+w.slice(1));
+  toast('Gold word “'+w+'”: in the world the '+name+' book flies to you from the '+(TOWER[name]||'Biology')+' tower, and '+B.t+' floats home. Back brings it again.');
+});
+
+/* ---------- controls ---------- */
+$('bPrev').addEventListener('click',function(){turn(-1);});
+$('bNext').addEventListener('click',function(){turn(1);});
+$('bSm').addEventListener('click',function(){resize(-1);});
+$('bLg').addEventListener('click',function(){resize(1);});
+$('bBack').addEventListener('click',putBack);
+$('bTP').addEventListener('click',function(){setTP(!tp);});
+$('bReset').addEventListener('click',reset);
+rng.addEventListener('input',function(){closeV=(+rng.value)/100;applyClose(140);});
+outer.addEventListener('wheel',function(e){
+  if(state!=='open'||tp)return;
+  e.preventDefault();
+  closeV=Math.max(0,Math.min(1,closeV+(e.deltaY<0?0.08:-0.08)));rng.value=String(Math.round(closeV*100));applyClose(260);
+},{passive:false});
+document.addEventListener('keydown',function(e){
+  if(e.target===rng||e.altKey||e.ctrlKey||e.metaKey)return;
+  if(e.key==='ArrowRight'&&canTurn(1)){e.preventDefault();turn(1);}
+  else if(e.key==='ArrowLeft'&&canTurn(-1)){e.preventDefault();turn(-1);}
+});
+
+function reset(){
+  timers.forEach(clearTimeout);timers=[];if(raf)cancelAnimationFrame(raf);raf=0;
+  turning=0;state='shelf';closeV=0;rng.value='0';world.style.filter='';
+  if(tp)setTP(false);
+  held.classList.remove('on','open','spread','hands');setHeld(HX,HY,0.3,0);setBook(false,90,0,0);setCover(0);
+  leaf.style.display='none';pgL.style.visibility='hidden';shade(null);
+  [].forEach.call(document.querySelectorAll('.sp'),function(x){x.classList.remove('out','gone','wig');});
+  setActive(1);dress(BOOKS.oct);ui();hint(shelfHint());toastEl.classList.remove('show');
+}
+reset();
+if(document.fonts&&document.fonts.ready){
+  document.fonts.ready.then(function(){
+    if(turning||state==='busy')return;
+    measure();if(s>S-1)s=S-1;
+    setFace(pgR,rightOf(state==='open'?s:0));if(state==='open')setFace(pgL,leftOf(s));ui();
+  });
+}
+})();
+</script>
+</body>
+</html>
