@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The book unfolds into the air</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=Cinzel:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0c0b22;--night2:#141235;--violet:#2a2160;--amber:#ffc266;--moon:#fff3cf;--thread:#ffd27a;
+  --vellum:#f3e7cc;--vellum2:#ead9b4;--ink:#2b2118;--link:#7a2b1c;
+  --walnut:#2a1a12;--brass:#c9a35a;--brass-d:#8a6a33;--btn1:#d9b46a;--btn2:#a07a3a;
+  --text:#e6e4f5;--muted:#a3a0c4;--line:rgba(201,163,90,.3);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;color:var(--text);font:15px/1.55 Inter,system-ui,sans-serif;background-color:#0c0b22;
+  background-image:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,#141235,#0a0b1c);background-attachment:fixed}
+.wrap{max-width:1500px;margin:0 auto;padding:0 16px}
+header{padding:26px 0 12px}
+.kicker{margin:0;font:600 11px/1.4 Cinzel,serif;letter-spacing:.2em;color:var(--brass);text-transform:uppercase}
+h1{font:600 40px/1.08 "Cormorant Garamond",Georgia,serif;letter-spacing:.02em;margin:6px 0 6px;color:var(--moon)}
+.lede{margin:0;color:#cfcae6;max-width:82ch;font-size:15.5px}
+
+/* ---------- demo frame ---------- */
+.demo{padding-bottom:8px}
+.holder{width:100%}
+.stagewrap{position:relative;margin:0 auto}
+.stagebox{position:relative;border-radius:14px;overflow:hidden;background:#0c0b22;touch-action:pan-y;
+  -webkit-user-select:none;user-select:none;box-shadow:0 0 0 1px rgba(201,163,90,.4),0 30px 80px rgba(0,0,0,.55)}
+.world{position:absolute;left:0;top:0;transform-origin:0 0}
+.backdrop{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.scene{position:absolute;left:0;top:0;width:100%;height:100%;perspective:700px;perspective-origin:50% 50%}
+.instant,.instant *{transition:none !important}
+
+/* hint overlay (unscaled) */
+.hint{position:absolute;left:14px;top:14px;z-index:6;max-width:min(470px,56%);margin:0;padding:9px 13px;border-radius:10px;
+  background:rgba(12,11,34,.82);border:1px solid rgba(201,163,90,.45);color:#ece7fb;font:13.5px/1.45 Inter,sans-serif;pointer-events:none}
+.hint b{color:var(--thread);font-weight:600}
+.stagewrap.below .hint{position:static;max-width:none !important;margin:10px 0 0}
+
+/* ---------- leaves ---------- */
+.leaf{position:absolute;left:50%;top:50%;width:500px;height:640px;margin:-320px 0 0 -250px;transform-origin:50% 50%;
+  transition:transform .95s cubic-bezier(.22,.8,.26,1),opacity .45s ease;cursor:pointer;outline:none}
+.leaf .float{position:absolute;left:0;top:0;width:100%;height:100%;animation:bob 7s ease-in-out infinite}
+.leaf.front .float{animation:none}
+@keyframes bob{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+.float::after{content:"";position:absolute;left:0;top:0;width:100%;height:100%;border-radius:3px 8px 8px 3px;background:rgba(8,7,26,.64);
+  opacity:0;transition:opacity .4s ease;pointer-events:none}
+.leaf.dim .float::after{opacity:1}
+.leaf.dim:hover .float::after{opacity:.38}
+.leaf.inbook,.leaf.gone,.scene.busy .leaf{pointer-events:none}
+.scene.dragging .leaf{transition:opacity .3s ease !important}
+.sheet{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;flex-direction:column;padding:22px 28px 14px 38px;
+  color:var(--ink);font-family:"Cormorant Garamond",Georgia,serif;border-radius:3px 8px 8px 3px;
+  background:linear-gradient(90deg,rgba(110,72,30,.24),rgba(110,72,30,0) 9%,rgba(110,72,30,0) 86%,rgba(110,72,30,.17)),linear-gradient(180deg,#f3e7cc,#ead9b4);
+  box-shadow:inset 0 0 0 1px rgba(138,106,51,.55),inset 0 0 44px rgba(120,80,30,.24),0 26px 50px rgba(0,0,0,.45),0 0 0 0 rgba(255,194,102,0);
+  transition:box-shadow .35s ease}
+.leaf.hov .sheet{box-shadow:inset 0 0 0 2px #c9a35a,inset 0 0 44px rgba(120,80,30,.2),0 26px 50px rgba(0,0,0,.45),0 0 64px 12px rgba(255,194,102,.6)}
+.leaf.front .sheet{box-shadow:inset 0 0 0 1px rgba(138,106,51,.6),inset 0 0 44px rgba(120,80,30,.22),0 30px 80px rgba(0,0,0,.6),0 0 90px 6px rgba(255,194,102,.3)}
+.leaf:focus-visible .sheet{outline:3px solid var(--thread);outline-offset:4px}
+.leaf .sheet *{pointer-events:none}
+.leaf.front .sheet *{pointer-events:auto}
+.leaf.front{cursor:default}
+.sheet::before{content:"";position:absolute;left:13px;top:28px;bottom:28px;width:3px;
+  background:repeating-linear-gradient(180deg,rgba(90,60,30,.5) 0 3px,transparent 3px 24px)}
+.cn{position:absolute;width:22px;height:22px;border:2px solid #c9a35a;pointer-events:none}
+.cn.c1{top:7px;left:22px;border-right:0;border-bottom:0}.cn.c2{top:7px;right:7px;border-left:0;border-bottom:0}
+.cn.c3{bottom:7px;left:22px;border-right:0;border-top:0}.cn.c4{bottom:7px;right:7px;border-left:0;border-top:0}
+.rib{position:absolute;top:-6px;right:40px;width:28px;height:60px;background:#7a2b1c;color:#f3e7cc;font:600 14px/1 Cinzel,serif;
+  text-align:center;padding-top:16px;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.crumb{font:500 11.5px/1.3 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7a5a36;padding-right:44px}
+.sheet h3{font-weight:700;font-size:38px;line-height:1.02;margin:8px 0 4px;padding-right:40px}
+.rule{height:12px;margin:0 0 10px;position:relative}
+.rule::before{content:"";position:absolute;left:0;right:0;top:6px;height:1px;background:linear-gradient(90deg,#8a6a33,rgba(138,106,51,.12))}
+.rule::after{content:"\2726";position:absolute;left:0;top:-3px;font-size:11px;color:#a07a3a;background:#f2e5c8;padding-right:6px}
+.body{flex:1 1 0;min-height:0;overflow:hidden;font-size:19.5px;line-height:1.42;text-align:justify;-webkit-hyphens:auto;hyphens:auto}
+.body p{margin:0}
+.body p+p{text-indent:1.5em}
+.body p:first-child::first-letter{float:left;font-size:2.7em;line-height:.85;padding:5px 7px 0 0;color:#7a2b1c;font-weight:700}
+.body.nodrop p:first-child::first-letter{float:none;font-size:inherit;padding:0;color:inherit;font-weight:inherit;line-height:inherit}
+.body .sa{margin:6px 0 0;padding-left:1.1em;text-align:left}
+.body .sa li{margin:0 0 3px}
+.lk{color:#7a2b1c;font-weight:600;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer;border-radius:2px;outline:none}
+.lk:hover,.lk:focus-visible{background:rgba(122,43,28,.1);text-shadow:0 0 12px rgba(255,210,122,.9)}
+.lbar{display:flex;gap:6px;justify-content:space-between;align-items:center;margin-top:10px;opacity:0;transition:opacity .35s ease}
+.leaf.front .lbar{opacity:1}
+.lb{font:600 12.5px/1 Inter,sans-serif;color:#2a1a12;background:linear-gradient(180deg,#d9b46a,#a07a3a);border:0;border-radius:3px;
+  padding:8px 11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.5);cursor:pointer;white-space:nowrap}
+.lb:hover{filter:brightness(1.08)}
+.lb.ghost{visibility:hidden}
+.foot{font:500 10.5px/1.2 Inter,sans-serif;color:#8a6a46;text-align:center;margin-top:9px;letter-spacing:.04em}
+
+/* ---------- the book ---------- */
+.book{position:absolute;left:50%;top:50%;width:340px;height:440px;margin:-220px 0 0 -170px;transform-style:preserve-3d;z-index:1;
+  transition:transform .9s cubic-bezier(.25,.8,.25,1),opacity .45s ease}
+.board{position:absolute;left:-3px;right:-9px;top:-6px;bottom:-6px;border-radius:4px 8px 8px 4px;background:linear-gradient(180deg,var(--lea1),var(--lea2));
+  transform:translateZ(-7px);box-shadow:0 30px 60px rgba(0,0,0,.6)}
+.book.oct{--lea1:#4a2c1a;--lea2:#24150d}
+.book.cut{--lea1:#4d1e22;--lea2:#220d0f}
+.block{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:2px 5px 5px 2px;padding:24px 26px 18px;color:var(--ink);
+  font-family:"Cormorant Garamond",Georgia,serif;overflow:hidden;transform:translateZ(-3px);
+  background:linear-gradient(90deg,#d6bd8c 0%,#f0e3c5 13%,#f3e7cc 100%);
+  box-shadow:2px 0 0 #e2cfa6,4px 1px 0 #c9b184,6px 1px 0 #e2cfa6,8px 2px 0 #bfa575,inset 0 0 40px rgba(120,80,30,.22);transition:box-shadow .6s ease}
+.book.glow .block{box-shadow:2px 0 0 #e2cfa6,4px 1px 0 #c9b184,6px 1px 0 #e2cfa6,8px 2px 0 #bfa575,inset 0 0 70px rgba(255,194,102,.6)}
+.cover{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:0 50%;transform-style:preserve-3d;
+  transform:translateZ(1px) rotateY(0deg);transition:transform .8s cubic-bezier(.35,.7,.3,1)}
+.book.open .cover{transform:translateZ(1px) rotateY(-178deg)}
+.face{position:absolute;left:0;top:0;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.face.front{border-radius:3px 7px 7px 3px;background:radial-gradient(120% 90% at 40% 28%,var(--lea1),var(--lea2));color:#e9c97c;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 28px 26px 44px;cursor:pointer;outline:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.4),inset 0 0 34px rgba(0,0,0,.55)}
+.face.front:focus-visible{box-shadow:inset 0 0 0 3px var(--thread)}
+.face.front::before{content:"";position:absolute;left:0;top:0;bottom:0;width:24px;border-radius:3px 0 0 3px;
+  background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.12) 70%,rgba(255,220,160,.14))}
+.frm{position:absolute;left:34px;right:16px;top:16px;bottom:16px;border:3px double #c9a35a;border-radius:3px;pointer-events:none}
+.cap{position:absolute;width:30px;height:30px;background:linear-gradient(135deg,#e9c97c,#8a6a33);pointer-events:none}
+.cap.k1{right:-1px;top:-1px;clip-path:polygon(0 0,100% 0,100% 100%);border-radius:0 7px 0 0}
+.cap.k2{right:-1px;bottom:-1px;clip-path:polygon(100% 0,100% 100%,0 100%);border-radius:0 0 7px 0}
+.emb{width:104px;height:92px;display:block;margin:0 auto 4px}
+.ct{font:700 52px/1 "Cormorant Garamond",Georgia,serif;color:#efd28a;text-shadow:0 1px 0 rgba(0,0,0,.5),0 0 18px rgba(255,194,102,.35);margin:6px 0 6px;padding:0 6px;border-radius:6px}
+.book.waiting .ct{animation:titleGlow 2.4s ease-in-out infinite}
+@keyframes titleGlow{0%,100%{text-shadow:0 1px 0 rgba(0,0,0,.5),0 0 14px rgba(255,194,102,.3)}50%{text-shadow:0 1px 0 rgba(0,0,0,.5),0 0 30px rgba(255,210,122,.95)}}
+.cd{font:italic 500 17px/1.25 "Cormorant Garamond",Georgia,serif;color:#dcc48e;max-width:20ch}
+.cl{font:600 11px/1.3 Cinzel,serif;letter-spacing:.16em;color:#c9a35a;margin-top:18px}
+.cc{font:500 11px/1.2 Inter,sans-serif;letter-spacing:.1em;color:#a99263;margin-top:6px}
+.face.back{transform:rotateY(180deg);border-radius:7px 3px 3px 7px;padding:24px 26px 18px;color:var(--ink);font-family:"Cormorant Garamond",Georgia,serif;
+  background:linear-gradient(90deg,#f3e7cc 0%,#efe0bf 84%,#d8c08f 100%);box-shadow:inset 0 0 40px rgba(120,80,30,.22);display:flex;flex-direction:column;overflow:hidden}
+.tp{align-items:center;justify-content:center;text-align:center}
+.tp .orn{color:#a07a3a;letter-spacing:.4em;font-size:14px;margin:8px 0}
+.tp h3{font-size:50px;line-height:1;margin:0 0 6px;font-weight:700}
+.tp .d{font-style:italic;font-size:18px;color:#5b4630;max-width:20ch}
+.tp .sh{font:500 11px/1.4 Inter,sans-serif;color:#7a5a36;letter-spacing:.06em;margin-top:14px}
+.tp .lab{font:600 11px/1.3 Cinzel,serif;letter-spacing:.16em;color:#7a2b1c;margin-top:12px}
+.pcrumb{font:500 10.5px/1.3 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7a5a36}
+.ph{font-size:40px;line-height:1;margin:6px 0 2px;font-weight:700}
+.pd{font-style:italic;font-size:16px;color:#5b4630;margin-bottom:6px}
+.psec{font:600 11px/1.3 Cinzel,serif;letter-spacing:.14em;color:#7a2b1c;margin:6px 0 6px}
+.pbody{font-size:17px;line-height:1.4;text-align:justify;-webkit-hyphens:auto;hyphens:auto}
+.pbody p{margin:0}.pbody p+p{text-indent:1.4em}
+.pbody.drop p:first-child::first-letter{float:left;font-size:2.6em;line-height:.85;padding:4px 6px 0 0;color:#7a2b1c;font-weight:700}
+.pfoot{margin-top:auto;font:500 10px/1.3 Inter,sans-serif;color:#8a6a46;text-align:center;letter-spacing:.04em;padding-top:8px}
+.toc .toch{font:600 12px/1.3 Cinzel,serif;letter-spacing:.18em;color:#7a2b1c;text-align:center;margin:4px 0 12px}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc button{display:flex;width:100%;align-items:baseline;gap:6px;background:none;border:0;padding:4px 4px;margin:0;border-radius:3px;
+  font:600 20px/1.25 "Cormorant Garamond",Georgia,serif;color:var(--ink);cursor:pointer;text-align:left}
+.toc button i{flex:1;border-bottom:2px dotted rgba(122,90,54,.5);transform:translateY(-5px)}
+.toc button b{font:500 13px Inter,sans-serif;color:#7a5a36}
+.toc button:hover,.toc button.on{background:rgba(201,163,90,.25);color:#7a2b1c}
+.toc .tocn{font-style:italic;font-size:16px;color:#5b4630;text-align:center;margin:12px 0 0}
+.hand{position:absolute;top:296px;width:150px;height:170px;pointer-events:none;transition:left .8s cubic-bezier(.35,.7,.3,1)}
+.hand.l{left:-92px;transform:translateZ(9px)}
+.hand.r{left:282px;transform:translateZ(9px) scaleX(-1)}
+.book.open .hand.l{left:-432px}
+
+/* ---------- 2D overlays inside the world ---------- */
+.tapHint{position:absolute;transform:translate(-50%,-100%);z-index:4;border:0;cursor:pointer;white-space:nowrap;
+  font:600 14px/1 Inter,sans-serif;letter-spacing:.05em;color:#2a1a12;background:linear-gradient(180deg,#e6c47c,#a07a3a);padding:9px 16px;border-radius:999px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px #8a6a33,0 0 26px rgba(255,194,102,.6);animation:pulse 2.4s ease-in-out infinite;transition:opacity .35s ease}
+.tapHint::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-top-color:#a07a3a;border-bottom:0}
+.tapHint.off{opacity:0;pointer-events:none;animation:none}
+@keyframes pulse{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px #8a6a33,0 0 14px rgba(255,194,102,.35)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px #8a6a33,0 0 34px rgba(255,194,102,.85)}}
+.turn{position:absolute;top:50%;z-index:4;width:var(--tb,56px);height:var(--tb,56px);margin-top:calc(var(--tb,56px) / -2);border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#efd28a,#a07a3a 72%);color:#2a1a12;font:700 calc(var(--tb,56px) * .62)/1 "Cormorant Garamond",Georgia,serif;
+  box-shadow:0 5px 16px rgba(0,0,0,.55),0 0 0 2px #2a1a12,0 0 0 3px #c9a35a;transition:opacity .35s ease,transform .2s ease}
+.turn:hover{transform:scale(1.07)}
+.turn:focus-visible{outline:3px solid var(--thread);outline-offset:3px}
+.turn.l{left:20px}.turn.r{right:20px}
+.turn.off{opacity:0;pointer-events:none}
+.turn:disabled{opacity:.3;cursor:default;transform:none}
+.turn .ch{display:block;margin-top:-4px}
+.turn .tl{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;font:500 12px/1.2 Inter,sans-serif;color:#fff3cf;
+  background:rgba(12,11,34,.78);border:1px solid rgba(201,163,90,.35);padding:3px 8px;border-radius:6px}
+.turn .tl:empty{display:none}
+.turn.l .tl{left:0;transform:none}.turn.r .tl{left:auto;right:0;transform:none}
+.mini{position:absolute;right:14px;top:14px;z-index:4;width:136px;padding:8px 8px 6px;border-radius:12px;background:rgba(12,11,34,.76);
+  border:1px solid rgba(201,163,90,.45);text-align:center;font:500 11px/1.2 Inter,sans-serif;color:#cfc6e8;pointer-events:none;transition:opacity .4s ease}
+.mini.off{opacity:0}
+.mini svg{display:block;width:120px;height:104px;margin:0 auto 3px}
+.mini .ring{fill:none;stroke:rgba(201,163,90,.4);stroke-dasharray:3 4}
+.mini .cone{fill:rgba(255,243,207,.1);stroke:rgba(255,243,207,.28);stroke-width:1}
+.mini .me{fill:#fff3cf}
+.mini .bk{fill:#7a4a2a;stroke:#c9a35a;stroke-width:1}
+.mini .tick{transform-box:view-box;transform-origin:60px 52px;transition:transform .95s cubic-bezier(.22,.8,.26,1),opacity .45s ease}
+.mini .tick rect{fill:#ead9b4}
+.mini .tick.on rect{fill:#ffc266}
+.mini.dragging .tick{transition:none}
+.stagebox.narrow .mini{transform:scale(1.5);transform-origin:100% 0}
+.stagebox.narrow .turn .tl{font-size:19px}
+.inFold{position:absolute;left:20px;bottom:20px;z-index:4;font:600 14px/1 Inter,sans-serif;color:#2a1a12;border:0;border-radius:6px;cursor:pointer;
+  padding:10px 15px;background:linear-gradient(180deg,#d9b46a,#a07a3a);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 1px #8a6a33,0 4px 14px rgba(0,0,0,.5);transition:opacity .35s ease}
+.inFold.off{opacity:0;pointer-events:none}
+.inFold:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.stagebox.narrow .inFold{font-size:24px;padding:14px 20px}
+.lglow{animation:flicker 5s ease-in-out infinite}
+.lglow.b{animation-delay:-2.3s}
+@keyframes flicker{0%,100%{opacity:.9}35%{opacity:.75}55%{opacity:1}75%{opacity:.82}}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:12px auto 0}
+.tlab{color:var(--muted);font-size:13px}
+.seg{display:inline-flex;border:1px solid rgba(201,163,90,.55);border-radius:8px;overflow:hidden}
+.seg button{font:500 13px/1.2 Inter,sans-serif;color:#efe9ff;background:rgba(255,255,255,.04);border:0;padding:8px 13px;cursor:pointer;text-align:left}
+.seg button+button{border-left:1px solid rgba(201,163,90,.4)}
+.seg button b{font-weight:600}
+.seg button small{display:block;font-size:11px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--amber);color:#1a1230}
+.seg button[aria-pressed="true"] small{color:#4a3a20}
+.seg button:disabled{cursor:default}
+.sp{flex:1}
+.btn{font:600 13px/1.2 Inter,sans-serif;color:#f3e7cc;background:rgba(255,255,255,.05);border:1px solid rgba(201,163,90,.55);border-radius:6px;padding:10px 15px;cursor:pointer}
+.btn.brass{background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border-color:#8a6a33;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.5)}
+.btn:disabled{opacity:.38;cursor:default}
+.btn:focus-visible,.seg button:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.note{color:var(--muted);font-size:12.5px;margin:10px 0 0}
+
+/* ---------- notes ---------- */
+.info{display:grid;gap:18px;grid-template-columns:repeat(3,minmax(0,1fr));padding-top:22px;padding-bottom:10px}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h2{font:600 25px/1.1 "Cormorant Garamond",Georgia,serif;color:var(--moon);margin:0 0 10px}
+.card ul,.card ol{margin:0;padding-left:19px}
+.card li{margin:0 0 8px;color:#d6d1ec}
+.card li b{color:var(--thread);font-weight:600}
+footer{color:var(--muted);font-size:13px;padding-top:12px;padding-bottom:40px}
+
+/* link bubble */
+.tip{position:fixed;display:none;z-index:1000;white-space:nowrap;font:600 12px/1.2 Inter,sans-serif;padding:5px 9px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);pointer-events:none}
+
+@media (max-width:1000px){.info{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:700px){
+  h1{font-size:32px}
+  .hint{position:static;max-width:none;margin:10px 0 0}
+  .sp{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .leaf,.book,.cover,.hand,.mini .tick,.float::after,.tapHint,.turn,.block{transition-duration:.01s !important;transition-delay:0s !important}
+  .leaf .float,.tapHint,.lglow,.book.waiting .ct{animation:none !important}
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="kicker">The Midnight Archive · reading idea 6</p>
+  <h1>The book unfolds into the air</h1>
+  <p class="lede">Open a long book and its sections fly out as parchment leaves that hang in a gentle arc around you. Pull one in to read it, then fold them all back into the book. Short articles just open as a normal book.</p>
+</header>
+
+<section class="demo wrap" aria-label="Interactive demo">
+  <div class="holder" id="holder">
+    <div class="stagewrap" id="stagewrap">
+      <div class="stagebox" id="stage">
+        <div class="world" id="world">
+          <svg class="backdrop" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1636"/><stop offset=".6" stop-color="#130f29"/><stop offset="1" stop-color="#0d0a1c"/></linearGradient>
+              <radialGradient id="gSky" cx="50%" cy="38%" r="62%"><stop offset="0" stop-color="#2a2160"/><stop offset=".62" stop-color="#171340"/><stop offset="1" stop-color="#0c0b22"/></radialGradient>
+              <radialGradient id="gMoon"><stop offset="0" stop-color="#fff3cf" stop-opacity=".55"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gLamp"><stop offset="0" stop-color="#ffc266" stop-opacity=".5"/><stop offset=".42" stop-color="#ffb347" stop-opacity=".16"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+              <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24170f"/><stop offset="1" stop-color="#0e0906"/></linearGradient>
+              <radialGradient id="gVig" cx="50%" cy="45%" r="75%"><stop offset=".55" stop-color="#05040f" stop-opacity="0"/><stop offset="1" stop-color="#05040f" stop-opacity=".78"/></radialGradient>
+              <linearGradient id="gHand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#776fbe"/><stop offset="1" stop-color="#3c357c"/></linearGradient>
+              <clipPath id="cWin"><circle cx="600" cy="262" r="174"/></clipPath>
+            </defs>
+            <rect width="1200" height="720" fill="url(#gWall)"/>
+            <g id="roomGen"></g>
+            <!-- round window -->
+            <circle cx="600" cy="262" r="194" fill="#1e130c"/>
+            <circle cx="600" cy="262" r="176" fill="url(#gSky)"/>
+            <g clip-path="url(#cWin)">
+              <g id="stars"></g>
+              <circle cx="676" cy="186" r="96" fill="url(#gMoon)"/>
+              <circle cx="676" cy="186" r="29" fill="#fff3cf"/>
+              <circle cx="668" cy="180" r="7" fill="#efe2bd"/><circle cx="684" cy="196" r="4" fill="#efe2bd"/>
+              <ellipse cx="514" cy="356" rx="74" ry="13" fill="#1a1442"/>
+              <rect x="497" y="252" width="34" height="106" fill="#1f1950"/>
+              <path d="M492 254 L514 220 L536 254 Z" fill="#1f1950"/>
+              <g stroke="#ffc266" stroke-width="2.2" opacity=".8"><line x1="499" y1="272" x2="529" y2="272"/><line x1="499" y1="290" x2="529" y2="290"/><line x1="499" y1="308" x2="529" y2="308"/><line x1="499" y1="326" x2="529" y2="326"/><line x1="499" y1="344" x2="529" y2="344"/></g>
+              <ellipse cx="704" cy="364" rx="44" ry="8" fill="#1a1442"/>
+              <rect x="694" y="300" width="20" height="66" fill="#1c1748"/>
+              <path d="M691 302 L704 282 L717 302 Z" fill="#1c1748"/>
+              <g stroke="#ffc266" stroke-width="1.6" opacity=".55"><line x1="696" y1="314" x2="712" y2="314"/><line x1="696" y1="328" x2="712" y2="328"/><line x1="696" y1="342" x2="712" y2="342"/><line x1="696" y1="356" x2="712" y2="356"/></g>
+              <path d="M418 380 C 470 356, 520 386, 572 366 S 682 352, 742 372 L 790 372 L 790 460 L 410 460 Z" fill="#2a2160"/>
+              <path d="M410 404 C 470 388, 540 410, 600 396 S 712 388, 790 402 L 790 460 L 410 460 Z" fill="#3a2f7a" opacity=".6"/>
+            </g>
+            <circle cx="600" cy="262" r="176" fill="none" stroke="#c9a35a" stroke-width="3"/>
+            <circle cx="600" cy="262" r="187" fill="none" stroke="#8a6a33" stroke-width="1.5" opacity=".7"/>
+            <circle cx="600" cy="262" r="58" fill="none" stroke="#1e130c" stroke-width="6"/>
+            <g stroke="#1e130c" stroke-width="7"><line x1="600" y1="86" x2="600" y2="204"/><line x1="600" y1="320" x2="600" y2="438"/><line x1="424" y1="262" x2="542" y2="262"/><line x1="658" y1="262" x2="776" y2="262"/></g>
+            <!-- window seat -->
+            <rect x="452" y="430" width="296" height="26" rx="13" fill="#4f3a78"/>
+            <ellipse cx="486" cy="428" rx="28" ry="18" fill="#7a2b1c"/>
+            <ellipse cx="716" cy="428" rx="28" ry="18" fill="#6b4a8a"/>
+            <rect x="430" y="452" width="340" height="16" rx="3" fill="#3b2416"/>
+            <rect x="440" y="468" width="320" height="132" fill="#21130c"/>
+            <g stroke="#3b2416" stroke-width="3" fill="none"><rect x="456" y="484" width="136" height="48" rx="3"/><rect x="608" y="484" width="136" height="48" rx="3"/></g>
+            <g fill="#c9a35a"><circle cx="524" cy="508" r="3"/><circle cx="676" cy="508" r="3"/></g>
+            <g id="floorGen"></g>
+            <!-- lanterns -->
+            <g transform="translate(252,0)">
+              <circle class="lglow" cx="0" cy="178" r="230" fill="url(#gLamp)"/>
+              <line x1="0" y1="0" x2="0" y2="134" stroke="#8a6a33" stroke-width="2"/>
+              <path d="M-12 146 L0 132 L12 146 Z" fill="#c9a35a"/>
+              <path d="M-16 146 L16 146 L22 156 L22 198 L16 208 L-16 208 L-22 198 L-22 156 Z" fill="#2a1a12" stroke="#c9a35a" stroke-width="2"/>
+              <rect x="-15" y="156" width="30" height="42" fill="#ffc266" opacity=".9"/>
+              <ellipse cx="0" cy="179" rx="5" ry="10" fill="#fff3cf"/>
+              <g stroke="#c9a35a" stroke-width="2"><line x1="-6" y1="156" x2="-6" y2="198"/><line x1="6" y1="156" x2="6" y2="198"/></g>
+            </g>
+            <g transform="translate(948,0)">
+              <circle class="lglow b" cx="0" cy="178" r="230" fill="url(#gLamp)"/>
+              <line x1="0" y1="0" x2="0" y2="134" stroke="#8a6a33" stroke-width="2"/>
+              <path d="M-12 146 L0 132 L12 146 Z" fill="#c9a35a"/>
+              <path d="M-16 146 L16 146 L22 156 L22 198 L16 208 L-16 208 L-22 198 L-22 156 Z" fill="#2a1a12" stroke="#c9a35a" stroke-width="2"/>
+              <rect x="-15" y="156" width="30" height="42" fill="#ffc266" opacity=".9"/>
+              <ellipse cx="0" cy="179" rx="5" ry="10" fill="#fff3cf"/>
+              <g stroke="#c9a35a" stroke-width="2"><line x1="-6" y1="156" x2="-6" y2="198"/><line x1="6" y1="156" x2="6" y2="198"/></g>
+            </g>
+            <rect width="1200" height="720" fill="url(#gVig)"/>
+          </svg>
+
+          <div class="scene" id="scene">
+            <div class="book oct waiting" id="book">
+              <div class="board"></div>
+              <div class="block" id="pageR"></div>
+              <div class="cover">
+                <div class="face front" id="coverFront" role="button" tabindex="0" aria-label="Open the book"></div>
+                <div class="face back" id="pageL"></div>
+              </div>
+              <svg class="hand l" viewBox="0 0 150 170" aria-hidden="true"><path d="M14 170 C 0 128, 4 82, 34 64 C 56 52, 84 60, 96 86 L 104 170 Z" fill="url(#gHand)" stroke="rgba(200,190,255,.35)" stroke-width="1.5"/><path d="M74 124 C 68 98, 86 52, 106 38 C 118 30, 132 38, 128 52 C 122 74, 104 110, 96 128 Z" fill="url(#gHand)" stroke="rgba(200,190,255,.45)" stroke-width="1.5"/></svg>
+              <svg class="hand r" viewBox="0 0 150 170" aria-hidden="true"><path d="M14 170 C 0 128, 4 82, 34 64 C 56 52, 84 60, 96 86 L 104 170 Z" fill="url(#gHand)" stroke="rgba(200,190,255,.35)" stroke-width="1.5"/><path d="M74 124 C 68 98, 86 52, 106 38 C 118 30, 132 38, 128 52 C 122 74, 104 110, 96 128 Z" fill="url(#gHand)" stroke="rgba(200,190,255,.45)" stroke-width="1.5"/></svg>
+            </div>
+          </div>
+
+          <button type="button" class="tapHint" id="tapHint">Tap the title</button>
+          <button type="button" class="turn l off" id="turnL" aria-label="Turn the arc left"><span class="ch">&#8249;</span><span class="tl" id="tlL"></span></button>
+          <button type="button" class="turn r off" id="turnR" aria-label="Turn the arc right"><span class="ch">&#8250;</span><span class="tl" id="tlR"></span></button>
+          <button type="button" class="inFold off" id="inFold" tabindex="-1">Fold back</button>
+          <div class="mini" id="mini" aria-hidden="true"><svg id="miniSvg" viewBox="0 0 120 104"></svg>top view</div>
+        </div>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <div class="toolbar" id="toolbar">
+    <span class="tlab">In your hands:</span>
+    <div class="seg" role="group" aria-label="Which book is in your hands">
+      <button type="button" data-book="octopus" aria-pressed="true"><b>Octopus</b><small>long article · 7 sections</small></button>
+      <button type="button" data-book="cuttlefish" aria-pressed="false"><b>Cuttlefish</b><small>short article · 2 sections</small></button>
+    </div>
+    <span class="sp"></span>
+    <button type="button" class="btn brass" id="foldBtn" disabled>Fold back</button>
+    <button type="button" class="btn" id="arcBtn" disabled>Back to the arc</button>
+    <button type="button" class="btn" id="resetBtn">Reset</button>
+  </div>
+  <p class="note">The book and page text here was written for this mock-up, not taken from Wikipedia. Only Octopus and Cuttlefish are real books in this demo; other gold words say where they would lead.</p>
+</section>
+
+<section class="info wrap" aria-label="Notes">
+  <article class="card">
+    <h2>In VRChat</h2>
+    <ul>
+      <li><b>VR:</b> open the book and the leaves spread around you at reading distance. Reach out and grab a leaf to pull it close; let go and it drifts back into the arc. Closing the book folds them all back in.</li>
+      <li><b>Desktop:</b> look around with the mouse and click a leaf to bring it in front of you. Arrow keys step to the next section; click away to let it go.</li>
+      <li><b>Quest:</b> each leaf is a simple quad, and the text for all of them is drawn on one shared canvas texture, with at most ~7 leaves. Articles with more sections merge the small ones.</li>
+      <li><b>Where:</b> best for long articles, at a lectern or in a nook. Not while flying: the leaves stay where you opened the book, and moving away folds them back.</li>
+      <li><b>Short articles</b> (2 or 3 sections) skip the leaves and open as a normal two-page book.</li>
+    </ul>
+  </article>
+  <article class="card">
+    <h2>Builds on</h2>
+    <ul>
+      <li><b>Clickable gold words:</b> the same overlay hit areas sit over the words on each leaf.</li>
+      <li><b>A&minus; / A+ with re-paging:</b> each leaf re-pages on its own; a long section gets page turns on its leaf.</li>
+      <li><b>Back history:</b> Back folds the leaves away and brings the previous book.</li>
+      <li><b>Grabbable books off a lit bay</b> (bays light when you stand next to them, never by facing them): unchanged. You carry the book to a lectern or nook to unfold it.</li>
+      <li><b>Others see the book you hold</b> (title on the cover), open or closed.</li>
+      <li><b>Books from GitHub Pages:</b> the ~5 s load hides behind carrying the book and the opening animation; the leaves only fly once the text has arrived.</li>
+    </ul>
+  </article>
+  <article class="card">
+    <h2>Open questions</h2>
+    <ol>
+      <li>Leaves only for long articles, or always available (even a two-section book could unfold)?</li>
+      <li>An arc around you, or a smaller fan above the open book?</li>
+      <li>Should other players see your leaves (and read along), or only you?</li>
+    </ol>
+  </article>
+</section>
+
+<footer class="wrap">Mock-up for choosing a direction. Made for The Midnight Archive by Doghouse Devs.</footer>
+
+<script>
+(function(){
+  'use strict';
+  var RM = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function D(ms){ return RM ? 30 : ms; }
+
+  /* ---------- sample content (written for the mock-up) ---------- */
+  var TOWER = {
+    'Mollusca':'Biology','Ocean':'Geography','Cephalopod':'Biology','Squid':'Biology','Cuttlefish':'Biology','Octopus':'Biology',
+    'Cephalopod intelligence':'Biology','Predation':'Biology','Hemocyanin':'Physical sciences','Gill':'Biology','Beak':'Biology',
+    'Cephalopod ink':'Biology','Neuron':'Biology','Coconut':'Biology','Tool use by animals':'Biology','Chromatophore':'Biology',
+    'Mimic octopus':'Biology','Pterois':'Biology','Hectocotylus':'Biology','Plankton':'Biology','Seabed':'Geography',
+    'Takoyaki':'Everyday life','Mediterranean cuisine':'Everyday life','Blue-ringed octopus':'Biology','Tetrodotoxin':'Physical sciences',
+    'Kraken':'Philosophy and religion','Sentience':'Philosophy and religion','Nautilus':'Biology','Giant Pacific octopus':'Biology',
+    'Cuttlebone':'Biology','Cephalopod limb':'Biology','Crab':'Biology','Polarization (waves)':'Physical sciences'
+  };
+  function md(s){
+    return s.replace(/\[([^\]→]+?)(?:→([^\]]+))?\]/g, function(_, w, t){
+      var book = t || (w.charAt(0).toUpperCase() + w.slice(1));
+      return '<a class="lk" tabindex="-1" data-book="' + book + '" data-to="' + (t || '') + '">' + w + '</a>';
+    });
+  }
+  var BOOKS = {
+    octopus: {
+      key:'octopus', cls:'oct', title:'Octopus', desc:'soft-bodied, eight-armed sea animal', code:'B-L12-S07', where:'Biology tower, level 12',
+      crumb:'Biological and health sciences › Animals › Molluscs', emblem:'oct',
+      sections:[
+        ['Overview', "<p>The octopus is a soft-bodied [mollusc→Mollusca] with eight arms, found in every [ocean]. It belongs to the [cephalopods→Cephalopod], together with [squid] and [cuttlefish].</p><p>Octopuses are known for their [intelligence→Cephalopod intelligence]: they solve puzzles, use tools and can change colour and texture in an instant to hide from [predators→Predation]. Most kinds live only a year or two.</p>"],
+        ['Anatomy', "<p>Each arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue [blood→Hemocyanin]: two hearts push blood through the [gills→Gill], and the third sends it round the body.</p><p>Most kinds have no shell and no bones. The only hard part is the [beak], so an octopus can slip through any gap wider than it. When threatened it squirts a cloud of [ink→Cephalopod ink] and jets away.</p>"],
+        ['Intelligence', "<p>For an animal without a backbone, the octopus has a large brain, and about two thirds of its [nerve cells→Neuron] sit in the arms. An arm can feel its way and grab food partly on its own.</p><p>In tests octopuses open jars, find their way through mazes and learn new tricks quickly. The veined octopus carries [coconut] shells about to use as a shelter later, a rare case of [tool use→Tool use by animals] in an invertebrate.</p>"],
+        ['Camouflage', "<p>An octopus can change colour in a fraction of a second. Its skin holds thousands of [colour cells→Chromatophore], tiny sacs of pigment that open and close under nerve control.</p><p>It can also raise small bumps to copy the texture of rock or weed. The [mimic octopus] goes further: it copies the shape and movement of other animals, such as [lionfish→Pterois] and sea snakes.</p>"],
+        ['Life cycle', "<p>Most octopuses live only one or two years. The male passes sperm to the female with a [special arm→Hectocotylus], and usually dies within a few months.</p><p>The female lays thousands of eggs in a den and guards them for weeks or months, cleaning them and often going without food. She dies around the time they hatch. The young of many kinds drift as [plankton] before they settle on the [seabed].</p>"],
+        ['Octopuses and people', "<p>People have eaten octopus for thousands of years, from Japanese [takoyaki] to grilled octopus around the [Mediterranean→Mediterranean cuisine].</p><p>The small [blue-ringed octopus] carries a [venom→Tetrodotoxin] strong enough to kill a person. In old sailors’ tales, the [kraken] was a giant, octopus-like sea monster.</p><p>Some laws now treat octopuses as [feeling animals→Sentience], after studies suggested they can feel pain.</p>"],
+        ['See also', "<p>More books on these shelves:</p><ul class='sa'><li>[Squid], a ten-armed cousin</li><li>[Cuttlefish], a cousin with an inner shell</li><li>[Nautilus], a cousin that kept its outer shell</li><li>[Giant Pacific octopus], the largest kind</li><li>[How they think→Cephalopod intelligence]</li><li>[Kraken], the sea monster of legend</li></ul>"]
+      ]
+    },
+    cuttlefish: {
+      key:'cuttlefish', cls:'cut', title:'Cuttlefish', desc:'eight-armed sea animal with an inner shell', code:'B-L12-S09', where:'Biology tower, level 12',
+      crumb:'Biology › Animals › Molluscs', emblem:'cut',
+      sections:[
+        ['Overview', "<p>The cuttlefish is a [cephalopod] with eight arms and two long feeding [tentacles→Cephalopod limb], a close cousin of the [octopus] and the [squid].</p><p>Inside its body is a light, chalky shell, the [cuttlebone]. By changing the mix of gas and liquid inside it, a cuttlefish rises or sinks in the water.</p>"],
+        ['Behaviour', "<p>Cuttlefish hunt [crabs→Crab] and small fish by shooting out their two tentacles. Like octopuses they change colour in a moment, and males ripple bands of colour to court females and warn off rivals.</p><p>Their eyes can see [polarised light→Polarization (waves)], which people cannot. Most kinds live only a year or two.</p>"]
+      ]
+    }
+  };
+  var LEAF_MIN = 4; // articles with fewer sections open as a normal book
+
+  var EMB = {
+    oct:'<svg class="emb" viewBox="0 0 120 110" aria-hidden="true"><g fill="none" stroke="#c9a35a" stroke-width="3" stroke-linecap="round"><ellipse cx="60" cy="36" rx="23" ry="26"/><path d="M42 54 C 28 66, 16 68, 11 58"/><path d="M47 59 C 39 80, 25 90, 17 84"/><path d="M54 62 C 52 84, 44 98, 34 99"/><path d="M58 63 C 58 86, 56 100, 50 105"/><path d="M78 54 C 92 66, 104 68, 109 58"/><path d="M73 59 C 81 80, 95 90, 103 84"/><path d="M66 62 C 68 84, 76 98, 86 99"/><path d="M62 63 C 62 86, 64 100, 70 105"/></g><g fill="#c9a35a"><circle cx="51" cy="38" r="3"/><circle cx="69" cy="38" r="3"/></g></svg>',
+    cut:'<svg class="emb" viewBox="0 0 120 110" aria-hidden="true"><g fill="none" stroke="#c9a35a" stroke-width="3" stroke-linecap="round"><path d="M38 55 C 52 30, 92 30, 108 55 C 92 80, 52 80, 38 55 Z"/><path d="M44 46 C 60 40, 88 40, 102 50"/><path d="M38 51 C 26 48, 16 42, 10 34"/><path d="M38 55 C 24 55, 14 54, 6 50"/><path d="M38 59 C 26 62, 16 68, 10 76"/><path d="M40 53 C 26 40, 22 30, 26 22"/></g><circle cx="47" cy="53" r="3.2" fill="#c9a35a"/></svg>'
+  };
+
+  /* ---------- elements ---------- */
+  var $ = function(id){ return document.getElementById(id); };
+  var holder=$('holder'), stagewrap=$('stagewrap'), stage=$('stage'), world=$('world'), scene=$('scene'), bookEl=$('book');
+  var coverFront=$('coverFront'), pageL=$('pageL'), pageR=$('pageR'), hint=$('hint'), tapHint=$('tapHint');
+  var turnL=$('turnL'), turnR=$('turnR'), tlL=$('tlL'), tlR=$('tlR'), mini=$('mini'), miniSvg=$('miniSvg');
+  var foldBtn=$('foldBtn'), arcBtn=$('arcBtn'), resetBtn=$('resetBtn'), inFold=$('inFold'), toolbar=$('toolbar');
+  var segBtns = Array.prototype.slice.call(document.querySelectorAll('.seg button'));
+
+  /* ---------- geometry ----------
+     Camera sits at z = +700 (the CSS perspective). The leaves stand on a cylinder of radius R whose centre is c = 500
+     in front of the camera, so you are inside the ring, a step behind its middle, and can see five leaves at once. */
+  var G;
+  function geometry(narrow){
+    var g = narrow
+      ? {W:760, H:960, leafY:-90, bookY:452, focusZ:0, readZ:-148, readY:-10, tb:84}
+      : {W:1200, H:720, leafY:-60, bookY:354, focusZ:-200, readZ:-200, readY:-6, tb:56};
+    g.P=700; g.c=500; g.R=1100; g.A=g.P-g.c; g.sp=28; g.bookZ=-600; g.back=320; g.pull=130; g.maxT=86;
+    return g;
+  }
+  function tf(B, X, Y, Z, T, S){
+    return 'translateZ(' + G.A + 'px) rotateY(' + (-B).toFixed(3) + 'deg) translate3d(' + X.toFixed(1) + 'px,' + Y.toFixed(1) + 'px,' + Z.toFixed(1) + 'px) rotateX(' + T.toFixed(2) + 'deg) scale(' + S + ')';
+  }
+
+  /* ---------- state ---------- */
+  var S, leaves = [], ticks = [];
+  function fresh(){ return {book:'octopus', phase:'closed', rot:3, drag:0, focus:-1, hover:-1, read:false, pose:null, msg:''}; }
+  S = fresh();
+  var timers = [];
+  function later(fn, ms){
+    var id = setTimeout(function(){ timers = timers.filter(function(x){ return x !== id; }); fn(); }, ms);
+    timers.push(id); return id;
+  }
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function busy(){ return /^(opening|folding|switching|spreading|closing)$/.test(S.phase); }
+  function curBook(){ return BOOKS[S.book]; }
+  function angleOf(i){ return (i - S.rot - S.drag) * G.sp; }
+
+  /* ---------- book rendering ---------- */
+  function renderBook(){
+    var b = curBook();
+    bookEl.classList.remove('oct', 'cut'); bookEl.classList.add(b.cls);
+    var n = b.sections.length, long = n >= LEAF_MIN;
+    coverFront.innerHTML = '<i class="frm"></i><i class="cap k1"></i><i class="cap k2"></i>' + EMB[b.emblem] +
+      '<div class="ct">' + b.title + '</div><div class="cd">' + b.desc + '</div>' +
+      '<div class="cl">' + (long ? 'Long article' : 'Short article') + ' · ' + n + ' sections</div><div class="cc">' + b.code + '</div>';
+    coverFront.setAttribute('aria-label', 'Open the book: ' + b.title);
+    if (long){
+      pageL.className = 'face back tp';
+      pageL.innerHTML = '<div class="pcrumb">' + b.crumb + '</div><div class="orn">✦ ✦ ✦</div><h3>' + b.title + '</h3><div class="d">' + b.desc +
+        '</div><div class="sh">Shelf ' + b.code + ' · ' + b.where + '</div><div class="lab">' + n + ' sections</div>';
+      var toc = '<div class="toc"><div class="toch">Contents</div><ol>';
+      b.sections.forEach(function(s, i){ toc += '<li><button type="button" data-toc="' + i + '" tabindex="-1"><span>' + s[0] + '</span><i></i><b>' + (i + 1) + '</b></button></li>'; });
+      toc += '</ol><p class="tocn">The sections are out of the book, hanging around you.</p></div>';
+      pageR.innerHTML = toc;
+    } else {
+      pageL.className = 'face back';
+      pageL.innerHTML = '<div class="pcrumb">' + b.crumb + '</div><div class="ph">' + b.title + '</div><div class="pd">' + b.desc + '</div>' +
+        '<div class="psec">' + b.sections[0][0] + '</div><div class="pbody drop">' + md(b.sections[0][1]) + '</div><div class="pfoot">Wikipedia · CC BY-SA 4.0 · ' + b.title + '</div>';
+      pageR.innerHTML = '<div class="psec">' + (b.sections[1] ? b.sections[1][0] : '') + '</div><div class="pbody">' + (b.sections[1] ? md(b.sections[1][1]) : '') +
+        '</div><div class="pfoot" style="position:absolute;left:0;right:0;bottom:18px">Shelf ' + b.code + ' · ' + b.where + '</div>';
+    }
+  }
+
+  function buildLeaves(){
+    leaves.forEach(function(L){ L.el.remove(); });
+    leaves = [];
+    var b = curBook(), n = b.sections.length;
+    if (n >= LEAF_MIN){
+      b.sections.forEach(function(s, i){
+        var el = document.createElement('div');
+        el.className = 'leaf inbook';
+        el.setAttribute('data-i', i);
+        el.setAttribute('role', 'group');
+        el.setAttribute('aria-label', 'Leaf ' + (i + 1) + ' of ' + n + ': ' + s[0]);
+        el.tabIndex = -1;
+        var prev = i > 0 ? '‹ ' + b.sections[i - 1][0] : '';
+        var next = i < n - 1 ? b.sections[i + 1][0] + ' ›' : '';
+        el.innerHTML = '<div class="float"><div class="sheet">' +
+          '<i class="cn c1"></i><i class="cn c2"></i><i class="cn c3"></i><i class="cn c4"></i><span class="rib">' + (i + 1) + '</span>' +
+          '<div class="crumb">' + b.title + ' · section ' + (i + 1) + ' of ' + n + '</div><h3>' + s[0] + '</h3><div class="rule"></div>' +
+          '<div class="body' + (s[0] === 'See also' ? ' nodrop' : '') + '">' + md(s[1]) + '</div>' +
+          '<div class="lbar"><button type="button" class="lb' + (prev ? '' : ' ghost') + '" data-go="-1" tabindex="-1">' + (prev || '‹') + '</button>' +
+          '<button type="button" class="lb" data-go="0" tabindex="-1">Let go</button>' +
+          '<button type="button" class="lb' + (next ? '' : ' ghost') + '" data-go="1" tabindex="-1">' + (next || '›') + '</button></div>' +
+          '<div class="foot">Wikipedia · CC BY-SA 4.0 · ' + b.title + ' · ' + b.code + '</div>' +
+          '</div></div>';
+        el.querySelector('.float').style.animationDelay = (-i * 1.3).toFixed(1) + 's';
+        el.addEventListener('pointerenter', function(e){
+          if (e.pointerType === 'touch' || drag || S.phase !== 'arc') return;
+          S.hover = i; placeLeaf(i);
+        });
+        el.addEventListener('pointerleave', function(){
+          if (S.hover === i){ S.hover = -1; placeLeaf(i); }
+        });
+        el.addEventListener('keydown', function(e){
+          if ((e.key === 'Enter' || e.key === ' ') && e.target === el){ e.preventDefault(); clickLeaf(i); }
+        });
+        scene.appendChild(el);
+        leaves.push({el:el, where:'book'});
+      });
+    }
+    leaves.forEach(function(L, i){ placeLeaf(i); });
+    buildMini();
+  }
+
+  /* ---------- placing things in 3D ---------- */
+  function setTab(el, on){
+    el.tabIndex = on ? 0 : -1;
+    Array.prototype.forEach.call(el.querySelectorAll('.lk,.lb'), function(x){ x.tabIndex = on && !x.classList.contains('ghost') ? 0 : -1; });
+  }
+  function placeLeaf(i){
+    var L = leaves[i]; if (!L) return;
+    var el = L.el, B = 0, Y, Z, T = 0, Sc = 1, op = 1, zi;
+    var c = {inbook:false, gone:false, front:false, dim:false, hov:false};
+    if (L.where === 'book'){
+      Y = G.bookY - 20; Z = G.bookZ; T = 40; Sc = 0.42; op = 0; c.inbook = true; zi = 10 + i;
+    } else if (S.focus === i){
+      Y = 0; Z = G.focusZ; c.front = true; zi = 60;
+    } else {
+      var th = angleOf(i), a = Math.abs(th);
+      c.gone = a > G.sp * 3 + 2;
+      c.hov = S.hover === i && S.focus < 0 && !c.gone;
+      c.dim = S.focus >= 0;
+      var r = G.R + (c.dim ? G.back : 0) - (c.hov ? G.pull : 0);
+      B = Math.max(-G.maxT, Math.min(G.maxT, th)); Y = G.leafY; Z = -r; op = c.gone ? 0 : 1;
+      zi = 40 - Math.round(a / 10) + (c.hov ? 15 : 0);
+    }
+    el.style.transform = tf(B, 0, Y, Z, T, Sc);
+    el.style.opacity = op;
+    el.style.zIndex = zi;
+    for (var k in c){ el.classList.toggle(k, c[k]); }
+    setTab(el, !c.inbook && !c.gone && S.phase !== 'opening' && S.phase !== 'folding');
+    if (!c.front){ Array.prototype.forEach.call(el.querySelectorAll('.lk,.lb'), function(x){ x.tabIndex = -1; }); }
+  }
+  function placeAll(){ leaves.forEach(function(L, i){ placeLeaf(i); }); drawMini(); }
+  function placeBook(){
+    var open = bookEl.classList.contains('open');
+    var X = open ? 170 : 0, Y = G.bookY, Z = G.bookZ, T = 40, op = 1;
+    if (S.read){ Y = G.readY; Z = G.readZ; T = 4; }
+    if (S.pose === 'away'){ X = 0; Y = G.bookY + 300; Z = G.bookZ - 260; T = 70; op = 0; }
+    if (S.pose === 'far'){ X = -1500; Y = -760; Z = G.bookZ - 2600; T = -10; op = 0; }
+    bookEl.style.transform = tf(0, X, Y, Z, T, 1);
+    bookEl.style.opacity = op;
+  }
+  function positionTap(){
+    var T = 40 * Math.PI / 180, hh = 220;
+    var yTop = G.bookY - hh * Math.cos(T), zTop = G.A + G.bookZ - hh * Math.sin(T), depth = G.P - zTop;
+    tapHint.style.left = (G.W / 2) + 'px';
+    tapHint.style.top = (G.H / 2 + yTop * G.P / depth - 18) + 'px';
+  }
+
+  /* ---------- top-view map ---------- */
+  function camY(){ return 52 + 40 * (G.c / G.R); }
+  function buildMini(){
+    var cy = camY(), h = Math.atan((G.W / 2) / G.P), len = 46;
+    var s = '<circle class="ring" cx="60" cy="52" r="40"/>' +
+      '<path class="cone" d="M60 ' + cy.toFixed(1) + ' L' + (60 - len * Math.sin(h)).toFixed(1) + ' ' + (cy - len * Math.cos(h)).toFixed(1) +
+      ' L' + (60 + len * Math.sin(h)).toFixed(1) + ' ' + (cy - len * Math.cos(h)).toFixed(1) + ' Z"/>';
+    leaves.forEach(function(L, i){ s += '<g class="tick" data-i="' + i + '"><rect x="53" y="10.5" width="14" height="3" rx="1"/></g>'; });
+    s += '<rect class="bk" x="54" y="' + (cy + 4).toFixed(1) + '" width="12" height="7" rx="1"/><circle class="me" cx="60" cy="' + cy.toFixed(1) + '" r="3.6"/>';
+    miniSvg.innerHTML = s;
+    ticks = Array.prototype.slice.call(miniSvg.querySelectorAll('.tick'));
+    drawMini();
+  }
+  function drawMini(){
+    var cy = camY();
+    ticks.forEach(function(t, i){
+      var L = leaves[i]; if (!L) return;
+      var tr, op = 1, on = false;
+      if (L.where === 'book'){ tr = 'rotate(0deg) translateY(' + (cy - 12).toFixed(1) + 'px)'; op = 0; }
+      else if (S.focus === i){ tr = 'rotate(0deg) translateY(' + (cy - 20 - 12).toFixed(1) + 'px)'; on = true; }
+      else {
+        var th = angleOf(i);
+        tr = 'rotate(' + th.toFixed(2) + 'deg) translateY(0px)';
+        op = Math.abs(th) > G.sp * 3 + 2 ? 0.3 : (S.focus >= 0 ? 0.55 : 1);
+        on = S.focus < 0 && Math.abs(th) < G.sp / 2;
+      }
+      t.style.transform = tr; t.style.opacity = op; t.classList.toggle('on', on);
+    });
+    mini.classList.toggle('off', leaves.length === 0);
+  }
+
+  /* ---------- hints and buttons ---------- */
+  function phaseHint(){
+    var b = curBook(), n = b.sections.length;
+    switch (S.phase){
+      case 'closed': return n >= LEAF_MIN
+        ? '<b>' + b.title + '</b> is a long article (' + n + ' sections). Tap the title on the cover to open it.'
+        : '<b>' + b.title + '</b> is a short article (' + n + ' sections). Tap the title on the cover to open it.';
+      case 'opening': return 'The book opens and its sections fly out into an arc around you.';
+      case 'arc': return 'Seven leaves hang around you (top view, upper right). <b>Hover</b> a leaf, <b>click</b> one to read it. <b>Drag</b> or use ‹ › to turn the arc.';
+      case 'focus': return 'Reading <b>' + b.sections[S.focus][0] + '</b> (' + (S.focus + 1) + ' of ' + n + '). Hover a gold word to see where it leads. ‹ › brings the next leaf forward; click outside the leaf to let it go.';
+      case 'folding': return 'The leaves fly back into the book, and it closes.';
+      case 'spreading': return 'Only ' + n + ' sections, so no leaves: it opens like a normal book and lifts to reading height.';
+      case 'spread': return 'Short article: a normal two-page book in your hands. Hover a gold word to see where it leads. <b>Close the book</b> lowers it again.';
+      case 'closing': return 'The book closes.';
+      case 'switching': return 'This book goes home to its shelf and the other one flies to your hands.';
+    }
+    return '';
+  }
+  function ui(){
+    var p = S.phase, b = curBook(), n = leaves.length;
+    hint.innerHTML = S.msg || phaseHint();
+    tapHint.classList.toggle('off', p !== 'closed');
+    bookEl.classList.toggle('waiting', p === 'closed');
+    var turning = (p === 'arc' || p === 'focus');
+    var at = p === 'focus' ? S.focus : S.rot;
+    [turnL, turnR].forEach(function(t){ t.classList.toggle('off', !turning); });
+    turnL.disabled = !turning || at <= 0;
+    turnR.disabled = !turning || at >= n - 1;
+    tlL.textContent = turning && at > 0 ? b.sections[at - 1][0] : '';
+    tlR.textContent = turning && at < n - 1 ? b.sections[at + 1][0] : '';
+    turnL.tabIndex = turning ? 0 : -1; turnR.tabIndex = turning ? 0 : -1;
+    foldBtn.textContent = (p === 'spread') ? 'Close the book' : 'Fold back';
+    foldBtn.disabled = !(p === 'arc' || p === 'focus' || p === 'spread');
+    inFold.textContent = foldBtn.textContent;
+    inFold.classList.toggle('off', foldBtn.disabled);
+    inFold.tabIndex = foldBtn.disabled ? -1 : 0;
+    arcBtn.disabled = p !== 'focus';
+    segBtns.forEach(function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-book') === S.book ? 'true' : 'false'); x.disabled = busy(); });
+    scene.classList.toggle('busy', busy());
+    Array.prototype.forEach.call(pageR.querySelectorAll('[data-toc]'), function(x){
+      var i = +x.getAttribute('data-toc');
+      x.classList.toggle('on', (p === 'focus' && i === S.focus) || (p === 'arc' && i === S.rot));
+      x.tabIndex = turning ? 0 : -1;
+    });
+    Array.prototype.forEach.call(bookEl.querySelectorAll('.lk'), function(x){ x.tabIndex = p === 'spread' ? 0 : -1; });
+    coverFront.tabIndex = p === 'closed' ? 0 : -1;
+    drawMini();
+  }
+
+  /* ---------- actions ---------- */
+  function centerOut(n){
+    var c = Math.floor((n - 1) / 2), out = [c];
+    for (var k = 1; k < n; k++){ if (c - k >= 0) out.push(c - k); if (c + k < n) out.push(c + k); }
+    return out;
+  }
+  function openBook(){
+    if (S.phase !== 'closed') return;
+    S.msg = '';
+    if (curBook().sections.length < LEAF_MIN){ openSpread(); return; }
+    S.phase = 'opening'; S.rot = Math.floor((leaves.length - 1) / 2); S.focus = -1; S.hover = -1; S.drag = 0;
+    bookEl.classList.add('open', 'glow'); placeBook(); ui();
+    var order = centerOut(leaves.length), step = 95;
+    later(function(){
+      order.forEach(function(i, k){
+        var L = leaves[i], d = D(k * step);
+        L.el.style.transitionDelay = d + 'ms, ' + d + 'ms';
+        L.where = 'arc'; placeLeaf(i);
+      });
+      drawMini();
+      later(function(){ bookEl.classList.remove('glow'); }, D(700));
+      later(function(){
+        leaves.forEach(function(L){ L.el.style.transitionDelay = ''; });
+        S.phase = 'arc'; placeAll(); ui();
+      }, D(order.length * step + 980));
+    }, D(420));
+  }
+  function foldBack(then){
+    if (S.phase !== 'arc' && S.phase !== 'focus') return;
+    S.phase = 'folding'; S.focus = -1; S.hover = -1; S.drag = 0; hideTip();
+    var order = leaves.map(function(L, i){ return i; }).sort(function(a, b){ return Math.abs(angleOf(b)) - Math.abs(angleOf(a)); });
+    var step = 75;
+    order.forEach(function(i, k){
+      var L = leaves[i], d = D(k * step);
+      L.el.style.transitionDelay = d + 'ms, ' + (d + D(520)) + 'ms';
+      L.where = 'book'; placeLeaf(i);
+    });
+    ui();
+    later(function(){
+      leaves.forEach(function(L){ L.el.style.transitionDelay = ''; });
+      bookEl.classList.remove('open'); placeBook();
+      later(function(){ S.phase = 'closed'; ui(); if (then) then(); }, D(850));
+    }, D(order.length * step + 900));
+  }
+  function openSpread(){
+    S.phase = 'spreading'; S.read = true;
+    bookEl.classList.add('open'); placeBook(); ui();
+    later(function(){ S.phase = 'spread'; ui(); }, D(980));
+  }
+  function closeSpread(then){
+    if (S.phase !== 'spread') return;
+    S.phase = 'closing'; S.read = false; hideTip();
+    bookEl.classList.remove('open'); placeBook(); ui();
+    later(function(){ S.phase = 'closed'; ui(); if (then) then(); }, D(980));
+  }
+  function setBook(name, autoOpen){
+    if (busy()) return;
+    if (name === S.book){ if (autoOpen && S.phase === 'closed') openBook(); return; }
+    if (S.phase === 'arc' || S.phase === 'focus'){ foldBack(function(){ swap(name, autoOpen); }); return; }
+    if (S.phase === 'spread'){ closeSpread(function(){ swap(name, autoOpen); }); return; }
+    swap(name, autoOpen);
+  }
+  function swap(name, autoOpen){
+    var keepMsg = S.msg;
+    S.phase = 'switching'; S.pose = 'away'; placeBook(); ui();
+    later(function(){
+      S.book = name; S.rot = 3; S.focus = -1;
+      renderBook(); buildLeaves();
+      S.pose = 'far';
+      bookEl.classList.add('instant'); placeBook(); void bookEl.offsetWidth; bookEl.classList.remove('instant');
+      S.pose = null; placeBook();
+      later(function(){
+        S.phase = 'closed'; S.msg = autoOpen ? '' : keepMsg; ui();
+        if (autoOpen) later(openBook, D(300));
+      }, D(950));
+    }, D(480));
+  }
+  function focusLeaf(i){
+    if (S.phase !== 'arc' && S.phase !== 'focus') return;
+    if (i < 0 || i >= leaves.length) return;
+    S.msg = ''; S.focus = i; S.rot = i; S.hover = -1; S.drag = 0; S.phase = 'focus';
+    hideTip(); placeAll(); ui();
+  }
+  function unfocus(){
+    if (S.phase !== 'focus') return;
+    S.msg = ''; S.focus = -1; S.phase = 'arc'; hideTip(); placeAll(); ui();
+  }
+  function clickLeaf(i){
+    if (S.phase === 'arc' || (S.phase === 'focus' && i !== S.focus)) focusLeaf(i);
+  }
+  function turn(d){
+    if (S.phase === 'focus'){ focusLeaf(Math.max(0, Math.min(leaves.length - 1, S.focus + d))); return; }
+    if (S.phase !== 'arc') return;
+    S.msg = ''; S.hover = -1; S.rot = Math.max(0, Math.min(leaves.length - 1, S.rot + d)); placeAll(); ui();
+  }
+  function followLink(a){
+    var bk = a.getAttribute('data-book'), key = bk.toLowerCase(), words = a.textContent;
+    hideTip();
+    if (BOOKS[key] && key !== S.book){
+      S.msg = 'Following “' + words + '”: ' + (S.phase === 'spread' ? 'this book closes' : 'the leaves fold back into the book') +
+        ', it goes home to its shelf, and the <b>' + BOOKS[key].title + '</b> book flies to your hands.';
+      ui(); setBook(key, true); return;
+    }
+    S.msg = 'In the world, “' + words + '” brings the <b>' + bk + '</b> book to you from the ' + (TOWER[bk] || 'Biology') + ' tower. ' +
+      (S.book === 'octopus' ? 'Try “cuttlefish” on the Overview leaf to see that happen here.' : 'Try “octopus” on the left page to see that happen here.');
+    ui();
+  }
+  function reset(){
+    clearTimers(); hideTip(); drag = null;
+    S = fresh();
+    stage.classList.add('instant');
+    bookEl.classList.remove('open', 'glow');
+    renderBook(); buildLeaves(); placeBook(); placeAll();
+    void stage.offsetWidth;
+    stage.classList.remove('instant');
+    ui();
+  }
+
+  /* ---------- link bubble ---------- */
+  var tip = document.createElement('div'); tip.className = 'tip'; document.body.appendChild(tip);
+  function hideTip(){ tip.style.display = 'none'; }
+  function isLive(a){ return !!a.closest('.leaf.front') || (S.phase === 'spread' && !!a.closest('.book')); }
+  function showTip(a){
+    var t = a.getAttribute('data-to');
+    if (!t){ hideTip(); return; }
+    tip.textContent = '→ ' + t; tip.style.display = 'block';
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var x = Math.max(6, Math.min(window.innerWidth - w - 6, r.left + r.width / 2 - w / 2));
+    var y = r.top - h - 8; if (y < 6) y = r.bottom + 8;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  document.addEventListener('mouseover', function(e){
+    var a = e.target.closest ? e.target.closest('.lk') : null;
+    if (a && isLive(a)) showTip(a); else hideTip();
+  });
+  document.addEventListener('focusin', function(e){
+    var a = e.target.closest ? e.target.closest('.lk') : null;
+    if (a && isLive(a)) showTip(a); else hideTip();
+  });
+  window.addEventListener('scroll', hideTip, {passive:true});
+
+  /* ---------- input ---------- */
+  var drag = null, justDragged = false;
+  stage.addEventListener('pointerdown', function(e){
+    if (e.button !== 0) return;
+    if (S.phase !== 'arc' && S.phase !== 'focus') return;
+    if (e.target.closest('button, .lk, [data-toc]')) return;
+    drag = {x0:e.clientX, y0:e.clientY, dx:0, moved:false};
+  });
+  window.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    drag.dx = dx;
+    if (!drag.moved){
+      if (Math.abs(dx) > 7 && Math.abs(dx) > Math.abs(dy)){
+        drag.moved = true;
+        if (S.phase === 'arc'){
+          scene.classList.add('dragging'); mini.classList.add('dragging');
+          if (S.hover >= 0){ var h = S.hover; S.hover = -1; placeLeaf(h); }
+        }
+      } else return;
+    }
+    if (S.phase === 'arc'){
+      var w = stage.getBoundingClientRect().width || 1;
+      var d = -dx / w * 3.2, lo = -0.45 - S.rot, hi = leaves.length - 1 + 0.45 - S.rot;
+      S.drag = Math.max(lo, Math.min(hi, d));
+      placeAll();
+    }
+  });
+  function endDrag(){
+    if (!drag) return;
+    var d = drag; drag = null;
+    if (!d.moved) return;
+    justDragged = true; setTimeout(function(){ justDragged = false; }, 60);
+    if (S.phase === 'arc'){
+      S.rot = Math.max(0, Math.min(leaves.length - 1, Math.round(S.rot + S.drag))); S.drag = 0;
+      scene.classList.remove('dragging'); mini.classList.remove('dragging');
+      S.msg = ''; placeAll(); ui();
+    } else if (S.phase === 'focus'){
+      if (d.dx < -50) turn(1); else if (d.dx > 50) turn(-1);
+    }
+  }
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', function(){
+    if (!drag) return;
+    drag = null; S.drag = 0; scene.classList.remove('dragging'); mini.classList.remove('dragging'); placeAll();
+  });
+
+  stage.addEventListener('click', function(e){
+    if (justDragged){ justDragged = false; return; }
+    var t = e.target;
+    if (t.closest('.turn, .inFold')) return;
+    var a = t.closest('.lk');
+    if (a){ if (isLive(a)){ e.preventDefault(); followLink(a); } return; }
+    var lb = t.closest('.lb');
+    if (lb){ var go = +lb.getAttribute('data-go'); if (go === 0) unfocus(); else turn(go); return; }
+    var toc = t.closest('[data-toc]');
+    if (toc){ if (S.phase === 'arc' || S.phase === 'focus') focusLeaf(+toc.getAttribute('data-toc')); return; }
+    if (t.closest('#tapHint') || t.closest('.face.front')){ openBook(); return; }
+    var lf = t.closest('.leaf');
+    if (lf){ clickLeaf(+lf.getAttribute('data-i')); return; }
+    if (S.phase === 'focus') unfocus();
+  });
+  coverFront.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openBook(); } });
+  stage.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ var a = e.target.closest && e.target.closest('.lk'); if (a && isLive(a)){ e.preventDefault(); followLink(a); } }
+  });
+  turnL.addEventListener('click', function(){ turn(-1); });
+  turnR.addEventListener('click', function(){ turn(1); });
+  function foldOrClose(){ S.msg = ''; if (S.phase === 'spread') closeSpread(); else foldBack(); }
+  foldBtn.addEventListener('click', foldOrClose);
+  inFold.addEventListener('click', foldOrClose);
+  arcBtn.addEventListener('click', unfocus);
+  resetBtn.addEventListener('click', reset);
+  segBtns.forEach(function(x){ x.addEventListener('click', function(){ S.msg = ''; setBook(x.getAttribute('data-book'), false); }); });
+  document.addEventListener('keydown', function(e){
+    var tg = e.target, tag = tg && tg.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (S.phase !== 'arc' && S.phase !== 'focus') return;
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); turn(-1); }
+    else if (e.key === 'ArrowRight'){ e.preventDefault(); turn(1); }
+    else if (e.key === 'Escape'){ unfocus(); }
+  });
+
+  /* ---------- the room (shelves, stars, floor) ---------- */
+  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function buildRoom(){
+    var rnd = rng(12), s = '', x;
+    function stretch(px){ var d = Math.abs(px - 600) - 205; if (d < 0) d = 0; d /= 395; return 1 + 0.55 * d * d; }
+    function Yat(level, px){ return 330 + (level - 330) * stretch(px); }
+    function line(level, x0, x1){ var p = []; for (x = x0; x < x1; x += 15) p.push(x + ',' + Yat(level, x).toFixed(1)); p.push(x1 + ',' + Yat(level, x1).toFixed(1)); return p; }
+    var levels = [62, 160, 258, 356, 454, 552];
+    var COLS = ['#5b2a20', '#2f4a6b', '#3d5a2a', '#6b4a8a', '#7a5a36', '#4a1f18', '#2a3a4a', '#8a6a33', '#5a3046', '#33465a'];
+    s += '<polyline points="' + line(40, 0, 1200).join(' ') + '" fill="none" stroke="#24150d" stroke-width="16"/>';
+    [[0, 395], [805, 1200]].forEach(function(seg){
+      var x0 = seg[0], x1 = seg[1];
+      var top = line(levels[0] - 14, x0, x1), bot = line(600, x0, x1).reverse();
+      s += '<polygon points="' + top.concat(bot).join(' ') + '" fill="#140d12"/>';
+      for (var r = 0; r < levels.length - 1; r++){
+        var lt = levels[r], lb = levels[r + 1];
+        x = x0 + 8;
+        while (x < x1 - 10){
+          var w = 8 + rnd() * 12;
+          if (x + w > x1 - 8) break;
+          var xm = x + w / 2, st = stretch(xm), sb = Yat(lb, xm) - 4, hgt = (lb - lt - 16) * (0.6 + rnd() * 0.36) * st;
+          var col = COLS[Math.floor(rnd() * COLS.length)];
+          s += '<rect x="' + x.toFixed(1) + '" y="' + (sb - hgt).toFixed(1) + '" width="' + (w - 1.6).toFixed(1) + '" height="' + hgt.toFixed(1) + '" fill="' + col + '" opacity=".88"/>';
+          if (rnd() < 0.45) s += '<rect x="' + x.toFixed(1) + '" y="' + (sb - hgt * 0.82).toFixed(1) + '" width="' + (w - 1.6).toFixed(1) + '" height="2" fill="#c9a35a" opacity=".5"/>';
+          x += w + (rnd() < 0.07 ? 14 + rnd() * 22 : 0);
+        }
+      }
+      levels.forEach(function(l){
+        var p = line(l, x0, x1).join(' ');
+        s += '<polyline points="' + p + '" fill="none" stroke="#3b2416" stroke-width="9"/>';
+        s += '<polyline points="' + p + '" fill="none" stroke="#c9a35a" stroke-opacity=".22" stroke-width="1" transform="translate(0,-4.5)"/>';
+      });
+      var base = line(levels[levels.length - 1] + 5, x0, x1), base2 = line(600, x0, x1).reverse();
+      s += '<polygon points="' + base.concat(base2).join(' ') + '" fill="#22140c"/>';
+      [x0 === 0 ? 4 : x1 - 4, x0 === 0 ? 395 : 805, x0 === 0 ? 200 : 1000].forEach(function(ux){
+        var y1 = Yat(levels[0] - 14, ux), y2 = Yat(600, ux);
+        s += '<rect x="' + (ux - 6) + '" y="' + y1.toFixed(1) + '" width="12" height="' + (y2 - y1).toFixed(1) + '" fill="#2c1b11"/>';
+      });
+    });
+    document.getElementById('roomGen').innerHTML = s;
+    var st = '';
+    for (var i = 0; i < 46; i++){
+      var sx = 430 + rnd() * 340, sy = 92 + rnd() * 250;
+      st += '<circle cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="' + (0.6 + rnd() * 1.1).toFixed(2) + '" fill="#fff3cf" opacity="' + (0.35 + rnd() * 0.6).toFixed(2) + '"/>';
+    }
+    document.getElementById('stars').innerHTML = st;
+    var f = line(600, 0, 1200);
+    var fl = '<polygon points="' + f.join(' ') + ' 1200,720 0,720" fill="url(#gFloor)"/>' +
+      '<ellipse cx="600" cy="694" rx="400" ry="64" fill="#221a4a" stroke="#8a6a33" stroke-width="2"/>' +
+      '<ellipse cx="600" cy="694" rx="346" ry="48" fill="none" stroke="#c9a35a" stroke-opacity=".45" stroke-dasharray="4 7"/>' +
+      '<ellipse cx="170" cy="690" rx="84" ry="27" fill="#5b3f86"/><ellipse cx="160" cy="682" rx="56" ry="12" fill="#6e52a0" opacity=".6"/>' +
+      '<ellipse cx="1034" cy="692" rx="88" ry="27" fill="#6b2a20"/><ellipse cx="1024" cy="684" rx="58" ry="12" fill="#86382a" opacity=".6"/>';
+    document.getElementById('floorGen').innerHTML = fl;
+  }
+
+  /* ---------- layout ---------- */
+  function layout(){
+    var cw = holder.clientWidth || 1200;
+    var narrow = cw < 860;
+    G = geometry(narrow);
+    var maxH = Math.max(300, window.innerHeight * 0.84);
+    var s = Math.min(cw / G.W, maxH / G.H);
+    world.style.width = G.W + 'px'; world.style.height = G.H + 'px';
+    world.style.transform = 'scale(' + s.toFixed(4) + ')';
+    world.style.setProperty('--tb', G.tb + 'px');
+    var sw = Math.floor(G.W * s), sh = Math.floor(G.H * s);
+    stage.style.width = sw + 'px'; stage.style.height = sh + 'px';
+    stagewrap.style.width = sw + 'px';
+    toolbar.style.maxWidth = Math.max(sw, 300) + 'px';
+    stage.classList.toggle('narrow', narrow);
+    /* the hint sits in the free column left of a leaf held in front of you; in narrow mode it goes under the stage */
+    stagewrap.classList.toggle('below', narrow);
+    hint.style.maxWidth = narrow ? '' : Math.max(230, Math.floor((G.W / 2 - 250) * s - 30)) + 'px';
+    stage.classList.add('instant');
+    placeBook(); placeAll(); positionTap(); buildMini();
+    void stage.offsetWidth;
+    stage.classList.remove('instant');
+  }
+  var raf = 0;
+  window.addEventListener('resize', function(){
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function(){ raf = 0; hideTip(); layout(); });
+  });
+
+  /* ---------- start ---------- */
+  buildRoom();
+  G = geometry((holder.clientWidth || 1200) < 860);
+  renderBook(); buildLeaves();
+  layout(); ui();
+})();
+</script>
+</body>
+</html>
