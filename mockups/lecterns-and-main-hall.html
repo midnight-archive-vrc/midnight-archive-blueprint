@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecterns: reading together, and the main hall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0b22;--bg2:#141235;--vio:#2a2160;--ink:#e6e4f5;--muted:#a3a0c4;--amber:#ffc266;--moon:#fff3cf;--gold:#ffd27a;
+  --brass:#c9a35a;--brass2:#8a6a33;--walnut:#2a1a12;--line:rgba(230,228,245,.14)}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,var(--bg2),#0a0b1c);
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
+.wrap{max-width:1400px;margin:0 auto;padding:0 16px}
+header{padding-top:28px;padding-bottom:6px}
+header h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:36px;letter-spacing:.03em;margin:0;line-height:1.15}
+header p{color:var(--muted);margin:8px 0 0;max-width:92ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:14px;padding-bottom:8px}
+.controls button{font:inherit;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.controls button:hover{background:rgba(255,255,255,.11)}
+.controls button[aria-selected="true"]{background:var(--amber);color:#1a1230;border-color:var(--amber);font-weight:600}
+.controls .reset{margin-left:auto}
+.hint{color:var(--muted);font-size:14px;margin:0 0 10px;min-height:2.6em}
+.hint b{color:var(--gold);font-weight:600}
+
+/* ---------- the stage: designed at 1200 x 720, scaled to fit ---------- */
+.stagewrap{position:relative;width:100%;aspect-ratio:1200/720;border-radius:14px;overflow:hidden;background:#0c0b22;
+  box-shadow:0 0 0 1px rgba(201,163,90,.25),0 30px 80px rgba(0,0,0,.55)}
+.stage{position:absolute;left:0;top:0;width:1200px;height:720px;transform-origin:0 0}
+.scene{position:absolute;inset:0;transition:opacity .5s ease}
+.scene.off{opacity:0;visibility:hidden;pointer-events:none}
+.scene svg.bg{position:absolute;inset:0;width:1200px;height:720px;display:block}
+.flicker{animation:flick 3.2s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:.9}20%{opacity:.75}45%{opacity:1}70%{opacity:.82}}
+.twinkle{animation:twk 4s ease-in-out infinite}
+@keyframes twk{0%,100%{opacity:.9}50%{opacity:.35}}
+.bob{animation:bob 3.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.av{transition:filter .3s}
+.av.act{filter:drop-shadow(0 0 10px #ffd27a) drop-shadow(0 0 4px #ffc266)}
+.toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%) translateY(8px);max-width:760px;text-align:center;
+  font:500 14px/1.35 Inter,sans-serif;color:var(--gold);background:#2a1a12f2;border:1px solid var(--brass);border-radius:9px;
+  padding:8px 14px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:40}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.place{position:absolute;left:34px;top:26px;font:600 13px Cinzel,serif;letter-spacing:.16em;color:#c9a35a;opacity:.85;pointer-events:none}
+.place small{display:block;font:500 12px Inter,sans-serif;letter-spacing:.02em;color:var(--muted);margin-top:3px;text-transform:none}
+
+/* ---------- Brass & Vellum reader (A1 look), the main hall panel ---------- */
+.frame{background:#2a1a12;border-radius:6px;padding:14px;box-shadow:0 0 0 2px #c9a35a inset,0 0 0 6px #2a1a12 inset,0 0 0 7px #8a6a33 inset,0 0 60px rgba(255,170,80,.25),0 20px 60px rgba(0,0,0,.6)}
+.corner{position:absolute;width:26px;height:26px;border:2px solid #c9a35a;pointer-events:none}
+.c1{top:8px;left:8px;border-right:0;border-bottom:0}.c2{top:8px;right:8px;border-left:0;border-bottom:0}
+.c3{bottom:8px;left:8px;border-right:0;border-top:0}.c4{bottom:8px;right:8px;border-left:0;border-top:0}
+#hallPanel{position:absolute;left:360px;top:14px;width:480px;height:400px;display:flex;flex-direction:column;z-index:10}
+/* A3 Candlelit page (picked for every lectern): toasted parchment, warm radial vignette; no candle prop */
+.page{position:relative;flex:1;min-height:0;background:radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);color:#2a1a10;border-radius:3px;margin:10px;padding:16px 22px 12px;
+  display:flex;flex-direction:column;box-shadow:inset 0 0 70px rgba(70,35,8,.55);font-family:"Cormorant Garamond",serif}
+.crumb{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#5a3a1a;font-family:Inter,sans-serif;line-height:1.35}
+.title{display:flex;gap:14px;align-items:flex-start;margin-top:6px}
+.title h3{font-size:32px;line-height:1;margin:0;font-weight:700}
+.title .desc{font-style:italic;font-size:16px;color:#4a3320;margin-top:3px}
+.plate{margin-left:auto;width:62px;height:62px;flex:none;border:3px double #8a6a33;background:radial-gradient(circle at 40% 40%,#d8b98a,#8a6a46 70%,#5b4630);
+  display:grid;place-items:center;color:#f3e7cc;font-size:10.5px;font-family:Inter,sans-serif;text-align:center;line-height:1.2}
+.page .title,.page .body{transition:opacity .35s,filter .35s}
+.page.dim .title,.page.dim .body,.page.dim .bt,.page.dim h3{opacity:.18;filter:blur(1.5px)}
+#bigPage h3,#bigPage .bt{transition:opacity .35s,filter .35s}
+.fetch{position:absolute;left:0;right:0;top:46%;text-align:center;font:italic 600 22px "Cormorant Garamond",serif;color:#7a2b1c;opacity:0;transition:opacity .3s;pointer-events:none}
+.page.dim .fetch{opacity:1}
+.body{flex:1 1 0;min-height:0;overflow:hidden;margin-top:10px;position:relative}
+.flow{font-size:19.5px;line-height:1.42;text-align:justify;hyphens:auto;column-fill:auto;transition:transform .45s cubic-bezier(.3,.1,.2,1)}
+.flow p{margin:0}.flow p+p{text-indent:1.6em}
+.flow p:first-child::first-letter{float:left;font-size:2.45em;line-height:.9;padding:4px 6px 0 0;color:#5a1408;font-weight:700}
+.lk{color:#5a1408;text-decoration:none;border-bottom:2px solid #b8862f;background:linear-gradient(180deg,transparent 60%,rgba(255,214,140,.45) 60%);font-weight:600;cursor:pointer}
+.lk:hover,.lk:focus-visible{background:linear-gradient(180deg,transparent 40%,rgba(255,214,140,.7) 40%);outline:none}
+.bar{display:flex;flex-wrap:wrap;gap:4px;padding:5px 8px 1px;font-family:Inter,sans-serif;font-size:12.5px;align-items:center}
+.bar button{font:600 12px Inter,sans-serif;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border:0;border-radius:3px;padding:5px 6px;
+  box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;white-space:nowrap;cursor:pointer}
+.bar button:hover{filter:brightness(1.1)}
+.bar button:disabled{opacity:.45;cursor:default;filter:none}
+.bar button.off{text-decoration:line-through;opacity:.7}
+.bar .pg{display:flex;align-items:center;gap:2px;color:#c9a35a;font-weight:500;margin:0 auto}
+.bar .pg button{background:none;box-shadow:none;color:#c9a35a;padding:4px 7px;font-size:15px}
+.bar .pg button:disabled{opacity:.3}
+.bar .tsv{color:#c9a35a;font-weight:500;min-width:34px;text-align:center}
+.src{font-size:11px;color:#c9a35a;text-align:center;padding:3px 0 0;font-family:Inter,sans-serif}
+.ovl{position:absolute;left:60px;right:60px;top:90px;background:#2a1a12;border:2px solid #c9a35a;border-radius:6px;padding:14px 16px 12px;z-index:20;
+  box-shadow:0 18px 40px rgba(0,0,0,.65);font-family:Inter,sans-serif;color:#f3e7cc}
+.ovl[hidden]{display:none}
+.ovl h4{margin:0 0 4px;font:600 15px Cinzel,serif;letter-spacing:.08em;color:#ffd27a}
+.ovl p{margin:0 0 10px;font-size:12.5px;color:#d8c8a8}
+.ovl .names{display:flex;flex-direction:column;gap:6px}
+.ovl button{font:600 13px Inter,sans-serif;text-align:left;background:#3b2416;color:#f3e7cc;border:1px solid #8a6a33;border-radius:4px;padding:7px 10px;cursor:pointer}
+.ovl button:hover{border-color:#ffd27a;color:#ffd27a}
+.ovl .x{position:absolute;right:8px;top:8px;padding:2px 8px;text-align:center}
+.flybook{position:absolute;left:0;top:0;width:30px;height:40px;border-radius:2px 4px 4px 2px;background:linear-gradient(90deg,#4a1a10,#7a2b1c);
+  border:2px solid #c9a35a;box-shadow:0 0 18px rgba(255,194,102,.7);pointer-events:none;opacity:0;z-index:8}
+
+/* ---------- Scene B: the reading nook ---------- */
+#spread{position:absolute;left:240px;top:30px;width:720px;height:368px;transform-origin:360px 426px;z-index:10;
+  transition:transform .75s cubic-bezier(.2,.8,.2,1),opacity .5s ease}
+#spread.closed{transform:scale(.08);opacity:0;pointer-events:none}
+.cover{position:absolute;inset:0;background:linear-gradient(180deg,#3b2416,#24150d);border-radius:8px;
+  box-shadow:0 0 0 2px #c9a35a inset,0 0 0 6px #2a1a12 inset,0 0 0 7px #8a6a33 inset,0 0 60px rgba(255,170,80,.25),0 30px 70px rgba(0,0,0,.6)}
+.leaves{position:absolute;left:16px;right:16px;top:14px;bottom:14px;display:grid;grid-template-columns:1fr 1fr;perspective:1800px}
+.leaf{position:relative;overflow:hidden;padding:18px 24px 14px;font-family:"Cormorant Garamond",serif;color:#2b2118}
+.leaf.l{background:linear-gradient(90deg,transparent 82%,rgba(90,50,15,.28) 100%),radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);border-radius:4px 0 0 4px;box-shadow:inset 0 0 60px rgba(70,35,8,.45);color:#2a1a10}
+.leaf.r{background:linear-gradient(90deg,rgba(90,50,15,.32) 0%,transparent 18%),radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);border-radius:0 4px 4px 0;box-shadow:inset 0 0 60px rgba(70,35,8,.45);color:#2a1a10}
+#leafL{transition:opacity .4s}
+.lt{font-size:19px;line-height:1.34;text-align:justify;hyphens:auto}
+.lt p{margin:0}
+.lt p.first::first-letter{float:left;font-size:2.6em;line-height:.85;padding:4px 6px 0 0;color:#5a1408;font-weight:700}
+.tp{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+.tp h3{font-size:44px;line-height:1;margin:0;font-weight:700}
+.tp .desc{font-style:italic;font-size:18px;color:#4a3320}
+.tp .plate{margin:4px auto;width:150px;height:96px}
+.tp .orn{color:#a07a3a;letter-spacing:.4em;font-size:13px}
+.blank{height:100%;display:grid;place-items:center;color:#a07a3a;font-size:22px;opacity:.6}
+.flipper{position:absolute;top:0;bottom:0;width:50%;transform-style:preserve-3d;z-index:5;pointer-events:none}
+.flipper.fwd{left:50%;transform-origin:0 50%}
+.flipper.bwd{left:0;transform-origin:100% 50%}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg)}
+.coverface{border-radius:2px 6px 6px 2px;border:2px solid #c9a35a;box-shadow:inset 0 0 0 6px rgba(0,0,0,.2),inset 0 0 0 8px #8a6a33;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#ffd27a;text-align:center;padding:20px}
+.coverface .cvt{font:700 34px Cinzel,serif;letter-spacing:.06em}
+.coverface .cvd{font:500 13px Inter,sans-serif;color:#e9d8b0;opacity:.85}
+.dimline{position:absolute;left:240px;top:8px;width:720px;height:16px;border-left:1px solid rgba(255,210,122,.55);border-right:1px solid rgba(255,210,122,.55);
+  pointer-events:none;transition:opacity .4s;text-align:center}
+.dimline::before{content:"";position:absolute;left:0;right:0;top:8px;border-top:1px dashed rgba(255,210,122,.4)}
+.dimline span{position:relative;font:500 11.5px Inter,sans-serif;color:#ffd27a;background:#1c1330;padding:0 8px}
+.dimline.hide{opacity:0}
+#syncLabel{position:absolute;left:600px;top:405px;transform:translateX(-50%);white-space:nowrap;z-index:12;font:600 13.5px Inter,sans-serif;color:#ffd27a;
+  background:#2a1a12f0;border:1px solid #c9a35a;border-radius:999px;padding:5px 14px;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:background .3s}
+#syncLabel.flash{background:#4a2c1c}
+.htag{position:absolute;transform:translateX(-50%);font:600 11.5px Inter,sans-serif;color:#2b2118;background:#f3e7cc;border:1px solid #c9a35a;border-radius:4px;
+  padding:1px 7px;box-shadow:0 3px 10px rgba(0,0,0,.45);pointer-events:none;z-index:11}
+.htag[hidden]{display:none}
+.htag.bump{animation:bump .6s ease}
+@keyframes bump{0%{transform:translateX(-50%) scale(1)}35%{transform:translateX(-50%) scale(1.35);background:#ffd27a}100%{transform:translateX(-50%) scale(1)}}
+.turn{position:absolute;transform:translateX(-50%);z-index:12;font:600 12.5px Inter,sans-serif;white-space:nowrap;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;
+  border:0;border-radius:999px;padding:5px 12px;box-shadow:inset 0 1px 0 #fff6,0 2px 6px #000a;cursor:pointer}
+.turn:hover{filter:brightness(1.1)}
+.turn:disabled{opacity:.4;cursor:default;filter:none}
+.chip{position:absolute;transform:translateX(-50%);z-index:12;font:600 12px Inter,sans-serif;white-space:nowrap;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;
+  border:0;border-radius:3px;padding:4px 9px;box-shadow:inset 0 1px 0 #fff6,0 2px 6px #000a;cursor:pointer}
+.chip[hidden]{display:none}
+.cbook{position:absolute;width:50px;height:68px;border-radius:2px 5px 5px 2px;border:2px solid #c9a35a;cursor:pointer;padding:3px;z-index:9;
+  display:flex;align-items:center;justify-content:center;text-align:center;font:700 8.5px/1.15 Cinzel,serif;letter-spacing:.03em;color:#ffd27a;
+  box-shadow:inset 4px 0 0 rgba(0,0,0,.3),0 6px 12px rgba(0,0,0,.5);transform:rotate(var(--r));transition:transform .25s,box-shadow .25s,opacity .3s}
+.cbook:hover,.cbook:focus-visible{transform:rotate(var(--r)) translateY(-6px);box-shadow:inset 4px 0 0 rgba(0,0,0,.3),0 0 18px rgba(255,210,122,.8);outline:none}
+.cbook.gone{opacity:0;visibility:hidden}
+.cbook.pulse{animation:cpulse 1.8s ease-in-out infinite}
+@keyframes cpulse{0%,100%{box-shadow:inset 4px 0 0 rgba(0,0,0,.3),0 6px 12px rgba(0,0,0,.5)}50%{box-shadow:inset 4px 0 0 rgba(0,0,0,.3),0 0 22px rgba(255,210,122,.95)}}
+.flyb{position:absolute;left:0;top:0;width:50px;height:68px;border-radius:2px 5px 5px 2px;border:2px solid #c9a35a;z-index:13;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;text-align:center;font:700 8.5px/1.15 Cinzel,serif;color:#ffd27a;padding:3px;
+  box-shadow:0 0 22px rgba(255,210,122,.75)}
+.tip{position:fixed;display:none;white-space:nowrap;font:600 12px/1.2 Inter,system-ui,sans-serif;padding:5px 9px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:100;pointer-events:none}
+
+/* ---------- notes below the demo ---------- */
+.notes{padding-top:26px;padding-bottom:10px;display:grid;gap:22px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1100px){.notes{grid-template-columns:minmax(0,1fr)}}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:25px;margin:0 0 8px;color:#fff3cf}
+.card h3{font:600 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin:12px 0 4px}
+.card ul,.card ol{margin:0;padding-left:20px;color:var(--muted);font-size:14px}
+.card li{margin:0 0 6px}
+.card li b{color:var(--ink);font-weight:600}
+.sample{color:var(--muted);font-size:13px;margin:6px 0 0}
+footer{padding-top:16px;padding-bottom:40px;color:var(--muted);font-size:13px}
+/* ---------- avatars (soft silhouettes, movable) ---------- */
+.avw{position:absolute;width:120px;height:240px;transform-origin:60px 220px;pointer-events:none;
+  transition:left 1.1s cubic-bezier(.4,.1,.3,1),top 1.1s cubic-bezier(.4,.1,.3,1),transform 1.1s ease}
+.avw svg{width:120px;height:240px;display:block;overflow:visible}
+.seen{position:absolute;left:50%;top:-6px;transform:translateX(-50%) scale(.4);opacity:0;font:600 11px Inter,sans-serif;color:#2a1a12;background:#ffd27a;
+  border-radius:999px;padding:2px 8px;white-space:nowrap;box-shadow:0 0 12px rgba(255,210,122,.8)}
+.seen.pop{animation:seenpop 1.6s ease forwards}
+@keyframes seenpop{0%{opacity:0;transform:translateX(-50%) scale(.4)}15%{opacity:1;transform:translateX(-50%) scale(1.1)}25%{transform:translateX(-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+.ring{position:absolute;width:700px;height:220px;margin:-110px 0 0 -350px;border:2px solid #ffd27a;border-radius:50%;pointer-events:none;z-index:7;
+  animation:ring 1.3s ease-out forwards}
+@keyframes ring{0%{transform:scale(.06);opacity:.95}100%{transform:scale(1);opacity:0}}
+.share{position:absolute;right:22px;top:18px;max-width:300px;z-index:30;font:600 12.5px/1.35 Inter,sans-serif;color:#ffd27a;background:#2a1a12f0;
+  border:1px solid #c9a35a;border-radius:10px;padding:6px 12px;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:background .3s}
+.share small{display:block;font-weight:500;color:#d8c8a8;font-size:11px}
+.share.flash{background:#5a3a1c}
+
+/* ---------- sub-lecterns in the main hall (A3 Candlelit, small) ---------- */
+.sub{position:absolute;background:#2a1a12;border-radius:5px;padding:5px;display:flex;flex-direction:column;z-index:9;
+  box-shadow:0 0 0 1.5px #c9a35a inset,0 0 0 4px #2a1a12 inset,0 0 0 5px #8a6a33 inset,0 0 44px rgba(255,170,80,.25),0 12px 30px rgba(0,0,0,.6)}
+.sub .pp{position:relative;flex:1;min-height:0;overflow:hidden;margin:4px;border-radius:2px;padding:6px 10px;color:#2a1a10;font-family:"Cormorant Garamond",serif;
+  background:radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);box-shadow:inset 0 0 40px rgba(70,35,8,.5)}
+.sub .hd{display:flex;justify-content:space-between;gap:6px;font:600 10px Inter,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#5a3a1a}
+.sub h4{font:700 19px/1.05 "Cormorant Garamond",serif;margin:3px 0 2px}
+.sub .tx{font-size:14.5px;line-height:1.24;text-align:justify;hyphens:auto;-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+.sub .sb{display:flex;gap:4px;align-items:center;padding:3px 4px 1px;font:600 11px Inter,sans-serif;color:#c9a35a}
+.sub .sb .who{margin-right:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub .sb button,.use button{font:600 11px Inter,sans-serif;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border:0;border-radius:3px;
+  padding:3px 7px;box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;cursor:pointer;white-space:nowrap}
+.sub .sb button:disabled{opacity:.35;cursor:default}
+.sub.free .pp{cursor:pointer}
+.sub .freemsg{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;font-size:16px;color:#4a3320}
+.sub .freemsg b{font:700 12px Cinzel,serif;letter-spacing:.08em;color:#5a1408}
+.use{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.sub.ping{animation:sping 1.1s ease}
+@keyframes sping{0%,100%{filter:none}30%{filter:drop-shadow(0 0 16px #ffd27a)}}
+
+/* ---------- the small search-and-fetch stand (oak catalog + brass typewriter) ---------- */
+.stand{position:absolute;width:62px;height:92px;padding:0;border:0;background:none;cursor:pointer;z-index:9;transform-origin:50% 100%}
+.stand svg{width:62px;height:92px;display:block;overflow:visible}
+.stand:hover svg,.stand:focus-visible svg{filter:drop-shadow(0 0 8px rgba(255,210,122,.8))}
+.stand:focus-visible{outline:none}
+.stand.pulse svg{animation:spulse 1.6s ease-in-out infinite}
+@keyframes spulse{0%,100%{filter:none}50%{filter:drop-shadow(0 0 10px #ffd27a)}}
+.srch{position:absolute;width:236px;z-index:35;background:#2a1a12;border:2px solid #c9a35a;border-radius:7px;padding:8px 9px 9px;
+  box-shadow:0 16px 40px rgba(0,0,0,.7);font-family:Inter,sans-serif}
+.srch .st{display:flex;justify-content:space-between;align-items:center;font:600 11px Cinzel,serif;letter-spacing:.1em;color:#ffd27a;margin-bottom:6px}
+.srch .st button{font:600 13px Inter,sans-serif;background:none;border:0;color:#c9a35a;cursor:pointer;padding:0 2px}
+.srch .paper{background:#f6ecd6;border-radius:2px;padding:5px 8px;box-shadow:inset 0 -2px 0 #c9a35a}
+.srch input{width:100%;border:0;background:transparent;font:500 15px Inter,sans-serif;color:#2a1a10;outline:none;padding:2px 0}
+.srch .how{font-size:10.5px;color:#b9a88a;margin:5px 1px 0}
+.srch .cards{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.icard{display:block;width:100%;text-align:left;background:#f6ecd6;border:0;border-top:3px solid #a8402e;border-radius:3px;padding:5px 9px 6px;cursor:pointer;
+  font:600 16px/1.15 "Cormorant Garamond",serif;color:#2a1a10;box-shadow:0 3px 8px rgba(0,0,0,.45);animation:cardup .4s cubic-bezier(.2,.9,.3,1.2) both}
+.icard small{display:block;font:500 10.5px Inter,sans-serif;color:#6b5236;margin-top:1px}
+.icard:hover,.icard:focus-visible{background:#fff6dc;outline:2px solid #ffd27a}
+.icard.none{cursor:default;border-top-color:#8a6a33;font-size:14px}
+@keyframes cardup{from{transform:translateY(26px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- Scene C: the lecture room, presenter mode ---------- */
+#bigPage{position:absolute;left:290px;top:34px;width:620px;height:340px;display:flex;flex-direction:column;z-index:6;padding:12px}
+#bigPage .page{margin:6px;padding:14px 26px 12px}
+#bigPage .hdr{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+#bigPage h3{font-size:30px;line-height:1;margin:4px 0 6px;font-weight:700}
+.bt{font-size:23px;line-height:1.36;text-align:justify;hyphens:auto;flex:1;min-height:0;overflow:hidden;transition:opacity .35s}
+.bt.fade{opacity:.15}
+.sn{background-image:linear-gradient(180deg,transparent 52%,rgba(255,200,90,.75) 52%,rgba(255,200,90,.75) 92%,transparent 92%);background-repeat:no-repeat;
+  background-size:0% 100%;transition:background-size 1.1s ease}
+.sn.hl{background-size:100% 100%}
+.bt.pres .sn{cursor:pointer}
+.bt.pres .sn:hover{background-color:rgba(255,214,140,.18)}
+#cBar{position:absolute;left:600px;top:432px;transform:translateX(-50%);display:flex;gap:4px;align-items:center;z-index:12;background:#2a1a12e8;
+  border:1px solid #c9a35a;border-radius:6px;padding:4px 6px;font:600 12px Inter,sans-serif;color:#c9a35a;white-space:nowrap}
+#cBar button{font:600 12px Inter,sans-serif;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border:0;border-radius:3px;padding:4px 8px;
+  box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;cursor:pointer}
+#cBar.locked button{opacity:.4}
+#cBar .pgc{min-width:70px;text-align:center}
+.homenu{position:absolute;z-index:36;background:#2a1a12;border:2px solid #c9a35a;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:5px;
+  font:600 12px Inter,sans-serif;color:#ffd27a;box-shadow:0 14px 34px rgba(0,0,0,.65)}
+.homenu[hidden]{display:none}
+.homenu button{font:600 13px Inter,sans-serif;text-align:left;background:#3b2416;color:#f3e7cc;border:1px solid #8a6a33;border-radius:4px;padding:6px 10px;cursor:pointer}
+.homenu button:hover{border-color:#ffd27a;color:#ffd27a}
+.mbook{position:absolute;z-index:14;display:grid;grid-template-columns:1fr 1fr;padding:5px;background:linear-gradient(180deg,#3b2416,#24150d);border-radius:5px;
+  box-shadow:0 0 0 1.5px #c9a35a inset,0 0 30px rgba(255,170,80,.22),0 10px 24px rgba(0,0,0,.6);transition:opacity .4s,transform .4s;pointer-events:none}
+.mbook.hide{opacity:0;transform:translateY(20px) scale(.9)}
+.mbook .ml,.mbook .mr{overflow:hidden;padding:6px 8px;font-family:"Cormorant Garamond",serif;color:#2a1a10;
+  background:radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);box-shadow:inset 0 0 30px rgba(70,35,8,.45)}
+.mbook .ml{border-radius:3px 0 0 3px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.mbook .mr{border-radius:0 3px 3px 0}
+.mbook .mt{font-weight:700;line-height:1.05}
+.mbook .mp{font:600 10px Inter,sans-serif;color:#5a3a1a;margin-top:3px}
+.mbook .mx{text-align:justify;line-height:1.22}
+.mcap{position:absolute;z-index:14;font:600 11.5px Inter,sans-serif;color:#d8c8a8;white-space:nowrap;transform:translateX(-50%);transition:opacity .4s}
+.mcap.hide{opacity:0}
+.ctl-c{display:none;align-items:center;gap:6px;flex-wrap:wrap}
+.ctl-c.on{display:flex}
+.ctl-c span{color:var(--muted);font-size:14px}
+@media (max-width:640px){header h1{font-size:28px}.controls .reset{margin-left:0}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>Lecterns: reading together, and the main hall</h1>
+  <p>Away from the centre of the world you read real books. The flat reader survives in one place, the main hall on the academy isle: a big central lectern and a ring of smaller sub-lecterns, each shared with everyone in the instance, each with a small search stand beside it. A lecture room off the hall adds a presenter lectern. In the towers, a reading nook's lectern holds one big open book that everyone around it shares.</p>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <div role="tablist" aria-label="Scene" style="display:flex;flex-wrap:wrap;gap:8px">
+      <button type="button" role="tab" data-scene="A" aria-selected="true">A · The main hall</button>
+      <button type="button" role="tab" data-scene="B" aria-selected="false">B · A reading nook in a tower</button>
+      <button type="button" role="tab" data-scene="C" aria-selected="false">C · Presenter mode</button>
+    </div>
+    <div class="ctl-c" id="roleCtl" role="group" aria-label="You are"><span>You are:</span>
+      <button type="button" data-role="pres" aria-selected="true">Presenter</button>
+      <button type="button" data-role="aud" aria-selected="false">Audience</button>
+    </div>
+    <button type="button" class="reset" id="reset">Reset</button>
+  </div>
+  <p class="hint" id="hint"></p>
+
+  <div class="stagewrap" id="stagewrap"><div class="stage" id="stage">
+
+    <!-- ===== Scene A: the main hall ===== -->
+    <section class="scene" id="sceneA" aria-label="The main hall">
+      <svg class="bg" id="hallSvg" viewBox="0 0 1200 720" aria-hidden="true"></svg>
+      <div class="place">THE MAIN HALL<small>academy isle, centre of the world</small></div>
+      <div class="share" id="aShare"></div>
+      <div id="hallPanel" class="frame">
+        <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+        <div class="page" id="aPage">
+          <div class="crumb" id="aCrumb"></div>
+          <div class="title"><div><h3 id="aTitle"></h3><div class="desc" id="aDesc"></div></div><div class="plate">lead picture</div></div>
+          <div class="body" id="aBody"><div class="flow" id="aFlow"></div></div>
+          <div class="fetch" id="aFetch"></div>
+        </div>
+        <div class="bar">
+          <button type="button" data-a="back" id="aBack">‹ Back</button><button type="button" data-a="shelf">Go to shelf</button>
+          <span class="pg"><button type="button" data-a="prev" id="aPrev" aria-label="Previous page">‹</button><span id="aPg">1 / 1</span><button type="button" data-a="next" id="aNext" aria-label="Next page">›</button></span>
+          <button type="button" data-a="smaller" title="Smaller text">A−</button><span class="tsv" id="aTs">100%</span><button type="button" data-a="bigger" title="Larger text">A+</button>
+          <button type="button" data-a="people">People here</button><button type="button" data-a="music" id="aMusic" title="Music on/off">♪</button>
+        </div>
+        <div class="src" id="aSrc"></div>
+        <div class="ovl" id="aPeople" hidden>
+          <button type="button" class="x" data-a="closepeople" aria-label="Close">✕</button>
+          <h4>People here</h4><p>Everyone in the instance. Press a name to stand beside them.</p>
+          <div class="names" id="aNames"></div>
+        </div>
+      </div>
+      <div id="aLayer"></div>
+      <div class="toast" id="aToast"></div>
+    </section>
+
+    <!-- ===== Scene B: a reading nook inside a tower ===== -->
+    <section class="scene off" id="sceneB" aria-label="A reading nook in a tower">
+      <svg class="bg" id="nookSvg" viewBox="0 0 1200 720" aria-hidden="true"></svg>
+      <div class="place">READING NOOK<small>inside the Biology tower, level 12</small></div>
+      <div class="dimline hide" id="dimline"><span>about the size of a bed, ≈ 2 m across</span></div>
+      <div id="spread" class="closed"><div class="cover"></div>
+        <div class="leaves" id="leaves"><div class="leaf l" id="leafL"></div><div class="leaf r" id="leafR"></div></div>
+      </div>
+      <div id="syncLabel">Pick a book from the purple cushion</div>
+      <button type="button" class="chip" id="bBack" hidden style="left:600px;top:480px">‹ Back</button>
+      <div id="bLayer"></div>
+      <div class="toast" id="bToast"></div>
+    </section>
+
+    <!-- ===== Scene C: the lecture room, presenter mode ===== -->
+    <section class="scene off" id="sceneC" aria-label="Presenter mode in the lecture room">
+      <svg class="bg" id="roomSvg" viewBox="0 0 1200 720" aria-hidden="true"></svg>
+      <div class="place">THE LECTURE ROOM<small>off the main hall, where the Lecture Hall was planned</small></div>
+      <div class="share" id="cShare" style="max-width:262px"></div>
+      <div id="bigPage" class="frame">
+        <div class="page">
+          <div class="hdr"><div class="crumb" id="cCrumb"></div><div class="crumb" id="cPgTop"></div></div>
+          <h3 id="cTitle"></h3>
+          <div class="bt pres" id="cText"></div>
+          <div class="fetch" id="cFetch"></div>
+        </div>
+      </div>
+      <div id="cBar"><button type="button" id="cPrev" aria-label="Previous page">‹</button><span class="pgc" id="cPg">page 1 / 1</span><button type="button" id="cNext" aria-label="Next page">›</button><button type="button" id="cHand">Hand over ▾</button></div>
+      <div class="homenu" id="cMenu" hidden style="left:640px;top:300px"><div>Hand the lectern to:</div>
+        <button type="button" data-to="Fox">Fox</button><button type="button" data-to="Robot">Robot</button><button type="button" data-to="Ghost">Ghost</button>
+      </div>
+      <div class="mbook" id="robotBook" style="left:118px;top:458px;width:172px;height:98px"><div class="ml"><div class="mt" style="font-size:14px"></div><div class="mp"></div></div><div class="mr"><div class="mx" style="font-size:8.5px"></div></div></div>
+      <div class="mcap" id="robotCap" style="left:204px;top:560px">Robot follows along in their own book</div>
+      <div class="mbook hide" id="myBook" style="left:902px;top:500px;width:284px;height:172px"><div class="ml"><div class="mt" style="font-size:22px"></div><div class="mp"></div></div><div class="mr"><div class="mx" style="font-size:12px"></div></div></div>
+      <button type="button" class="chip" id="cFollow" hidden style="left:1044px;top:684px">Follow along in my own book: off</button>
+      <div id="cLayer"></div>
+      <div class="toast" id="cToast"></div>
+    </section>
+
+  </div></div>
+  <p class="sample">The sample book text in this page was written for the mock-up, not taken from Wikipedia. The search stands are a small version of the search tool; the big card catalog has its own mock-up (05).</p>
+</div>
+
+<div class="wrap notes">
+  <div class="card">
+    <h2>In VRChat</h2>
+    <h3>Main hall (A)</h3>
+    <ul>
+      <li><b>Every lectern is one synced object</b> (book id, page, holder). Whatever is open on it, everyone in the instance sees the same thing. Anyone can walk up and use a free one.</li>
+      <li>The central reader works on desktop and Quest exactly like today's panel. A−/A+ stays your own and re-pages for you; the book and the place in it are shared.</li>
+      <li>VR: step up to a lectern (it lights when you stand next to it, never by facing it), point and pull the trigger on words and buttons. Desktop: walk up and click.</li>
+      <li><b>Mini search:</b> type on the brass typewriter; it searches on Enter or when you leave the field. Cards pop out of the drawer; pick one and the book lands on that lectern, synced like the lectern. It uses the same search shards and aliases as the big catalog.</li>
+    </ul>
+    <h3>Reading nook (B)</h3>
+    <ul>
+      <li>The page and book are synced for everyone in the nook. Anyone can turn the page, and the owner (whoever placed the book) can lock it.</li>
+      <li>VR: lift a book off the cushion and set it on the lectern, then press a turn button or a gold word. Desktop: click them.</li>
+    </ul>
+    <h3>Presenter mode (C)</h3>
+    <ul>
+      <li>Syncs the page and the highlight, and only the current presenter can change them. Hand over passes control to someone in the audience. In presenter mode only the presenter can use the search stand.</li>
+      <li>The audience sees the big page but can't turn it. "Follow along in my own book" shows a small held book that mirrors it.</li>
+    </ul>
+    <h3>Everywhere</h3>
+    <ul>
+      <li>Late joiners see the current book and page at once.</li>
+      <li>Everything is added the same way on PC and Quest, so the network IDs match.</li>
+      <li><b>Quest cost: low.</b> Each lectern is a page, a text mesh and a few synced values that only send when they change.</li>
+      <li><b>Lectern look: A3 Candlelit (picked for the lecterns).</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Builds on</h2>
+    <ul>
+      <li><b>Clickable gold words</b> (overlay hit areas over the words), on every lectern.</li>
+      <li><b>A−/A+ text size with re-paging</b>, on the central reader.</li>
+      <li><b>Back history</b>, on the central reader and the nook lectern.</li>
+      <li><b>Grabbable books off a lit bay</b>: the nook's cushion books are the same grab, and lecterns light the same way (when you stand next to them, never by facing them).</li>
+      <li><b>Others see the book you hold</b> (title on the cover): the follow-along book and the nook's cover show the title.</li>
+      <li><b>Books fetched from GitHub Pages</b> with the ~5 s load hidden behind animation: books glide in from the hall's shelves, through the nook's window, or out of the search drawer.</li>
+      <li><b>People here</b> and <b>music</b> on the central reader, as today.</li>
+      <li><b>The search tool</b>: each stand is a smaller version of the big card catalog (mock-up 05).</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Open questions</h2>
+    <ol>
+      <li>How many sub-lecterns in the main hall? This shows four.</li>
+      <li>Can anyone take the presenter lectern, or only someone who claims it?</li>
+      <li>Should the audience hear the presenter through a stage voice boost?</li>
+      <li>Should the nook lectern be in every tower interior, or only some?</li>
+      <li>Who can change the book at a shared lectern: anyone, or only the person who placed it?</li>
+    </ol>
+  </div>
+</div>
+
+<footer class="wrap">Mock-up for choosing a direction. Made for The Midnight Archive by Doghouse Devs.</footer>
+
+<script>
+(function(){
+'use strict';
+var RM = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function T(ms){ return RM ? 0 : ms; }
+function $(id){ return document.getElementById(id); }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, T(ms)); }); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function anim(el, kf, ms, ease){
+  return new Promise(function(res){
+    if(RM || !el || !el.animate){ res(); return; }
+    var done = false; function fin(){ if(!done){ done = true; res(); } }
+    try{ var a = el.animate(kf, {duration:ms, easing:ease || 'ease', fill:'forwards'}); a.onfinish = fin; a.oncancel = fin; }catch(e){ fin(); }
+    setTimeout(fin, ms + 250);
+  });
+}
+
+/* ---------- sample books (written for this mock-up, not copied from Wikipedia) ----------
+   [words] links to the book named by the words; [words|Target] links to Target. */
+var BIO = 'Biological and health sciences';
+var BOOKS = {
+  'Octopus': {d:'soft-bodied, eight-armed sea animal', c:BIO+' › Animals › Molluscs', code:'B-L12-S07', tw:'Biology tower', lv:12, col:'#5a2a4a', p:[
+    'The octopus is a soft-bodied [mollusc|Mollusca] with eight arms, found in every [ocean]. It belongs to the [cephalopods|Cephalopod], together with [squid] and [cuttlefish]. Octopuses are known for their [intelligence|Cephalopod intelligence]: they solve puzzles, use tools and can change colour and texture in an instant to hide from [predators|Predation]. Most kinds live only a year or two.',
+    'Each arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue [blood|Hemocyanin], and when threatened it squirts a cloud of [ink|Cephalopod ink] and slips through any gap wider than its [beak].',
+    'An octopus has no bones. Its only hard part is the beak, so a large animal can squeeze through a hole the size of a coin. Most of its [nerve cells|Neuron] sit in the arms, and each arm can react to touch on its own.',
+    'Its skin holds thousands of colour cells called [chromatophores|Chromatophore]. Tiny muscles stretch or squeeze them in a fraction of a second, so an octopus can match a rock, flash a warning or ripple with stripes.',
+    'To move fast, an octopus pulls water into its body and pushes it out through a tube called a siphon, shooting backwards by [jet propulsion|Jet propulsion]. Most of the time it crawls along the sea floor on its arms.',
+    'Octopuses hunt crabs, clams and small fish, mostly at night. They catch prey with their arms, crack shells with the beak and can inject a [venom] that softens the meat.',
+    'The [blue-ringed octopus|Blue-ringed octopus] of the Pacific and Indian Oceans is small, but its bite carries enough venom to be dangerous to people. Its rings flash bright blue as a warning.',
+    'Most octopuses live alone in a den, a crack in the rocks or an empty shell. A female lays thousands of eggs and guards them for weeks or months without eating, and she dies soon after they hatch.',
+    'The largest kind is the [giant Pacific octopus|Giant Pacific octopus], whose arms can span several metres. Octopuses appear in many [myths|Mythology], from sea monsters in sailors’ tales to the kraken.'
+  ]},
+  'Squid': {d:'fast-swimming ten-limbed cephalopod', c:BIO+' › Animals › Molluscs', code:'B-L12-S09', tw:'Biology tower', lv:12, col:'#2f4a6b', p:[
+    'Squid are fast-swimming [cephalopods|Cephalopod] with a long body, eight arms and two longer [tentacles|Tentacle]. Like the [octopus], they can change colour and squirt [ink|Cephalopod ink].',
+    'Inside the body is a thin, stiff strip called the pen, all that is left of a shell. Fins on the sides steer, while a siphon gives quick bursts of [jet propulsion|Jet propulsion].',
+    'The [giant squid|Giant squid] lives in the deep sea and can be longer than a bus. Its eyes are among the largest of any animal, about the size of a dinner plate.',
+    'Squid are food for whales, seals and seabirds, and many [predators|Predation] hunt them in the open [ocean]. [Sperm whales|Sperm whale] dive more than a kilometre deep to catch them.',
+    'Many kinds glow in the dark. Light organs on their underside can hide their shadow from hunters below, a trick called [counter-illumination|Counter-illumination].'
+  ]},
+  'Ocean': {d:'the body of salt water covering most of the Earth', c:'Geography › Physical geography › Oceans', code:'G-L03-S14', tw:'Geography tower', lv:3, col:'#1f5a5a', p:[
+    'The ocean is the body of salt water that covers about 71 percent of the [Earth]. It is usually divided into five parts: the Pacific, Atlantic, Indian, Southern and Arctic oceans.',
+    'Sunlight reaches only the top few hundred metres. Below that is the [deep sea|Deep sea], cold and dark, where many animals make their own light.',
+    'The ocean holds most of the water on the planet and much of its heat. Its currents carry warm water from the tropics toward the poles and help shape the [climate].',
+    '[Tides|Tide] rise and fall about twice a day, pulled mostly by the [Moon]. Waves are raised by the wind, sometimes thousands of kilometres away.',
+    'Life began in the sea, and it is still home to most kinds of animal, from tiny [plankton] to the [blue whale|Blue whale], the largest animal that has ever lived.'
+  ]},
+  'Predation': {d:'one living thing hunting and eating another', c:BIO+' › Ecology', code:'B-L07-S02', tw:'Biology tower', lv:7, col:'#7a2b1c', p:[
+    'Predation is when one living thing, the predator, hunts and eats another, the [prey]. Lions hunting zebras, owls catching mice and [octopuses|Octopus] catching crabs are all predation.',
+    'Predators find prey by sight, smell, hearing or touch. Some chase it down; others wait in hiding and strike, a strategy called [ambush predation|Ambush predator].',
+    'Prey animals defend themselves in many ways: running, hiding, living in groups, growing spines or shells, or tasting bad. [Camouflage] lets them blend into their surroundings.',
+    'Predators and prey change together over many generations. As prey get faster or better hidden, predators get quicker or sharper-eyed, a kind of [arms race|Evolutionary arms race].',
+    'Predators help shape whole [ecosystems|Ecosystem]. When large predators disappear, plant-eaters can multiply and strip the land of plants.'
+  ]},
+  'Hemocyanin': {d:'copper protein that carries oxygen in blue blood', c:'Physical sciences › Chemistry › Proteins', code:'P-L21-S05', tw:'Physical sciences tower', lv:21, col:'#3d4a7a', p:[
+    'Hemocyanin is a [protein] that carries [oxygen] in the blood of many molluscs and arthropods, including [octopuses|Octopus], snails, crabs and spiders.',
+    'Where our [hemoglobin] holds iron, hemocyanin holds [copper]. It is colourless without oxygen and turns blue when oxygen binds, which is why octopus blood is blue.',
+    'Hemocyanin floats freely in the blood rather than inside cells. It works well in cold water, which helps animals that live in the [deep sea|Deep sea] and near the poles.'
+  ]}
+};
+function placeholder(t, d, c, code, tw, col){
+  BOOKS[t] = {d:d, c:c, code:code, tw:tw, lv:+code.split('-L')[1].split('-')[0], col:col, ph:true, p:[
+    t + ' would open here, fetched from the ' + tw + '. This is a short placeholder page for the mock-up.',
+    'Meanwhile the [octopus] and the [ocean] are on the shelves.'
+  ]};
+}
+placeholder('Moon', 'Earth’s only natural satellite', 'Physical sciences › Astronomy', 'P-L09-S11', 'Physical sciences tower', '#4a4a6b');
+placeholder('Lighthouse', 'tower with a light that guides ships', 'Technology › Buildings', 'T-L05-S03', 'Technology tower', '#6b4a2a');
+placeholder('Tea', 'drink made from the leaves of the tea plant', 'Everyday life › Food and drink', 'E-L14-S08', 'Everyday life tower', '#3d5a2a');
+placeholder('Artificial intelligence', 'machines doing tasks that need thinking', 'Technology › Computing', 'T-L30-S01', 'Technology tower', '#2a3a5a');
+var ALIASES = [['AI', 'Artificial intelligence']];
+
+function md(s){
+  return s.replace(/\[([^\]|]+)(?:\|([^\]]+))?\]/g, function(m, w, t){
+    var target = t || (w.charAt(0).toUpperCase() + w.slice(1));
+    return '<a class="lk" tabindex="0" data-to="' + esc(target) + '"' + (t ? ' data-tip="1"' : '') + ' data-w="' + esc(w) + '">' + esc(w) + '</a>';
+  });
+}
+function sentences(s){
+  var parts = s.match(/[^.!?]+[.!?]+\s*/g) || [s];
+  return parts.map(function(x, i){ return '<span class="sn" data-i="' + i + '">' + md(x) + '</span>'; }).join('');
+}
+function search(q){
+  q = (q || '').trim().toLowerCase();
+  if(!q) return [];
+  var out = [];
+  ALIASES.forEach(function(a){ if(a[0].toLowerCase() === q || (q.length > 1 && a[0].toLowerCase().indexOf(q) === 0)) out.push({t:a[1], alias:a[0]}); });
+  Object.keys(BOOKS).forEach(function(t){
+    var l = t.toLowerCase(), hit = l.indexOf(q) === 0 || l.split(' ').some(function(w){ return w.indexOf(q) === 0; });
+    if(hit && !out.some(function(o){ return o.t === t; })) out.push({t:t});
+  });
+  return out.slice(0, 3);
+}
+
+/* ---------- shared SVG defs ---------- */
+document.body.insertAdjacentHTML('afterbegin',
+  '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
+  '<linearGradient id="avFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4090"/><stop offset="1" stop-color="#1c173f"/></linearGradient>' +
+  '<linearGradient id="brassV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0bd72"/><stop offset="1" stop-color="#8a6a33"/></linearGradient>' +
+  '<linearGradient id="brassH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a6a33"/><stop offset=".45" stop-color="#e0bd72"/><stop offset="1" stop-color="#6b4f22"/></linearGradient>' +
+  '<linearGradient id="oak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6436"/><stop offset="1" stop-color="#5b3a22"/></linearGradient>' +
+  '<linearGradient id="wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a1a12"/><stop offset=".5" stop-color="#5b3a22"/><stop offset="1" stop-color="#2a1a12"/></linearGradient>' +
+  '<radialGradient id="amberGlow"><stop offset="0" stop-color="#ffc266" stop-opacity=".55"/><stop offset="1" stop-color="#ffc266" stop-opacity="0"/></radialGradient>' +
+  '<radialGradient id="moonGlow"><stop offset="0" stop-color="#fff3cf" stop-opacity=".55"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></radialGradient>' +
+  '<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0b22"/><stop offset="1" stop-color="#2a2160"/></linearGradient>' +
+  '<linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3cf" stop-opacity=".12"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></linearGradient>' +
+  spinesPattern() + '</defs></svg>');
+function spinesPattern(){
+  var cols = ['#7a2b1c','#2f4a6b','#3d5a2a','#6b4a8a','#8a6a33','#5b3a22','#a0583a','#4a3a6a'], seed = 7, x = 2, s = '';
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  s += '<pattern id="spines" width="140" height="44" patternUnits="userSpaceOnUse"><rect width="140" height="44" fill="#1a110c"/>';
+  while(x < 136){ var w = 4 + Math.floor(rnd() * 5), h = 26 + Math.floor(rnd() * 12);
+    s += '<rect x="' + x + '" y="' + (40 - h) + '" width="' + w + '" height="' + h + '" fill="' + cols[Math.floor(rnd() * cols.length)] + '"/>'; x += w + 1; }
+  return s + '<rect y="40" width="140" height="4" fill="#3b2416"/></pattern>';
+}
+
+/* ---------- avatars ---------- */
+function headSvg(kind, hy, back){
+  var y = function(d){ return hy + d; };
+  if(kind === 'cat') return '<circle cx="0" cy="' + hy + '" r="22"/><path d="M-19,' + y(-8) + ' L-16,' + y(-36) + ' L-3,' + y(-20) + ' Z M19,' + y(-8) + ' L16,' + y(-36) + ' L3,' + y(-20) + ' Z"/>';
+  if(kind === 'dog') return '<circle cx="0" cy="' + hy + '" r="23"/><ellipse cx="-22" cy="' + y(4) + '" rx="8" ry="17" transform="rotate(18 -22 ' + y(4) + ')"/><ellipse cx="22" cy="' + y(4) + '" rx="8" ry="17" transform="rotate(-18 22 ' + y(4) + ')"/>' + (back ? '' : '<ellipse cx="0" cy="' + y(10) + '" rx="12" ry="9" fill="#5a50a8"/>');
+  if(kind === 'fox') return '<path d="M-24,' + y(-6) + ' Q-20,' + y(14) + ' 0,' + y(22) + ' Q20,' + y(14) + ' 24,' + y(-6) + ' Q22,' + y(-18) + ' 0,' + y(-20) + ' Q-22,' + y(-18) + ' -24,' + y(-6) + ' Z M-22,' + y(-10) + ' L-15,' + y(-46) + ' L-3,' + y(-18) + ' Z M22,' + y(-10) + ' L15,' + y(-46) + ' L3,' + y(-18) + ' Z"/>';
+  if(kind === 'robot') return '<rect x="-22" y="' + y(-20) + '" width="44" height="38" rx="8"/><line x1="0" y1="' + y(-20) + '" x2="0" y2="' + y(-34) + '" stroke="#8f86d8" stroke-width="3"/><circle cx="0" cy="' + y(-37) + '" r="4" fill="#ffc266" stroke="none"/>' +
+    (back ? '' : '<rect x="-13" y="' + y(-6) + '" width="9" height="6" rx="2" fill="#ffd27a" stroke="none"/><rect x="4" y="' + y(-6) + '" width="9" height="6" rx="2" fill="#ffd27a" stroke="none"/>');
+  return '';
+}
+function avSvg(kind, sit, back, label){
+  var g = '<g fill="url(#avFill)" stroke="rgba(200,190,255,.38)" stroke-width="1.5">';
+  if(kind === 'ghost'){
+    g = '<g class="bob">' + g + '<path d="M-36,0 Q-30,-9 -24,0 Q-18,9 -12,0 Q-6,-9 0,0 Q6,9 12,0 Q18,-9 24,0 Q30,9 36,0 L36,-84 C36,-134 -36,-134 -36,-84 Z"/>' +
+      (back ? '' : '<ellipse cx="-12" cy="-86" rx="5" ry="7" fill="#0c0b22" stroke="none"/><ellipse cx="12" cy="-86" rx="5" ry="7" fill="#0c0b22" stroke="none"/>') + '</g></g>';
+  } else {
+    var tail = kind === 'fox' ? '<path d="M26,-8 C66,-6 74,-52 50,-68 C56,-42 44,-24 24,-26 Z"/>' : kind === 'cat' ? '<path d="M26,-10 C56,-14 58,-54 42,-70" fill="none" stroke="#3a3170" stroke-width="7" stroke-linecap="round"/>' : '';
+    g += tail + '<path d="' + (sit ? 'M-46,0 C-48,-24 -34,-62 -20,-80 Q0,-90 20,-80 C34,-62 48,-24 46,0 Z' : 'M-30,0 C-33,-50 -30,-100 -20,-122 Q0,-132 20,-122 C30,-100 33,-50 30,0 Z') + '"/>' +
+      headSvg(kind, sit ? -104 : -148, back) + '</g>';
+  }
+  if(label) g += '<text x="0" y="19" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#d8d0f8">' + esc(label) + '</text>';
+  return '<svg viewBox="-60 -220 120 240" aria-hidden="true">' + g + '</svg>';
+}
+function makeAvatar(layer, kind, x, y, s, opts){
+  opts = opts || {};
+  var el = document.createElement('div'); el.className = 'avw av';
+  el.innerHTML = avSvg(kind, opts.sit, opts.back, opts.label) + '<div class="seen">seen</div>';
+  el.style.zIndex = opts.z || 8; layer.appendChild(el); placeAv(el, x, y, s); return el;
+}
+function placeAv(el, x, y, s){ el.style.left = (x - 60) + 'px'; el.style.top = (y - 220) + 'px'; el.style.transform = 'scale(' + s + ')'; }
+function seenPop(els){ els.forEach(function(el){ var b = el.querySelector('.seen'); if(!b) return; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }); }
+function ring(layer, x, y, s){
+  if(RM) return; var r = document.createElement('div'); r.className = 'ring'; r.style.left = x + 'px'; r.style.top = y + 'px';
+  if(s) r.style.width = (700 * s) + 'px', r.style.height = (220 * s) + 'px', r.style.margin = (-110 * s) + 'px 0 0 ' + (-350 * s) + 'px';
+  layer.appendChild(r); setTimeout(function(){ r.remove(); }, 1400);
+}
+function act(el){ el.classList.add('act'); setTimeout(function(){ el.classList.remove('act'); }, 900); }
+
+/* ---------- props ---------- */
+function lecternSvg(x, y, s){
+  return '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')"><ellipse cx="0" cy="2" rx="62" ry="12" fill="#000" opacity=".35"/>' +
+    '<path d="M-38,0 L38,0 L28,-22 L-28,-22 Z" fill="url(#brassV)"/><rect x="-10" y="-102" width="20" height="82" fill="url(#brassH)"/>' +
+    '<rect x="-15" y="-70" width="30" height="5" rx="2" fill="#8a6a33"/><rect x="-15" y="-98" width="30" height="5" rx="2" fill="#8a6a33"/>' +
+    '<path d="M-70,-104 L70,-104 L56,-134 L-56,-134 Z" fill="#3b2416" stroke="#c9a35a" stroke-width="2"/><rect x="-74" y="-107" width="148" height="6" rx="2" fill="url(#brassV)"/>' +
+    '<path d="M-44,-110 Q-22,-118 -2,-112 L-2,-130 Q-22,-134 -42,-128 Z M44,-110 Q22,-118 2,-112 L2,-130 Q22,-134 42,-128 Z" fill="#d9bd85"/></g>';
+}
+var STAND_SVG = '<svg viewBox="0 0 62 92" aria-hidden="true"><ellipse cx="31" cy="90" rx="28" ry="3" fill="#000" opacity=".4"/>' +
+  '<rect x="8" y="78" width="5" height="12" fill="#4a2c1c"/><rect x="49" y="78" width="5" height="12" fill="#4a2c1c"/>' +
+  '<rect x="4" y="38" width="54" height="42" rx="2" fill="url(#oak)" stroke="#3b2416"/>' +
+  '<g fill="#a06a38" stroke="#5b3a22"><rect x="8" y="42" width="21" height="16"/><rect x="33" y="42" width="21" height="16"/><rect x="8" y="61" width="21" height="16"/><rect x="33" y="61" width="21" height="16"/></g>' +
+  '<g fill="#e0bd72"><rect x="15.5" y="51" width="6" height="2.5" rx="1"/><rect x="40.5" y="51" width="6" height="2.5" rx="1"/><rect x="15.5" y="70" width="6" height="2.5" rx="1"/><rect x="40.5" y="70" width="6" height="2.5" rx="1"/></g>' +
+  '<rect x="2" y="35" width="58" height="4" rx="1" fill="#5b3a22"/><path d="M12,35 L50,35 L46,22 L16,22 Z" fill="url(#brassV)"/>' +
+  '<g fill="#2a1a12"><circle cx="19" cy="27" r="1.4"/><circle cx="24" cy="27" r="1.4"/><circle cx="29" cy="27" r="1.4"/><circle cx="34" cy="27" r="1.4"/><circle cx="39" cy="27" r="1.4"/><circle cx="44" cy="27" r="1.4"/>' +
+  '<circle cx="17" cy="31" r="1.4"/><circle cx="22" cy="31" r="1.4"/><circle cx="27" cy="31" r="1.4"/><circle cx="32" cy="31" r="1.4"/><circle cx="37" cy="31" r="1.4"/><circle cx="42" cy="31" r="1.4"/><circle cx="47" cy="31" r="1.4"/></g>' +
+  '<rect x="21" y="3" width="20" height="14" fill="#f6ecd6"/><rect x="14" y="15" width="34" height="6" rx="3" fill="#2a1a12" stroke="#c9a35a"/>' +
+  '<circle cx="12" cy="18" r="3" fill="#e0bd72"/><circle cx="50" cy="18" r="3" fill="#e0bd72"/></svg>';
+function makeStand(layer, x, y, s, label){
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'stand'; b.setAttribute('aria-label', 'Search stand: ' + label);
+  b.title = 'Search stand (' + label + ')'; b.innerHTML = STAND_SVG;
+  b.style.left = (x - 31) + 'px'; b.style.top = (y - 92) + 'px'; b.style.transform = 'scale(' + s + ')';
+  layer.appendChild(b); return b;
+}
+
+/* ---------- scene drawings ---------- */
+var SUBS = [
+  {n:1, lx:250, ly:440, ls:.72, card:[150,196,200,140], st:[338,442,.72], spot:[124,452,.72]},
+  {n:2, lx:190, ly:700, ls:1, card:[70,418,240,142], st:[300,706,.95], spot:[40,696,.95]},
+  {n:3, lx:1010, ly:700, ls:1, card:[890,418,240,142], st:[900,706,.95], spot:[1160,696,.95]},
+  {n:4, lx:950, ly:440, ls:.72, card:[850,196,200,140], st:[862,442,.72], spot:[1076,452,.72]}
+];
+function stars(n, x0, y0, w, h, seed){
+  var s = '';
+  for(var i = 0; i < n; i++){ seed = (seed * 9301 + 49297) % 233280; var a = seed / 233280; seed = (seed * 9301 + 49297) % 233280; var b = seed / 233280;
+    s += '<circle cx="' + (x0 + a * w).toFixed(1) + '" cy="' + (y0 + b * h).toFixed(1) + '" r="' + (0.8 + (i % 3) * 0.5) + '" fill="#fff3cf"' + (i % 4 === 0 ? ' class="twinkle"' : '') + ' opacity=".85"/>'; }
+  return s;
+}
+function buildHall(){
+  var s = '<rect width="1200" height="720" fill="url(#sky)"/><rect width="1200" height="720" fill="#0e0c28" opacity=".55"/>';
+  s += '<clipPath id="ocu"><ellipse cx="600" cy="0" rx="250" ry="74"/></clipPath><ellipse cx="600" cy="0" rx="250" ry="74" fill="#141235"/>' +
+    '<g clip-path="url(#ocu)">' + stars(26, 360, 0, 480, 70, 11) + '<circle cx="705" cy="24" r="60" fill="url(#moonGlow)"/><circle cx="705" cy="24" r="19" fill="#fff3cf"/></g>' +
+    '<ellipse cx="600" cy="0" rx="250" ry="74" fill="none" stroke="#8a6a33" stroke-width="4"/>';
+  s += '<path d="M470,40 L730,40 L800,650 L400,650 Z" fill="url(#shaft)"/><rect y="470" width="1200" height="250" fill="#141235"/>';
+  var N = 10, P = [], i;
+  for(i = 0; i < N; i++){ var th = Math.PI * (1 + i / (N - 1)), c = Math.cos(th), sn = -Math.sin(th);
+    P.push({x:600 + 690 * c, fy:600 - 120 * sn, ty:70 + 110 * sn, w:46 - 22 * sn, c:c, sn:sn}); }
+  for(i = 0; i < N - 1; i++){ var a = P[i], b = P[i + 1], pts = (a.x + a.w / 2) + ',' + (a.ty + 26) + ' ' + (b.x - b.w / 2) + ',' + (b.ty + 26) + ' ' + (b.x - b.w / 2) + ',' + b.fy + ' ' + (a.x + a.w / 2) + ',' + a.fy;
+    s += '<polygon points="' + pts + '" fill="url(#spines)"/><polygon points="' + pts + '" fill="#0c0b22" opacity="' + (0.15 + 0.4 * (a.sn + b.sn) / 2).toFixed(2) + '"/>'; }
+  P.forEach(function(p){
+    s += '<path d="M' + p.x + ',' + (p.ty - 10) + ' Q' + (p.x * 0.75 + 150) + ',' + (p.ty - 95) + ' ' + (600 + 240 * p.c) + ',' + (14 + 50 * (1 - Math.abs(p.c))) + '" fill="none" stroke="#8a6a33" stroke-opacity=".35" stroke-width="3"/>' +
+      '<rect x="' + (p.x - p.w / 2) + '" y="' + p.ty + '" width="' + p.w + '" height="' + (p.fy - p.ty) + '" fill="#2a2160"/>' +
+      '<rect x="' + (p.x - p.w / 2 + 3) + '" y="' + p.ty + '" width="3" height="' + (p.fy - p.ty) + '" fill="#4a4090" opacity=".6"/>' +
+      '<rect x="' + (p.x - p.w / 2 - 4) + '" y="' + (p.ty - 10) + '" width="' + (p.w + 8) + '" height="11" fill="url(#brassV)"/>' +
+      '<rect x="' + (p.x - p.w / 2 - 4) + '" y="' + (p.fy - 9) + '" width="' + (p.w + 8) + '" height="9" fill="#8a6a33"/>'; });
+  s += '<g fill="none" stroke="#8a6a33" stroke-opacity=".38" stroke-width="2"><ellipse cx="600" cy="610" rx="560" ry="104"/><ellipse cx="600" cy="610" rx="400" ry="74"/><ellipse cx="600" cy="610" rx="230" ry="44"/>';
+  for(i = 0; i < 8; i++){ var an = i * Math.PI / 4; s += '<line x1="' + (600 + 230 * Math.cos(an)).toFixed(1) + '" y1="' + (610 + 44 * Math.sin(an)).toFixed(1) + '" x2="' + (600 + 400 * Math.cos(an)).toFixed(1) + '" y2="' + (610 + 74 * Math.sin(an)).toFixed(1) + '"/>'; }
+  s += '</g>';
+  s += '<ellipse cx="600" cy="575" rx="170" ry="34" fill="url(#amberGlow)"/>' + lecternSvg(600, 572, 1.15);
+  SUBS.forEach(function(u){ s += '<ellipse cx="' + u.lx + '" cy="' + u.ly + '" rx="' + (120 * u.ls) + '" ry="' + (26 * u.ls) + '" fill="url(#amberGlow)"/>' + lecternSvg(u.lx, u.ly, u.ls); });
+  return s;
+}
+function cush(cx, cy, rx, ry, col){
+  return '<ellipse cx="' + cx + '" cy="' + (cy + ry * 0.6) + '" rx="' + rx + '" ry="' + (ry * 0.7) + '" fill="#000" opacity=".35"/><ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + col + '"/>' +
+    '<ellipse cx="' + cx + '" cy="' + (cy - ry * 0.35) + '" rx="' + (rx * 0.75) + '" ry="' + (ry * 0.45) + '" fill="#fff" opacity=".09"/><circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#000" opacity=".3"/>';
+}
+function buildNook(){
+  var s = '<defs><linearGradient id="nwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1230"/><stop offset="1" stop-color="#3a2418"/></linearGradient>' +
+    '<linearGradient id="nfloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2418"/><stop offset="1" stop-color="#1a100b"/></linearGradient>' +
+    '<clipPath id="win"><circle cx="140" cy="215" r="100"/></clipPath></defs>';
+  s += '<rect width="1200" height="560" fill="url(#nwall)"/>';
+  for(var k = -10; k <= 10; k++){ var x = 600 + 640 * Math.sin(k / 10 * Math.PI / 2); s += '<line x1="' + x.toFixed(1) + '" y1="60" x2="' + x.toFixed(1) + '" y2="548" stroke="#000" stroke-opacity=".28" stroke-width="2"/>'; }
+  s += '<path d="M0,72 Q600,2 1200,72" fill="none" stroke="#3b2416" stroke-width="22"/><path d="M0,94 Q600,24 1200,94" fill="none" stroke="#2a1a12" stroke-width="6"/>';
+  s += '<circle cx="140" cy="215" r="112" fill="#2a1a12" stroke="#8a6a33" stroke-width="6"/><circle cx="140" cy="215" r="100" fill="url(#sky)"/>' +
+    '<g clip-path="url(#win)">' + stars(18, 40, 115, 200, 200, 5) + '<circle cx="172" cy="186" r="70" fill="url(#moonGlow)"/><circle cx="172" cy="186" r="30" fill="#fff3cf"/>' +
+    '<path d="M40,300 Q100,270 160,290 T240,280 L240,320 L40,320 Z" fill="#2a2160" opacity=".8"/></g>' +
+    '<g stroke="#2a1a12" stroke-width="6" fill="none"><line x1="40" y1="215" x2="240" y2="215"/><line x1="140" y1="115" x2="140" y2="315"/><circle cx="140" cy="215" r="55" stroke-width="4"/></g>' +
+    '<rect x="36" y="318" width="208" height="12" rx="4" fill="#3b2416"/>';
+  s += '<rect y="548" width="1200" height="172" fill="url(#nfloor)"/><rect y="540" width="1200" height="10" fill="#2a1a12"/>' +
+    '<g stroke="#000" stroke-opacity=".25"><line x1="0" y1="575" x2="1200" y2="575"/><line x1="0" y1="610" x2="1200" y2="610"/><line x1="0" y1="652" x2="1200" y2="652"/><line x1="0" y1="700" x2="1200" y2="700"/></g>';
+  s += '<path d="M60,330 L240,330 L470,700 L150,700 Z" fill="url(#shaft)"/>';
+  s += '<ellipse cx="600" cy="655" rx="440" ry="60" fill="#2a2160" stroke="#c9a35a" stroke-opacity=".55" stroke-width="3"/><ellipse cx="600" cy="655" rx="405" ry="48" fill="none" stroke="#8a6a33" stroke-dasharray="6 6"/>';
+  s += '<line x1="1080" y1="0" x2="1080" y2="148" stroke="#8a6a33" stroke-width="3"/><circle class="flicker" cx="1080" cy="195" r="190" fill="url(#amberGlow)"/>' +
+    '<path d="M1058,160 L1102,160 L1094,146 L1066,146 Z" fill="#8a6a33"/><rect x="1062" y="160" width="36" height="62" rx="6" fill="#ffc266" opacity=".92"/>' +
+    '<g stroke="#8a6a33" stroke-width="3"><line x1="1074" y1="160" x2="1074" y2="222"/><line x1="1086" y1="160" x2="1086" y2="222"/></g>' +
+    '<ellipse class="flicker" cx="1080" cy="192" rx="6" ry="11" fill="#fff3cf"/><rect x="1058" y="222" width="44" height="8" rx="2" fill="#8a6a33"/>';
+  s += cush(330, 652, 90, 24, '#7a2b1c') + cush(860, 652, 90, 24, '#2f4a6b') + cush(985, 642, 58, 16, '#3d5a2a') + cush(140, 668, 100, 26, '#6b4a8a');
+  s += '<ellipse cx="1125" cy="700" rx="70" ry="10" fill="#000" opacity=".35"/><rect x="1068" y="662" width="8" height="36" fill="#3b2416"/><rect x="1174" y="662" width="8" height="36" fill="#3b2416"/>' +
+    '<ellipse cx="1125" cy="660" rx="70" ry="14" fill="#4a2c1c" stroke="#8a6a33" stroke-width="2"/>' +
+    '<path d="M1092,640 L1116,640 L1113,656 L1095,656 Z" fill="#e9d8b0"/><path d="M1116,644 Q1124,646 1115,652" fill="none" stroke="#e9d8b0" stroke-width="2"/>' +
+    '<ellipse cx="1104" cy="657" rx="16" ry="3" fill="#c9a35a"/><rect x="1140" y="646" width="30" height="5" rx="1" fill="#7a2b1c"/><rect x="1142" y="641" width="26" height="5" rx="1" fill="#2f4a6b"/>';
+  s += '<ellipse cx="600" cy="642" rx="56" ry="12" fill="#000" opacity=".4"/><path d="M572,640 L628,640 L618,622 L582,622 Z" fill="url(#brassV)"/>' +
+    '<rect x="588" y="470" width="24" height="154" fill="url(#wood)"/><rect x="583" y="520" width="34" height="6" rx="2" fill="#8a6a33"/><rect x="583" y="590" width="34" height="6" rx="2" fill="#8a6a33"/>' +
+    '<path d="M536,470 L664,470 L650,446 L550,446 Z" fill="#4a2c1c" stroke="#c9a35a" stroke-width="2"/><rect x="532" y="467" width="136" height="6" rx="2" fill="url(#brassV)"/>';
+  return s;
+}
+function buildRoom(){
+  var s = '<defs><linearGradient id="rwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141235"/><stop offset="1" stop-color="#2a1a2a"/></linearGradient>' +
+    '<linearGradient id="rfloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1a12"/><stop offset="1" stop-color="#120b10"/></linearGradient>' +
+    '<linearGradient id="curt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a1640"/><stop offset=".5" stop-color="#4a2a5e"/><stop offset="1" stop-color="#2a1640"/></linearGradient></defs>';
+  s += '<rect width="1200" height="490" fill="url(#rwall)"/><rect y="390" width="1200" height="100" fill="#2a1a12" opacity=".75"/>';
+  for(var x = 40; x < 1200; x += 120) s += '<rect x="' + x + '" y="402" width="96" height="74" rx="3" fill="none" stroke="#5b3a22" stroke-width="2"/>';
+  s += '<path d="M0,0 L170,0 Q130,240 176,490 L0,490 Z" fill="url(#curt)"/><path d="M1200,0 L1030,0 Q1070,240 1024,490 L1200,490 Z" fill="url(#curt)"/>' +
+    '<g stroke="#1a0c28" stroke-width="3" fill="none" opacity=".7"><path d="M60,0 Q50,250 70,490"/><path d="M115,0 Q100,250 125,490"/><path d="M1140,0 Q1150,250 1130,490"/><path d="M1085,0 Q1100,250 1075,490"/></g>' +
+    '<rect x="0" y="0" width="1200" height="14" fill="url(#brassV)" opacity=".8"/>';
+  s += '<rect y="490" width="1200" height="230" fill="url(#rfloor)"/>';
+  s += '<path d="M300,472 L900,472 L940,512 L260,512 Z" fill="#4a2c1c"/><rect x="260" y="512" width="680" height="18" fill="#2a1a12"/><line x1="260" y1="512" x2="940" y2="512" stroke="#c9a35a" stroke-width="2"/>';
+  s += '<ellipse cx="600" cy="480" rx="120" ry="18" fill="url(#amberGlow)"/>' + lecternSvg(600, 478, .72);
+  s += '<g fill="#3b2416"><rect x="170" y="596" width="860" height="14" rx="4"/><rect x="190" y="610" width="10" height="26"/><rect x="1000" y="610" width="10" height="26"/><rect x="595" y="610" width="10" height="26"/>' +
+    '<rect x="110" y="700" width="980" height="16" rx="4"/></g><g fill="#5a2a4a" opacity=".85"><ellipse cx="330" cy="594" rx="46" ry="7"/><ellipse cx="480" cy="594" rx="46" ry="7"/><ellipse cx="720" cy="594" rx="46" ry="7"/><ellipse cx="870" cy="594" rx="46" ry="7"/><ellipse cx="600" cy="698" rx="52" ry="8"/></g>';
+  return s;
+}
+
+/* ---------- the small search-and-fetch stand ---------- */
+var openPop = null;
+function closeSearch(){ if(openPop){ var p = openPop; openPop = null; p.remove(); } }
+function openSearch(o){
+  closeSearch();
+  var pop = document.createElement('div'); pop.className = 'srch';
+  pop.innerHTML = '<div class="st"><span>SEARCH · ' + esc(o.name) + '</span><button type="button" aria-label="Close search">✕</button></div>' +
+    '<div class="paper"><input type="text" placeholder="type a title…" aria-label="Type a title" autocomplete="off" spellcheck="false"></div>' +
+    '<div class="how">Searches when you press Enter or click away. Try Octopus, Squid, Moon or AI.</div><div class="cards"></div>';
+  pop.style.left = Math.max(8, Math.min(1200 - 244, o.x - 118)) + 'px';
+  pop.style.top = Math.max(8, Math.min(720 - 250, o.y - 250)) + 'px';
+  o.layer.appendChild(pop); openPop = pop;
+  var inp = pop.querySelector('input'), cards = pop.querySelector('.cards'), last = '';
+  function run(){
+    var q = inp.value.trim(); if(q === last || !openPop) return; last = q; cards.innerHTML = '';
+    if(!q) return;
+    var res = search(q);
+    if(!res.length){ cards.innerHTML = '<div class="icard none">No card for “' + esc(q) + '”<small>try Octopus, Squid, Ocean, Moon, Tea or AI</small></div>'; return; }
+    res.forEach(function(r, i){
+      var B = BOOKS[r.t], b = document.createElement('button'); b.type = 'button'; b.className = 'icard'; b.style.animationDelay = (RM ? 0 : i * 80) + 'ms';
+      b.innerHTML = (r.alias ? esc(r.alias) + ' → ' + esc(r.t) + '<small>alias card · ' + esc(B.tw) + '</small>' : esc(r.t) + '<small>' + esc(B.tw) + ' · ' + B.code + (B.ph ? ' · short placeholder page' : '') + '</small>');
+      b.addEventListener('mousedown', function(e){ e.preventDefault(); });
+      b.addEventListener('click', function(){ closeSearch(); o.onPick(r.t); });
+      cards.appendChild(b);
+    });
+  }
+  inp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); last = '\u0000'; run(); } if(e.key === 'Escape') closeSearch(); });
+  inp.addEventListener('blur', function(){ setTimeout(run, 0); });
+  pop.querySelector('.st button').addEventListener('mousedown', function(e){ e.preventDefault(); });
+  pop.querySelector('.st button').addEventListener('click', closeSearch);
+  setTimeout(function(){ try{ inp.focus({preventScroll:true}); }catch(e){ inp.focus(); } }, 30);
+}
+
+/* ---------- Scene A: the main hall ---------- */
+var STEPS = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75, 2], GAP = 40;
+var aLayer = $('aLayer'), aPage = $('aPage'), aFlow = $('aFlow'), aBody = $('aBody');
+var A = {}, aAv = {}, subEls = [];
+var HALL_PEOPLE = {Fox:{kind:'fox', home:[455,650,.95]}, Robot:{kind:'robot', home:[792,660,.95]}, Ghost:{kind:'ghost', home:[600,694,.9]}};
+$('hallSvg').innerHTML = buildHall();
+Object.keys(HALL_PEOPLE).forEach(function(n){ var h = HALL_PEOPLE[n].home; aAv[n] = makeAvatar(aLayer, HALL_PEOPLE[n].kind, h[0], h[1], h[2], {label:n}); });
+function aToast(msg){ toast($('aToast'), msg); }
+function toast(el, msg){ el.innerHTML = msg; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 3600); }
+function allAv(){ return Object.keys(aAv).map(function(k){ return aAv[k]; }); }
+function share(el, html, small){ el.innerHTML = html + '<small>' + small + '</small>'; el.classList.add('flash'); setTimeout(function(){ el.classList.remove('flash'); }, 500); }
+
+function resetA(){
+  A = {t:'Octopus', page:0, pages:1, hist:[], step:2, music:true, busy:false, token:(A.token || 0) + 1,
+    subs:SUBS.map(function(u, i){ return {t: i === 1 ? 'Ocean' : null, page:0, holder:null, choose:false}; })};
+  Object.keys(aAv).forEach(function(n){ var h = HALL_PEOPLE[n].home; placeAv(aAv[n], h[0], h[1], h[2]); });
+  $('aPeople').hidden = true; aPage.classList.remove('dim');
+  $('aMusic').classList.remove('off');
+  renderMain(); SUBS.forEach(function(u, i){ renderSub(i); });
+  $('aShare').innerHTML = 'Every lectern here is shared<small>whatever is open on one, everyone in the instance sees</small>';
+}
+function renderMain(){
+  var B = BOOKS[A.t];
+  $('aCrumb').textContent = B.c + ' · ' + B.code; $('aTitle').textContent = A.t; $('aDesc').textContent = B.d;
+  $('aSrc').textContent = 'Wikipedia · CC BY-SA 4.0 · ' + A.t;
+  aFlow.innerHTML = B.p.map(function(p){ return '<p>' + md(p) + '</p>'; }).join('').replace(/<\/p>$/, '<span class="endmark"></span></p>');
+  layoutMain();
+}
+function layoutMain(){
+  var fs = 19.5 * STEPS[A.step], W = aBody.clientWidth, H = aBody.clientHeight, lh = fs * 1.42;
+  var lines = Math.max(1, Math.floor((H + 0.5) / lh));
+  aFlow.style.fontSize = fs + 'px'; aFlow.style.lineHeight = lh + 'px'; aFlow.style.height = (lines * lh) + 'px';
+  aFlow.style.width = W + 'px'; aFlow.style.columnWidth = W + 'px'; aFlow.style.columnGap = GAP + 'px';
+  var end = aFlow.querySelector('.endmark'), n = 1;
+  if(end && W > 0){
+    var fr = aFlow.getBoundingClientRect(), er = end.getBoundingClientRect(), sc = fr.width / (aFlow.offsetWidth || 1) || 1;
+    n = Math.max(1, Math.floor(((er.left - fr.left) / sc + 2) / (W + GAP)) + 1);
+  }
+  A.pages = n; A.page = Math.min(A.page, n - 1);
+  $('aTs').textContent = Math.round(STEPS[A.step] * 100) + '%';
+  applyMainPage();
+}
+function applyMainPage(){
+  aFlow.style.transform = 'translateX(' + (-A.page * (aBody.clientWidth + GAP)) + 'px)';
+  $('aPg').textContent = (A.page + 1) + ' / ' + A.pages;
+  $('aPrev').disabled = A.page === 0; $('aNext').disabled = A.page >= A.pages - 1; $('aBack').disabled = !A.hist.length;
+}
+function shareMain(){ share($('aShare'), 'Main lectern · you are reading ' + esc(A.t) + ' · page ' + (A.page + 1) + '/' + A.pages, 'seen by everyone in the instance · your text size is just yours'); ring(aLayer, 600, 572, .5); seenPop(allAv()); }
+function flyA(x0, y0, x1, y1, col){
+  var f = document.createElement('div'); f.className = 'flybook'; f.style.zIndex = 20; if(col) f.style.background = col; aLayer.appendChild(f);
+  var mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 90;
+  return anim(f, [{transform:'translate(' + x0 + 'px,' + y0 + 'px) scale(.6)', opacity:0}, {transform:'translate(' + (x0 * .8 + mx * .2) + 'px,' + (y0 * .8 + my * .2) + 'px) scale(.9)', opacity:1, offset:.15},
+    {transform:'translate(' + mx + 'px,' + my + 'px) scale(1.1) rotate(-12deg)', opacity:1, offset:.55}, {transform:'translate(' + x1 + 'px,' + y1 + 'px) scale(.5)', opacity:0}], 1000, 'cubic-bezier(.4,.1,.3,1)')
+    .then(function(){ f.remove(); });
+}
+function followMain(target, from){
+  if(A.busy) return;
+  if(!BOOKS[target]){ aToast('In the world, <b>' + esc(target) + '</b> would fly in from its tower. This mock-up carries nine sample books.'); return; }
+  if(target === A.t){ aToast(esc(target) + ' is already open here.'); return; }
+  var tok = A.token, B = BOOKS[target]; A.busy = true;
+  A.hist.push({t:A.t, page:A.page});
+  $('aFetch').textContent = 'Bringing ' + target + ' from the ' + B.tw + '…'; aPage.classList.add('dim');
+  var src = from || (A.hist.length % 2 ? [70, 330] : [1130, 330]);
+  flyA(src[0], src[1], 585, 400, 'linear-gradient(90deg,#1a0f0a,' + B.col + ')').then(function(){
+    if(tok !== A.token) return;
+    A.t = target; A.page = 0; renderMain(); aPage.classList.remove('dim'); A.busy = false; shareMain();
+  });
+}
+function backMain(){
+  if(A.busy || !A.hist.length) return;
+  var h = A.hist.pop(), tok = A.token; A.busy = true; aPage.classList.add('dim'); $('aFetch').textContent = 'Back to ' + h.t + '…';
+  sleep(500).then(function(){ if(tok !== A.token) return; A.t = h.t; A.page = h.page; renderMain(); aPage.classList.remove('dim'); A.busy = false; shareMain(); });
+}
+$('hallPanel').addEventListener('click', function(e){
+  var lk = e.target.closest('.lk'); if(lk){ followMain(lk.dataset.to); return; }
+  var b = e.target.closest('[data-a]'); if(!b || b.disabled) return;
+  var a = b.dataset.a, B = BOOKS[A.t];
+  if(a === 'prev' && A.page > 0){ A.page--; applyMainPage(); shareMain(); }
+  else if(a === 'next' && A.page < A.pages - 1){ A.page++; applyMainPage(); shareMain(); }
+  else if(a === 'smaller' || a === 'bigger'){ A.step = Math.max(0, Math.min(STEPS.length - 1, A.step + (a === 'bigger' ? 1 : -1))); layoutMain();
+    aToast('Text ' + Math.round(STEPS[A.step] * 100) + '%: the page re-flows into ' + A.pages + ' pages. Only you see your size.'); }
+  else if(a === 'back') backMain();
+  else if(a === 'shelf') aToast('Go to shelf: in the world this flies you to <b>' + B.code + '</b> in the ' + esc(B.tw) + ', level ' + B.lv + '.');
+  else if(a === 'music'){ A.music = !A.music; b.classList.toggle('off', !A.music); aToast('Music ' + (A.music ? 'on' : 'off') + ' (saved for your next visit).'); }
+  else if(a === 'people'){ var o = $('aPeople'); o.hidden = !o.hidden;
+    $('aNames').innerHTML = Object.keys(aAv).map(function(n){ return '<button type="button" data-a="goto" data-n="' + n + '">' + n + '</button>'; }).join(''); }
+  else if(a === 'closepeople') $('aPeople').hidden = true;
+  else if(a === 'goto'){ $('aPeople').hidden = true; act(aAv[b.dataset.n]); aToast('In the world you arrive 1.2 m beside <b>' + b.dataset.n + '</b>, facing them.'); }
+});
+
+/* sub-lecterns */
+SUBS.forEach(function(u, i){
+  var c = document.createElement('div'); c.className = 'sub'; c.style.left = u.card[0] + 'px'; c.style.top = u.card[1] + 'px'; c.style.width = u.card[2] + 'px'; c.style.height = u.card[3] + 'px';
+  aLayer.appendChild(c); subEls.push(c);
+  c.addEventListener('click', function(e){ subClick(i, e); });
+  var st = makeStand(aLayer, u.st[0], u.st[1], u.st[2], 'Lectern ' + u.n);
+  st.addEventListener('click', function(){ standSub(i); });
+  u.standEl = st;
+});
+var mainStand = makeStand(aLayer, 705, 578, 1, 'Main lectern');
+mainStand.addEventListener('click', function(){
+  openSearch({layer:aLayer, x:705, y:486, name:'Main lectern', onPick:function(t){ followMain(t, [705, 520]); }});
+});
+function renderSub(i){
+  var s = A.subs[i], u = SUBS[i], c = subEls[i], B = s.t && BOOKS[s.t], h = '';
+  c.classList.toggle('free', !s.holder);
+  if(s.choose){
+    h = '<div class="pp"><div class="freemsg"><b>LECTERN ' + u.n + '</b>Who is using it?<div class="use">' +
+      Object.keys(aAv).map(function(n){ return '<button type="button" data-use="' + n + '">' + n + '</button>'; }).join('') + '</div></div></div>';
+  } else if(B){
+    h = '<div class="pp"><div class="hd"><span>Lectern ' + u.n + '</span><span>page ' + (s.page + 1) + '/' + B.p.length + '</span></div><h4>' + esc(s.t) + '</h4><div class="tx">' + md(B.p[s.page]) + '</div></div>';
+  } else if(s.holder){
+    h = '<div class="pp"><div class="freemsg"><b>LECTERN ' + u.n + '</b>' + s.holder + ' is here.<span style="font-size:13.5px">Type a title on the typewriter beside it.</span></div></div>';
+  } else {
+    h = '<div class="pp"><div class="freemsg"><b>LECTERN ' + u.n + '</b>free<span style="font-size:13.5px">click to use it</span></div></div>';
+  }
+  h += '<div class="sb"><span class="who">' + (s.holder ? s.holder + (B ? ' is reading' : ' is here') : (B ? 'free · left open' : 'free')) + '</span>' +
+    (B ? '<button type="button" data-sub="prev"' + (!s.holder || s.page === 0 ? ' disabled' : '') + ' aria-label="Previous page">‹</button><button type="button" data-sub="next"' + (!s.holder || s.page >= B.p.length - 1 ? ' disabled' : '') + ' aria-label="Next page">›</button>' : '') +
+    (s.holder ? '<button type="button" data-sub="leave">leave</button>' : '') + '</div>';
+  c.innerHTML = h;
+  u.standEl && u.standEl.classList.toggle('pulse', !!s.holder && !B);
+}
+function shareSub(i, verb){
+  var s = A.subs[i], u = SUBS[i], B = BOOKS[s.t];
+  share($('aShare'), 'Lectern ' + u.n + ' · ' + s.holder + ' ' + (verb || 'is reading') + ' ' + esc(s.t) + ' · page ' + (s.page + 1) + '/' + B.p.length, 'seen by everyone in the instance');
+  ring(aLayer, u.lx, u.ly, u.ls * .55); seenPop(allAv()); var c = subEls[i]; c.classList.remove('ping'); void c.offsetWidth; c.classList.add('ping');
+}
+function useSub(i, name){
+  A.subs.forEach(function(s, j){ if(j !== i && s.holder === name){ s.holder = null; renderSub(j); } });
+  var s = A.subs[i], u = SUBS[i]; s.holder = name; s.choose = false;
+  placeAv(aAv[name], u.spot[0], u.spot[1], u.spot[2]); renderSub(i);
+  if(s.t) shareSub(i, 'took over and is reading');
+  else { share($('aShare'), 'Lectern ' + u.n + ' · ' + name + ' stepped up', 'seen by everyone in the instance'); seenPop(allAv()); }
+}
+function subClick(i, e){
+  var s = A.subs[i], b = e.target.closest('button'), lk = e.target.closest('.lk');
+  if(b && b.dataset.use){ useSub(i, b.dataset.use); return; }
+  if(b && b.dataset.sub){
+    var B = BOOKS[s.t];
+    if(b.dataset.sub === 'leave'){ var n = s.holder; s.holder = null; var h = HALL_PEOPLE[n].home; placeAv(aAv[n], h[0], h[1], h[2]); renderSub(i);
+      share($('aShare'), 'Lectern ' + SUBS[i].n + ' is free again', s.t ? esc(s.t) + ' stays open on it for the next person' : 'anyone can use it'); return; }
+    if(b.dataset.sub === 'prev' && s.page > 0) s.page--;
+    if(b.dataset.sub === 'next' && B && s.page < B.p.length - 1) s.page++;
+    renderSub(i); shareSub(i, 'is reading'); return;
+  }
+  if(lk && s.holder){ fetchSub(i, lk.dataset.to, null); return; }
+  if(!s.holder){ s.choose = !s.choose || !!lk; renderSub(i); }
+}
+function fetchSub(i, t, from){
+  var s = A.subs[i], u = SUBS[i];
+  if(!BOOKS[t]){ aToast('In the world, <b>' + esc(t) + '</b> would fly in from its tower. This mock-up carries nine sample books.'); return; }
+  if(t === s.t){ aToast(esc(t) + ' is already open on Lectern ' + u.n + '.'); return; }
+  var tok = A.token, src = from || (u.lx < 600 ? [30, 300] : [1170, 300]);
+  flyA(src[0], src[1], u.card[0] + u.card[2] / 2 - 15, u.card[1] + u.card[3] / 2, 'linear-gradient(90deg,#1a0f0a,' + BOOKS[t].col + ')').then(function(){
+    if(tok !== A.token) return; s.t = t; s.page = 0; renderSub(i); shareSub(i, 'opened');
+  });
+}
+function standSub(i){
+  var s = A.subs[i], u = SUBS[i];
+  if(!s.holder){ s.choose = true; renderSub(i); aToast('Pick who is using Lectern ' + u.n + ' first.'); return; }
+  openSearch({layer:aLayer, x:u.st[0], y:u.st[1] - 92 * u.st[2], name:'Lectern ' + u.n + ' · ' + s.holder, onPick:function(t){ fetchSub(i, t, [u.st[0], u.st[1] - 60 * u.st[2]]); }});
+}
+
+/* ---------- Scene B: the reading nook ---------- */
+var bLayer = $('bLayer'), spread = $('spread'), leaves = $('leaves'), leafL = $('leafL'), leafR = $('leafR');
+$('nookSvg').innerHTML = buildNook();
+var NOOK = {Fox:{kind:'fox', x:330, y:642, s:1.25, tag:[330,420], btn:[330,682]}, Robot:{kind:'robot', x:860, y:642, s:1.25, tag:[860,422], btn:[860,682]},
+  Ghost:{kind:'ghost', x:985, y:612, s:1.05, tag:[985,452], btn:[985,664]}};
+var CB = [{t:'Octopus', x:78, y:588, r:-8}, {t:'Squid', x:128, y:578, r:3}, {t:'Ocean', x:180, y:590, r:10}];
+var Bst = {token:0}, nookAv = {}, nookTag = {}, nookBtn = {};
+Object.keys(NOOK).forEach(function(n){
+  var o = NOOK[n]; nookAv[n] = makeAvatar(bLayer, o.kind, o.x, o.y, o.s, {sit:true});
+  var tg = document.createElement('div'); tg.className = 'htag'; tg.hidden = true; tg.style.left = o.tag[0] + 'px'; tg.style.top = o.tag[1] + 'px'; bLayer.appendChild(tg); nookTag[n] = tg;
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'turn'; b.style.left = o.btn[0] + 'px'; b.style.top = o.btn[1] + 'px';
+  b.addEventListener('click', function(){ turnB(n); }); bLayer.appendChild(b); nookBtn[n] = b;
+});
+CB.forEach(function(c){
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'cbook pulse'; b.textContent = c.t; b.setAttribute('aria-label', 'Place ' + c.t + ' on the lectern');
+  b.style.left = c.x + 'px'; b.style.top = c.y + 'px'; b.style.setProperty('--r', c.r + 'deg'); b.style.background = 'linear-gradient(90deg,#1a0f0a 0%,' + BOOKS[c.t].col + ' 22%,' + BOOKS[c.t].col + ' 100%)';
+  b.addEventListener('click', function(){ cushionB(c); }); bLayer.appendChild(b); c.el = b;
+});
+function spreadsOf(t){ return 1 + Math.ceil((BOOKS[t].p.length - 1) / 2); }
+function leafHTML(t, k, side){
+  var B = BOOKS[t];
+  if(k === 0 && side === 'l') return '<div class="tp"><div class="crumb">' + esc(B.c) + '</div><div class="orn">✦ ✦ ✦</div><h3>' + esc(t) + '</h3><div class="desc">' + esc(B.d) + '</div><div class="plate">lead picture</div><div class="crumb">shelf ' + B.code + ' · ' + esc(B.tw) + '</div></div>';
+  var i = k === 0 ? 0 : 2 * k - 1 + (side === 'r' ? 1 : 0);
+  return B.p[i] ? '<div class="lt"><p' + (i === 0 ? ' class="first"' : '') + '>' + md(B.p[i]) + '</p></div>' : '<div class="blank">✦</div>';
+}
+function fitLeaf(el){
+  var lt = el.querySelector('.lt'); if(!lt) return;
+  var fs = 19, g = 0; lt.style.fontSize = fs + 'px';
+  while(el.scrollHeight > el.clientHeight + 1 && fs > 12 && g++ < 20){ fs -= 0.5; lt.style.fontSize = fs + 'px'; }
+}
+function fillLeaf(el, html){ el.innerHTML = html; fitLeaf(el); }
+function coverHTML(t){ return '<div class="cvt">' + esc(t) + '</div><div class="cvd">' + esc(BOOKS[t].tw) + '</div>'; }
+function makeFlipper(dir, fh, bh, fc, bc){
+  var f = document.createElement('div'); f.className = 'flipper ' + dir;
+  f.innerHTML = '<div class="face front ' + fc + '"></div><div class="face back ' + bc + '"></div>';
+  leaves.appendChild(f); f.children[0].innerHTML = fh; f.children[1].innerHTML = bh; fitLeaf(f.children[0]); fitLeaf(f.children[1]); return f;
+}
+function flip(f, dir){ return anim(f, [{transform:'rotateY(0deg)'}, {transform:'rotateY(' + (dir === 'fwd' ? -180 : 180) + 'deg)'}], 820, 'cubic-bezier(.35,.1,.25,1)'); }
+function bLabel(txt){ var l = $('syncLabel'); l.textContent = txt; l.classList.add('flash'); setTimeout(function(){ l.classList.remove('flash'); }, 450); }
+function bSync(){
+  Object.keys(NOOK).forEach(function(n){
+    var tg = nookTag[n], b = nookBtn[n]; tg.hidden = !Bst.cur;
+    if(Bst.cur){ tg.textContent = 'p ' + (Bst.sp + 1) + '/' + Bst.n; tg.classList.remove('bump'); void tg.offsetWidth; tg.classList.add('bump'); }
+    b.disabled = !Bst.cur || Bst.busy; b.textContent = n + (Bst.cur && Bst.sp >= Bst.n - 1 ? ' · back to page 1' : ' · turn page ›');
+  });
+  $('bBack').hidden = !Bst.hist.length;
+  CB.forEach(function(c){ c.el.classList.toggle('gone', c.t === Bst.cur); c.el.classList.toggle('pulse', !Bst.cur); });
+}
+function resetB(){
+  Bst = {cur:null, sp:0, n:0, hist:[], busy:false, token:Bst.token + 1};
+  leaves.querySelectorAll('.flipper').forEach(function(f){ f.remove(); });
+  spread.classList.add('closed'); $('dimline').classList.add('hide'); leafL.innerHTML = ''; leafR.innerHTML = '';
+  $('syncLabel').textContent = 'Pick a book from the purple cushion'; bSync();
+}
+function flyB(from, t){
+  var f = document.createElement('div'); f.className = 'flyb'; f.textContent = t; f.style.background = 'linear-gradient(90deg,#1a0f0a 0%,' + BOOKS[t].col + ' 22%)'; bLayer.appendChild(f);
+  var x0 = from[0] - 25, y0 = from[1] - 34, x1 = 575, y1 = 418, mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 110, s0 = from[2] || 1;
+  return anim(f, [{transform:'translate(' + x0 + 'px,' + y0 + 'px) scale(' + s0 + ')', opacity:s0 < 1 ? 0 : 1}, {transform:'translate(' + mx + 'px,' + my + 'px) scale(1.15) rotate(-14deg)', opacity:1, offset:.5},
+    {transform:'translate(' + x1 + 'px,' + y1 + 'px) scale(.8) rotate(0deg)', opacity:1}], 800, 'cubic-bezier(.4,.1,.3,1)').then(function(){ f.remove(); });
+}
+function placeB(t, how, from, startSp){
+  if(Bst.busy) return; Bst.busy = true; bSync();
+  var tok = Bst.token, p = Promise.resolve();
+  if(Bst.cur){ spread.classList.add('closed'); $('dimline').classList.add('hide'); p = sleep(520); }
+  p.then(function(){ if(tok !== Bst.token) return; return flyB(from, t); }).then(function(){
+    if(tok !== Bst.token) return;
+    Bst.cur = t; Bst.n = spreadsOf(t); Bst.sp = Math.min(startSp || 0, Bst.n - 1);
+    leafL.style.opacity = 0; fillLeaf(leafL, leafHTML(t, Bst.sp, 'l')); fillLeaf(leafR, leafHTML(t, Bst.sp, 'r'));
+    var f = makeFlipper('fwd', coverHTML(t), leafHTML(t, Bst.sp, 'l'), 'coverface', 'leaf l');
+    f.children[0].style.background = 'linear-gradient(135deg,' + BOOKS[t].col + ',#1a0f0a)';
+    spread.classList.remove('closed'); bSync();
+    return sleep(320).then(function(){ leafL.style.opacity = 1; return flip(f, 'fwd'); }).then(function(){
+      f.remove(); if(tok !== Bst.token) return;
+      Bst.busy = false; $('dimline').classList.remove('hide');
+      bLabel(t + ' · page ' + (Bst.sp + 1) + ' of ' + Bst.n + ' · ' + how); bSync();
+      Object.keys(nookAv).forEach(function(n){ act(nookAv[n]); });
+    });
+  });
+}
+function cushionB(c){
+  if(Bst.busy) return;
+  if(c.t === Bst.cur){ toast($('bToast'), c.t + ' is already open on the lectern.'); return; }
+  Bst.hist = []; placeB(c.t, 'placed by you, open for everyone', [c.x + 25, c.y + 34]);
+}
+function followB(target, word){
+  if(Bst.busy) return;
+  if(!BOOKS[target]){ toast($('bToast'), 'In the world, <b>' + esc(target) + '</b> would fly in through the window from its tower. This mock-up carries nine sample books.'); return; }
+  if(target === Bst.cur){ toast($('bToast'), esc(target) + ' is already open.'); return; }
+  Bst.hist.push({t:Bst.cur, sp:Bst.sp}); bLabel('Fetching ' + target + ' from the ' + BOOKS[target].tw + '…');
+  placeB(target, 'you followed “' + word + '”, for everyone', [140, 215, .3]);
+}
+function turnB(who){
+  if(!Bst.cur || Bst.busy) return;
+  var t = Bst.cur, tok = Bst.token, f; Bst.busy = true; act(nookAv[who]); bSync();
+  if(Bst.sp < Bst.n - 1){
+    var next = Bst.sp + 1;
+    f = makeFlipper('fwd', leafHTML(t, Bst.sp, 'r'), leafHTML(t, next, 'l'), 'leaf r', 'leaf l'); fillLeaf(leafR, leafHTML(t, next, 'r'));
+    flip(f, 'fwd').then(function(){ f.remove(); if(tok !== Bst.token) return; fillLeaf(leafL, leafHTML(t, next, 'l')); Bst.sp = next; Bst.busy = false;
+      bLabel('page ' + (Bst.sp + 1) + ' of ' + Bst.n + ', turned by ' + who); bSync(); });
+  } else {
+    f = makeFlipper('bwd', leafHTML(t, Bst.sp, 'l'), leafHTML(t, 0, 'r'), 'leaf l', 'leaf r'); fillLeaf(leafL, leafHTML(t, 0, 'l'));
+    flip(f, 'bwd').then(function(){ f.remove(); if(tok !== Bst.token) return; fillLeaf(leafR, leafHTML(t, 0, 'r')); Bst.sp = 0; Bst.busy = false;
+      bLabel('back to page 1 of ' + Bst.n + ', turned by ' + who); bSync(); });
+  }
+}
+leaves.addEventListener('click', function(e){ var a = e.target.closest('.lk'); if(a) followB(a.dataset.to, a.dataset.w); });
+$('bBack').addEventListener('click', function(){
+  if(Bst.busy || !Bst.hist.length) return; var h = Bst.hist.pop();
+  placeB(h.t, 'you went back, for everyone', [140, 215, .3], h.sp);
+});
+
+/* ---------- Scene C: presenter mode ---------- */
+var cLayer = $('cLayer'); $('roomSvg').innerHTML = buildRoom();
+var SEATS = {Robot:['robot',330,600,.85], Fox:['fox',480,600,.85], Cat:['cat',720,600,.85], Ghost:['ghost',870,598,.85], You:['dog',600,694,1]};
+var cAv = {}, C = {token:0, timers:[]};
+Object.keys(SEATS).forEach(function(n){
+  var o = SEATS[n], seat = makeAvatar(cLayer, o[0], o[1], o[2], o[3], {sit:true, back:true, label:n});
+  seat.style.transition = 'opacity .6s'; cAv[n] = {seat:seat};
+  if(n !== 'Cat'){ var st = makeAvatar(cLayer, o[0], 505, 492, .72, {label:n === 'You' ? 'You (presenting)' : n + ' (presenting)'}); st.style.transition = 'opacity .6s'; cAv[n].stage = st; }
+});
+var cStand = makeStand(cLayer, 702, 494, .8, 'Presenter lectern');
+function audience(){ return Object.keys(cAv).filter(function(n){ return n !== C.pres; }).map(function(n){ return cAv[n].seat; }); }
+function cShare(html, small){ share($('cShare'), html, small); seenPop(audience()); }
+function clearScript(){ C.timers.forEach(clearTimeout); C.timers = []; }
+function fitBig(){ var el = $('cText'), fs = 23, g = 0; el.style.fontSize = fs + 'px'; while(el.scrollHeight > el.clientHeight + 1 && fs > 15 && g++ < 20){ fs -= 0.5; el.style.fontSize = fs + 'px'; } }
+function mirror(el){
+  var B = BOOKS[C.t]; el.querySelector('.mt').textContent = C.t; el.querySelector('.mp').textContent = 'page ' + (C.pg + 1) + ' / ' + B.p.length;
+  el.querySelector('.mx').innerHTML = sentences(B.p[C.pg]);
+}
+function applyHl(sweep){
+  [$('cText'), $('robotBook'), $('myBook')].forEach(function(root){
+    root.querySelectorAll('.sn').forEach(function(s){ s.classList.remove('hl'); if(!sweep && +s.dataset.i === C.hl) s.classList.add('hl'); });
+  });
+  if(sweep) requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    [$('cText'), $('robotBook'), $('myBook')].forEach(function(root){ var s = root.querySelector('.sn[data-i="' + C.hl + '"]'); if(s) s.classList.add('hl'); });
+  }); });
+}
+function renderC(){
+  var B = BOOKS[C.t], mine = C.pres === 'You';
+  $('cCrumb').textContent = B.c + ' · ' + B.code; $('cPgTop').textContent = 'page ' + (C.pg + 1) + ' / ' + B.p.length; $('cTitle').textContent = C.t;
+  $('cText').innerHTML = sentences(B.p[C.pg]); $('cText').classList.toggle('pres', mine); fitBig();
+  $('cPg').textContent = 'page ' + (C.pg + 1) + ' / ' + B.p.length; $('cBar').classList.toggle('locked', !mine);
+  mirror($('robotBook')); mirror($('myBook')); applyHl(false);
+  $('robotBook').classList.toggle('hide', C.pres === 'Robot'); $('robotCap').classList.toggle('hide', C.pres === 'Robot');
+  $('myBook').classList.toggle('hide', mine || !C.follow);
+  var f = $('cFollow'); f.hidden = mine; f.textContent = 'Follow along in my own book: ' + (C.follow ? 'on' : 'off');
+  Object.keys(cAv).forEach(function(n){ var a = cAv[n]; a.seat.style.opacity = C.pres === n ? 0 : 1; if(a.stage) a.stage.style.opacity = C.pres === n ? 1 : 0; });
+  document.querySelectorAll('#roleCtl [data-role]').forEach(function(b){ b.setAttribute('aria-selected', String((b.dataset.role === 'pres') === mine)); });
+  cStand.classList.toggle('pulse', false);
+}
+function presName(){ return C.pres === 'You' ? 'you' : C.pres; }
+function shareC(small){ cShare('Presenting: ' + presName() + ' · ' + esc(C.t) + ' · page ' + (C.pg + 1) + '/' + BOOKS[C.t].p.length, small || 'the big page and every follow-along book turn together'); }
+function resetC(){
+  clearScript(); C = {t:'Octopus', pg:0, hl:-1, pres:'You', follow:false, hist:[], busy:false, token:C.token + 1, timers:[]};
+  $('cMenu').hidden = true; renderC(); shareC('only the presenter can turn, highlight or search');
+}
+function pageC(d, who){
+  var n = BOOKS[C.t].p.length, to = C.pg + d; if(C.busy || to < 0 || to >= n) return;
+  var tok = C.token; C.busy = true; $('cText').classList.add('fade');
+  sleep(260).then(function(){ if(tok !== C.token) return; C.pg = to; C.hl = -1; renderC(); $('cText').classList.remove('fade'); C.busy = false; shareC(); if(who) act(cAv[who].stage); });
+}
+function highlightC(i, who){
+  C.hl = i; applyHl(true); if(who && cAv[who].stage) act(cAv[who].stage);
+  cShare(esc(who === 'You' ? 'You' : who) + ' highlighted a sentence on page ' + (C.pg + 1), 'the gold sweep shows for everyone in the room, and in follow-along books');
+}
+function followC(target, word, from){
+  if(C.busy) return;
+  if(!BOOKS[target]){ toast($('cToast'), 'In the world, <b>' + esc(target) + '</b> would fly in from its tower. This mock-up carries nine sample books.'); return; }
+  if(target === C.t){ toast($('cToast'), esc(target) + ' is already on the big page.'); return; }
+  var tok = C.token, pg = $('bigPage').querySelector('.page'); C.busy = true; C.hist.push({t:C.t, pg:C.pg});
+  $('cFetch').textContent = 'Bringing ' + target + ' from the ' + BOOKS[target].tw + '…'; pg.classList.add('dim');
+  var f = document.createElement('div'); f.className = 'flybook'; f.style.zIndex = 20; f.style.background = 'linear-gradient(90deg,#1a0f0a,' + BOOKS[target].col + ')'; cLayer.appendChild(f);
+  var s = from || [150, 260];
+  anim(f, [{transform:'translate(' + s[0] + 'px,' + s[1] + 'px) scale(.6)', opacity:0}, {transform:'translate(' + ((s[0] + 585) / 2) + 'px,' + (Math.min(s[1], 380) - 80) + 'px) scale(1.1) rotate(-12deg)', opacity:1, offset:.5},
+    {transform:'translate(585px,384px) scale(.5)', opacity:0}], 1000, 'cubic-bezier(.4,.1,.3,1)').then(function(){
+    f.remove(); if(tok !== C.token) return; pg.classList.remove('dim');
+    C.t = target; C.pg = 0; C.hl = -1; C.busy = false; renderC();
+    shareC(word ? presName() + ' followed “' + esc(word) + '”; the big page and follow-along books changed book' : presName() + ' fetched it with the search stand; everyone sees it');
+  });
+}
+function handOver(name, stepDown){
+  clearScript(); $('cMenu').hidden = true; closeSearch(); C.pres = name; renderC();
+  cShare(stepDown ? 'You stepped down; ' + name + ' took the lectern' : 'You handed the lectern to ' + name, name + ' can now turn, highlight and search; you sit with the audience');
+  var tok = C.token;
+  C.timers.push(setTimeout(function(){ if(tok === C.token && C.pres === name) pageC(1, name); }, RM ? 400 : 1800));
+  C.timers.push(setTimeout(function(){ if(tok === C.token && C.pres === name) highlightC(1, name); }, RM ? 800 : 3800));
+}
+function handBack(){
+  if(C.pres === 'You') return; var was = C.pres; clearScript(); C.pres = 'You'; renderC();
+  cShare(esc(was) + ' handed the lectern back to you', 'you can turn, highlight, follow links and search again');
+}
+$('cPrev').addEventListener('click', function(){ if(C.pres !== 'You') return lockedC(); pageC(-1, 'You'); });
+$('cNext').addEventListener('click', function(){ if(C.pres !== 'You') return lockedC(); pageC(1, 'You'); });
+$('cHand').addEventListener('click', function(){ if(C.pres !== 'You') return lockedC(); $('cMenu').hidden = !$('cMenu').hidden; });
+$('cMenu').addEventListener('click', function(e){ var b = e.target.closest('[data-to]'); if(b) handOver(b.dataset.to); });
+function lockedC(){ toast($('cToast'), 'Only the presenter (' + presName() + ') can turn the big page. Try <b>follow along in my own book</b>.'); }
+$('cText').addEventListener('click', function(e){
+  var a = e.target.closest('.lk'), s = e.target.closest('.sn');
+  if(C.pres !== 'You'){ if(a) toast($('cToast'), 'Only the presenter can follow links on the big page.'); return; }
+  if(a){ followC(a.dataset.to, a.dataset.w); return; }
+  if(s) highlightC(+s.dataset.i, 'You');
+});
+$('cFollow').addEventListener('click', function(){ C.follow = !C.follow; renderC(); });
+cStand.addEventListener('click', function(){
+  if(C.pres !== 'You'){ toast($('cToast'), 'In presenter mode only the presenter can use the search stand. ' + esc(C.pres) + ' has it now.'); return; }
+  openSearch({layer:cLayer, x:702, y:420, name:'Presenter lectern', onPick:function(t){ followC(t, null, [702, 440]); }});
+});
+document.querySelectorAll('#roleCtl [data-role]').forEach(function(b){
+  b.addEventListener('click', function(){ if(b.dataset.role === 'pres') handBack(); else if(C.pres === 'You') handOver('Fox', true); });
+});
+
+/* ---------- tabs, hints, reset, scaling, link bubbles ---------- */
+var HINTS = {
+  A:'Click a <b>gold word</b> on the big reader to bring that book here, or try <b>A+</b>, the <b>‹ ›</b> arrows and <b>Back</b>. Click a <b>sub-lectern</b> to use it as Fox, Robot or Ghost, then click the <b>typewriter stand</b> beside it and type a title (try <b>Squid</b>, <b>Moon</b> or <b>AI</b>), then press Enter.',
+  B:'Click a <b>book on the purple cushion</b> to set it on the lectern. Then press anyone’s <b>turn page</b> button, or a <b>gold word</b> to change the book for the whole nook.',
+  C:'As <b>Presenter</b>: turn with <b>‹ ›</b>, click a <b>gold word</b> to follow it, click <b>any sentence</b> to sweep a highlight over it, try <b>Hand over</b>. Switch to <b>Audience</b> to see the locked page and <b>follow along in your own book</b>. Robot’s little book (left) follows too.'
+};
+var scene = 'A';
+function show(sc){
+  scene = sc; closeSearch();
+  ['A', 'B', 'C'].forEach(function(k){ $('scene' + k).classList.toggle('off', k !== sc); });
+  document.querySelectorAll('[data-scene]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.scene === sc)); });
+  $('roleCtl').classList.toggle('on', sc === 'C'); $('hint').innerHTML = HINTS[sc];
+  if(sc === 'A') layoutMain(); if(sc === 'C') fitBig();
+}
+document.querySelectorAll('[data-scene]').forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.scene); }); });
+$('reset').addEventListener('click', function(){ closeSearch(); resetA(); resetB(); resetC(); });
+function fit(){ var w = $('stagewrap').clientWidth || 1200; $('stage').style.transform = 'scale(' + (w / 1200) + ')'; }
+window.addEventListener('resize', fit);
+var tip = document.createElement('div'); tip.className = 'tip'; document.body.appendChild(tip);
+document.addEventListener('mouseover', function(e){
+  var a = e.target.closest ? e.target.closest('.lk') : null;
+  if(!a || !a.dataset.tip){ tip.style.display = 'none'; return; }
+  var r = a.getBoundingClientRect(); tip.textContent = '→ ' + a.dataset.to; tip.style.display = 'block';
+  tip.style.left = Math.max(4, Math.min(window.innerWidth - tip.offsetWidth - 4, r.left)) + 'px'; tip.style.top = Math.max(4, r.top - tip.offsetHeight - 6) + 'px';
+});
+window.addEventListener('scroll', function(){ tip.style.display = 'none'; }, {passive:true});
+document.addEventListener('keydown', function(e){
+  var a = e.target.closest && e.target.closest('.lk'); if(a && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); a.click(); }
+});
+fit(); resetA(); resetB(); resetC(); show('A');
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ layoutMain(); fitBig(); if(Bst.cur && !Bst.busy){ fillLeaf(leafL, leafHTML(Bst.cur, Bst.sp, 'l')); fillLeaf(leafR, leafHTML(Bst.cur, Bst.sp, 'r')); } });
+})();
+</script>
+</body>
+</html>
