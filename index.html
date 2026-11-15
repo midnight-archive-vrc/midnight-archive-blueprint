@@ -336,7 +336,7 @@ footer a{color:var(--line)}
   <section class="panel intro prose" aria-labelledby="intro-h">
     <h2 class="panel-h" id="intro-h">Fall down a rabbit hole</h2>
     <p>The Midnight Archive is a library floating on clouds at night, in VRChat. Every book on its shelves is a real, readable Wikipedia article.</p>
-    <p>Open a book and follow its links. Each linked book flies off its shelf, from whatever tower it lives in, straight to you. A glowing trail draws the path you took through the archive, so you can see how far down the hole you went.</p>
+    <p>Open a book and follow its links. Each linked book flies off its shelf, from whatever tower it lives in, straight to you. Back takes you through everything you looked at, like a browser.</p>
     <p>The books line the outside of tall towers on floating isles, joined by lantern-lit bridges. Inside, each tower is a cozy place to lie around and talk, themed by its topic.</p>
     <p class="sub">This page is the blueprint: concept art, a map you can click, and a cut through each tower. Nothing here is final.</p>
     <ul class="key" aria-label="Status key">
@@ -367,11 +367,11 @@ footer a{color:var(--line)}
       </div>
     </div>
     <figure class="drawing">
-      <svg id="plan" viewBox="-255 -255 510 510" role="img" aria-label="Plan of the archipelago: the academy isle at the centre, and isles of different sizes and heights holding 11 topic towers, linked by lantern-lit bridges, with an example reading trail jumping between towers, under a rising moon."></svg>
+      <svg id="plan" viewBox="-255 -255 510 510" role="img" aria-label="Plan of the archipelago: the academy isle at the centre, and isles of different sizes and heights holding 11 topic towers, linked by lantern-lit bridges, with an example race route jumping between towers, under a rising moon."></svg>
       <figcaption>North up, metres from the centre of the academy. <span id="plan-cap"></span></figcaption>
     </figure>
     <div class="layers" role="group" aria-label="Layers">
-      <button type="button" class="tog" data-layer="trail" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-width="2" stroke-dasharray="4 3"/></svg>Example trail</button>
+      <button type="button" class="tog" data-layer="trail" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/><line x1="1" y1="5" x2="23" y2="5" stroke="#8edbff" stroke-width="2" stroke-dasharray="4 3"/></svg>Example race route</button>
       <button type="button" class="tog" data-layer="flight" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><path d="M1 8 Q10 0 19 5" fill="none" stroke="#e3eeff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/><path d="M17 1.5L23 6L16.5 8z" fill="#e3eeff"/></svg>Wind currents</button>
       <button type="button" class="tog" data-layer="npc" aria-pressed="false"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3" stroke-linecap="round"/></svg>NPC routes</button>
       <button type="button" class="tog" data-layer="below" aria-pressed="true"><svg viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" stroke="#e3eeff" stroke-opacity=".6" stroke-width="2" stroke-dasharray="5 3"/></svg>Below cloud</button>
@@ -426,7 +426,7 @@ footer a{color:var(--line)}
       <h2 class="panel-h" id="games-h">Games in the academy <span class="tag dec">Settled</span> planned, not built yet</h2>
       <p>The academy at the centre of the archipelago is where the games live. Switch the map to <b>Academy</b> to see the rooms.</p>
       <ul>
-        <li><b>Wiki Race</b> in the Race Hall. Everyone gets the same start book and target book. Only the link buttons work, no search. Your glowing trail is your route, and at the end everyone sees each other's paths. Every hop takes the same few seconds to load for everyone, so the shortest route wins.</li>
+        <li><b>Wiki Race</b> in the Race Hall. Everyone gets the same start book and target book. Only the links work, no search. During a race a glowing trail draws your route (it only appears in races), and at the end everyone sees each other's paths. Every hop takes the same few seconds to load for everyone, so the shortest route wins.</li>
         <li><b>Daily Race.</b> One race a day for every visitor, picked ahead of time from the real link map of the shelves, so it is always solvable, with a par.</li>
         <li><b>Trivia Room.</b> "Mystery book": read a book's first lines with its title blanked and pick the right title from four. "Which tower?": guess where a book lives. Only Wikipedia's own text, no AI-written questions.</li>
       </ul>
@@ -439,10 +439,10 @@ footer a{color:var(--line)}
         <li>Open a book and read the article.</li>
         <li>Links to other books in the archive are highlighted in the text, and listed as buttons under each page.</li>
         <li>Press one. That book flies off its shelf to you and opens. The flight covers the few seconds it takes to load.</li>
-        <li>A glowing trail draws your path between the shelves, so you can see how far down the hole you went.</li>
+        <li>Back returns through everything you looked at, like a browser. (The glowing trail of your path only appears during races.)</li>
         <li>Back returns to the book before. Title search finds any book in the archive.</li>
       </ol>
-      <p class="sub">This already works in a plain grey test world. The trail on the map above is a made-up example.</p>
+      <p class="sub">This already works in a plain grey test world. The route on the map above is a made-up example of a race.</p>
     </section>
 
     <section class="panel prose" aria-labelledby="col-h">
@@ -491,7 +491,7 @@ footer a{color:var(--line)}
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h2" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><path d="M4 9 Q10 3 18 4 Q28 4 30 9 Q24 14 14 13 Q6 13 4 9Z" transform="translate(0 2)" fill="url(#lg-h2)" stroke="#e3eeff" stroke-opacity=".5"/><path d="M4 7 Q10 1 18 2 Q28 2 30 7 Q24 12 14 11 Q6 11 4 7Z" fill="#14324f" stroke="#e3eeff" stroke-width="1.2"/></svg>Floating isle, underside hatched</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 11 Q17 1 32 11" fill="none" stroke="#e3eeff" stroke-width="6"/><path d="M2 11 Q17 1 32 11" fill="none" stroke="#0b2a48" stroke-width="3.6"/><circle cx="10" cy="7" r="1.3" fill="#e3eeff"/><circle cx="17" cy="6" r="1.3" fill="#e3eeff"/><circle cx="24" cy="7" r="1.3" fill="#e3eeff"/></svg>Lantern Way: bridges looping past every isle</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#e3eeff" stroke-opacity=".6" stroke-width="1.6" stroke-dasharray="6 4"/></svg>Below the cloud surface</li>
-      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-opacity=".3" stroke-width="6" stroke-linecap="round"/><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-width="2" stroke-dasharray="5 4"/><circle cx="3" cy="8" r="2.6" fill="#8edbff"/><circle cx="31" cy="8" r="2.6" fill="#8edbff"/></svg>Trail: your path between books, drawn in light</li>
+      <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-opacity=".3" stroke-width="6" stroke-linecap="round"/><line x1="3" y1="8" x2="31" y2="8" stroke="#8edbff" stroke-width="2" stroke-dasharray="5 4"/><circle cx="3" cy="8" r="2.6" fill="#8edbff"/><circle cx="31" cy="8" r="2.6" fill="#8edbff"/></svg>Race route: your path between books, drawn in light (races only)</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><path d="M2 12 Q14 1 27 7" fill="none" stroke="#e3eeff" stroke-width="1.6" stroke-dasharray="1 4" stroke-linecap="round"/><path d="M25 3L32 8L24.5 10.5z" fill="#e3eeff"/></svg>Wind current for flying</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><line x1="2" y1="8" x2="32" y2="8" stroke="#c6b4ff" stroke-width="2" stroke-dasharray="1 3.5" stroke-linecap="round"/></svg>NPC route</li>
       <li><svg viewBox="0 0 34 16" aria-hidden="true"><defs><pattern id="lg-h" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#e3eeff" stroke-opacity=".6"/></pattern></defs><rect x="2" y="3" width="30" height="10" fill="url(#lg-h)" stroke="#e3eeff" stroke-width="1"/></svg>Sealed, or spare room to grow</li>
@@ -572,10 +572,10 @@ var ROCKS=[
 var ZONES={
   landing:{t:"Approach Landing",k:"Place · spawn",rows:[["Where","South of the archipelago"],["Baked","Language lectern, paw-print trail"]],n:"Frame the postcard view of the towers here. The Long Bridge curves north to the academy entrance."},
   bridge:{t:"Long Bridge",k:"Place · path",rows:[["Runs","Approach Landing to the academy entrance"],["Crosses","Under the high arch between Everyday life and Arts"]],n:"The first walk in, with lantern posts and the isles rising on both sides."},
-  lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. Links and the trail do the exploring; the Way is for strolling."},
+  lanternway:{t:"Lantern Way",k:"Path · walking loop",rows:[["Route","The academy, History, People, Geography, the Commons, the high arch, Arts, Observatory Isle, High Isle, then down the Long Stair"],["Lights","A lantern post every few metres"]],n:"A walking loop past every isle. Links do the exploring; the Way is for strolling."},
   longstair:{t:"Long Stair",k:"Path · academy to High Isle",rows:[["Climb","From the academy up to High Isle (+70 m)"],["Rest","A reading gazebo floats beside the halfway turn"]],n:"The slow way to Philosophy and religion. Everyone else flies."},
   games:{t:"Games Hall",k:"Place · academy, the middle",rows:[["Does","Where races start and finish; the scoreboard of the instance"],["Status","Planned"]],n:"Everyone gathers here: press Start and the race begins for the whole instance."},
-  race:{t:"Race Hall",k:"Place · academy, north",rows:[["Game","Wiki Race: same start and target book for everyone, link buttons only"],["Status","Planned"]],n:"Your gold trail is your route; at the end everyone sees each other's paths."},
+  race:{t:"Race Hall",k:"Place · academy, north",rows:[["Game","Wiki Race: same start and target book for everyone, link buttons only"],["Status","Planned"]],n:"During a race your gold trail is your route; at the end everyone sees each other's paths."},
   daily:{t:"Daily Race",k:"Place · academy, west",rows:[["Game","One race a day for every visitor, always solvable, with a par"],["Status","Planned"]],n:"Picked ahead of time from the real link map of the shelves."},
   trivia:{t:"Trivia Room",k:"Place · academy, east",rows:[["Game","Mystery book (title blanked, 4 choices) and Which tower?"],["Status","Planned"]],n:"Only Wikipedia's own text, no AI-written questions."},
   entrance:{t:"Entrance",k:"Place · academy, south",rows:[["From","The Long Bridge from the Approach Landing"]],n:"The way in from the spawn."},
@@ -817,7 +817,7 @@ function buildPlan(){
     el("circle",{cx:s[0][0],cy:s[0][1],r:5.5,"class":"trail-stop"},trl);
     txt(trl,s[0][0],s[0][1],String(i+1),"trail-no",{dy:"0.35em"});
   });
-  txt(trl,132,58,"EXAMPLE TRAIL","lbl trl vis-s");
+  txt(trl,132,58,"EXAMPLE RACE ROUTE","lbl trl vis-s");
 
   /* Selection */
   callout=el("g",{"class":"vis-s"},plan);
@@ -1158,7 +1158,7 @@ function renderInfo(){
       ["List","Vital Articles, Level 5 · "+k.t+(k.one?"":" · "+band.cap)],
       ["Books","Counted by the build. Related books stand side by side."],
       ["Opening","One book per load. The book's few-second flight to you covers the wait."],
-      ["Links","Highlighted links fly books here from any tower. The trail follows."],
+      ["Links","Highlighted links fly books here from any tower."],
       ["Tower","Tower "+k.c+" · "+k.t+(function(){var cl=TOWERS[k.c].cluster;if(!cl)return "";for(var i=0;i<cl.length;i++){if(cl[i].subs.indexOf(band.code)>=0)return " · sub-tower "+cl[i].n;}return "";})()]
     ], k.one?"Wikipedia keeps this topic on one page. Its section headings could split it into floors (proposal). "+baked:baked);
     cap.textContent="Selected: floor "+band.code+" "+band.cap+", tower "+k.c+" on "+isle.name+", "+lvls+".";
