@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Touch a gold word, the book comes to you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0b22;--bg2:#141235;--violet:#2a2160;--ink:#ece8f7;--muted:#aaa5cc;--amber:#ffc266;--moon:#fff3cf;--thread:#ffd27a;
+  --walnut:#2a1a12;--brass:#c9a35a;--brass2:#8a6a33;--line:rgba(236,232,247,.14)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:#0c0b22;background-image:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,#141235,#0c0b22 70%);
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;min-height:100vh;overflow-x:hidden}
+.wrap{max-width:1400px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 4px}
+.kicker{font-family:Cinzel,serif;letter-spacing:.18em;font-size:12px;color:var(--brass)}
+h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:clamp(28px,3.4vw,44px);line-height:1.1;margin:6px 0 8px;color:var(--moon)}
+header p{color:var(--muted);margin:0;max-width:82ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:14px 0 10px}
+.hint{font-size:14px;flex:1 1 380px}
+.hint b{color:var(--thread);font-weight:600}
+.toolbar label{color:var(--muted);font-size:13px;display:flex;gap:6px;align-items:center;cursor:pointer}
+.btn{font:600 13px/1 Inter,sans-serif;color:#2a1a12;background:linear-gradient(180deg,#d9b46a,#a07a3a);border:1px solid #8a6a33;border-radius:4px;
+  padding:9px 18px;cursor:pointer;box-shadow:inset 0 1px 0 #fff6,0 2px 6px #0008}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible,.lk:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+
+/* ---------- the demo: a 1600 x 960 scene scaled to fit ---------- */
+.demo{position:relative;width:100%;aspect-ratio:5/3;border-radius:14px;overflow:hidden;background:#0c0b22;
+  box-shadow:0 0 0 1px rgba(201,163,90,.35),0 24px 70px rgba(0,0,0,.6)}
+.scene{position:absolute;left:0;top:0;width:1600px;height:960px;transform-origin:0 0;user-select:none;-webkit-user-select:none}
+.layer{position:absolute;left:0;top:0;width:1600px;height:960px;pointer-events:none}
+svg.layer{overflow:visible}
+.ring path{transition:opacity .35s,stroke .35s,stroke-width .35s}
+.ring.hot .rb{stroke:#ffd27a;opacity:1}
+.ring.hot .rg{opacity:.55;stroke-width:18}
+.handg,.thumbg{transition:transform .75s cubic-bezier(.3,.7,.3,1),opacity .45s}
+.notrans .handg,.notrans .thumbg{transition:none!important}
+.tlabel{position:absolute;z-index:7;left:0;top:0;transform:translate(-50%,-100%);margin-top:-22px;white-space:nowrap;pointer-events:none;
+  font:600 17px/1.2 Inter,sans-serif;color:#ffd27a;background:#2a1a12;border:1.5px solid #c9a35a;border-radius:8px;padding:7px 12px;
+  box-shadow:0 8px 22px rgba(0,0,0,.5);opacity:0;transition:opacity .4s}
+.tlabel small{display:block;font:500 13px Inter,sans-serif;color:#c9a35a;margin-top:2px}
+
+/* ---------- a book: right page + a hinged leaf (cover outside, left page inside) ---------- */
+.bk{position:absolute;left:0;top:0;width:740px;height:480px;transform-origin:0 0;will-change:transform;transition:filter .6s}
+.bk.aside{filter:brightness(.72) saturate(.85)}
+.tilt{position:absolute;left:0;top:0;width:740px;height:480px;transform-style:preserve-3d}
+.rcase{position:absolute;left:370px;top:0;width:370px;height:480px;background:linear-gradient(90deg,#24150d,#3b2416);border-radius:2px 8px 8px 2px;
+  box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px #8a6a33}
+.leaf{position:absolute;left:370px;top:0;width:370px;height:480px;transform-origin:0 50%;transform-style:preserve-3d;
+  transform:translateZ(1px) rotateY(0deg);transition:transform .9s cubic-bezier(.35,.75,.25,1)}
+.bk.open .leaf{transform:translateZ(1px) rotateY(-180deg)}
+.face{position:absolute;left:0;top:0;width:370px;height:480px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.front{border-radius:2px 8px 8px 2px;background:radial-gradient(120% 90% at 30% 20%,#4a2e1b,#2a1a12 70%);
+  box-shadow:inset 0 0 0 2px #c9a35a,inset 0 0 0 8px #2a1a12,inset 0 0 0 9px #8a6a33,inset 12px 0 20px rgba(0,0,0,.45)}
+.flying .front{overflow:visible;box-shadow:inset 0 0 0 2px #c9a35a,inset 0 0 0 8px #2a1a12,inset 0 0 0 9px #8a6a33,0 0 70px 20px rgba(255,210,122,.55)}
+.back{transform:rotateY(180deg);border-radius:8px 2px 2px 8px;background:linear-gradient(270deg,#24150d,#3b2416);box-shadow:inset 0 0 0 1px #8a6a33}
+.bk.open .front,.bk:not(.open) .back{pointer-events:none}
+.cv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 34px;color:#ffd27a}
+.cv .orn{font-size:18px;letter-spacing:.5em;color:#c9a35a}
+.cv .ct{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:52px;line-height:1;margin:14px 0 10px;text-shadow:0 0 18px rgba(255,210,122,.45)}
+.cv .cd{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:20px;color:#e9c98a;max-width:270px;line-height:1.2}
+.cv .ctw{margin-top:24px;font:600 14px Cinzel,serif;letter-spacing:.16em;color:#c9a35a}
+.cv .cl{position:absolute;bottom:34px;left:0;right:0;font:500 14px Inter,sans-serif;color:#ffd27a;opacity:0;letter-spacing:.06em;transition:opacity .3s}
+.loading .cv .cl{opacity:.9}
+.shim{position:absolute;inset:0;opacity:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,236,190,.4) 50%,transparent 65%);
+  background-size:260% 100%;transition:opacity .4s}
+.loading .shim{opacity:1;animation:shim 1.25s linear infinite}
+@keyframes shim{from{background-position:130% 0}to{background-position:-130% 0}}
+
+.pg{position:absolute;top:10px;bottom:10px;color:#2b2118;font-family:"Cormorant Garamond",serif;padding:20px 22px 16px;overflow:hidden;
+  box-shadow:inset 0 0 40px rgba(120,80,30,.22)}
+.pg.r{left:0;right:10px;border-radius:0 3px 3px 0;background:linear-gradient(90deg,#d6bd8c 0%,#f0e3c5 12%,#f3e7cc 100%)}
+.pg.l{left:10px;right:0;border-radius:3px 0 0 3px;background:linear-gradient(90deg,#efe0bf 0%,#f3e7cc 80%,#dcc597 100%)}
+.crumb{font:500 10.5px/1.3 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7a5a36}
+.pg h3{font-size:38px;line-height:1;margin:8px 0 3px;font-weight:700}
+.desc{font-style:italic;font-size:17px;color:#5b4630;margin-bottom:10px;line-height:1.2}
+.pg p{margin:0;font-size:18.5px;line-height:1.36;font-weight:500;text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.pg.l p.dc::first-letter{float:left;font-size:2.75em;line-height:.85;padding:4px 7px 0 0;color:#7a2b1c;font-weight:700}
+.plate{float:right;width:108px;height:86px;margin:2px 0 8px 12px;border:3px double #8a6a33;background:radial-gradient(circle at 40% 40%,#d8b98a,#8a6a46 70%,#5b4630);
+  display:grid;place-items:center;color:#f3e7cc;font:500 10px Inter,sans-serif}
+.foot{position:absolute;left:22px;right:22px;bottom:12px;font:500 10.5px Inter,sans-serif;color:#8a6a46;letter-spacing:.04em;
+  border-top:1px solid rgba(138,106,51,.35);padding-top:6px}
+.lk{color:#7a2b1c;font-weight:700;cursor:pointer;border-radius:2px;text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:3px;
+  background:linear-gradient(180deg,transparent 62%,rgba(255,200,100,.38) 62%);transition:background-color .2s,box-shadow .2s}
+.lk:hover{background-color:rgba(255,210,122,.45)}
+.lk.fired{background:#ffd27a;color:#5a1408;box-shadow:0 0 14px 4px rgba(255,210,122,.85)}
+.hit .bk.open .lk{outline:2px dashed #1aa37a;outline-offset:1px}
+.tip{position:fixed;z-index:50;display:none;white-space:nowrap;font:600 13px/1.2 Inter,sans-serif;padding:6px 10px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);pointer-events:none}
+
+/* ---------- under the demo ---------- */
+.strip{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;justify-content:space-between;padding:10px 2px 0;font-size:13px;color:var(--muted)}
+.status{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 420px}
+.status span{color:var(--ink)}
+.prog{flex:none;width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a07a3a,#ffd27a)}
+.trail{font-family:"Cormorant Garamond",serif;font-size:17px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.trail em{font-style:normal;color:var(--brass);padding:0 4px}
+.note{color:var(--muted);font-size:13px;margin:6px 2px 0}
+section{padding:30px 0 0}
+h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:28px;margin:0 0 12px;color:var(--moon)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card h3{margin:0 0 6px;font:600 12px Cinzel,serif;letter-spacing:.14em;color:var(--brass)}
+.card p{margin:0;font-size:14px}
+ul.plain,ol.qs{margin:0;padding-left:22px;max-width:92ch}
+ul.plain li,ol.qs li{margin:6px 0}
+ul.plain b,ol.qs b{color:var(--thread);font-weight:600}
+ol.qs .why{color:var(--muted)}
+footer{padding:36px 0 40px;color:var(--muted);font-size:13px}
+@media (max-width:640px){.trail{font-size:15px}.strip{font-size:12px}h2{font-size:24px}}
+@media (prefers-reduced-motion:reduce){
+  .leaf{transition-duration:.2s}.handg,.thumbg{transition-duration:.15s}
+  .loading .shim{animation:none;background-position:50% 0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">The Midnight Archive · reading idea 2</div>
+  <h1>Touch a gold word, the book comes to you</h1>
+  <p>You read from a real book held in your hand. Touch one of its gold words and a thread of light runs out to the tower where that book lives; the book flies back along it, lands in your free hand and opens. The flight takes about four seconds, which hides the ~5 s page download.</p>
+</header>
+
+<div class="toolbar">
+  <div class="hint">Hover a gold word to see where it leads (try <b>predators</b>). Click any gold word to fetch its book. Try <b>blood</b>, <b>ocean</b> or <b>ink</b>, then keep following links from the new book.</div>
+  <label><input type="checkbox" id="hitbox"> show the touch areas</label>
+  <button class="btn" id="reset" type="button">Reset</button>
+</div>
+
+<div class="demo" id="demo">
+  <div class="scene" id="scene">
+    <svg class="layer" id="sky" viewBox="0 0 1600 960" style="z-index:0" aria-hidden="true">
+      <defs>
+        <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07061a"/><stop offset=".42" stop-color="#141235"/><stop offset=".66" stop-color="#2a2160"/><stop offset="1" stop-color="#3a2f7a"/></linearGradient>
+        <radialGradient id="gMoon"><stop offset="0" stop-color="#fff3cf" stop-opacity=".5"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></radialGradient>
+        <linearGradient id="gTower" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d0b26"/><stop offset=".6" stop-color="#18143e"/><stop offset="1" stop-color="#2d2665"/></linearGradient>
+        <linearGradient id="gRoof" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#110e30"/><stop offset="1" stop-color="#2a2360"/></linearGradient>
+        <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3184"/><stop offset="1" stop-color="#1a1642"/></linearGradient>
+        <filter id="fSoft" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+        <filter id="fLamp" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="4"/></filter>
+      </defs>
+      <rect width="1600" height="960" fill="url(#gSky)"/>
+      <g id="stars"></g>
+      <circle cx="1440" cy="112" r="160" fill="url(#gMoon)"/>
+      <circle cx="1440" cy="112" r="42" fill="#fff3cf"/>
+      <g id="towers"></g>
+      <g id="isles"></g>
+      <g id="clouds"></g>
+    </svg>
+    <svg class="layer" id="hands" viewBox="0 0 1600 960" style="z-index:1" aria-hidden="true">
+      <defs><linearGradient id="gHand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d346e"/><stop offset="1" stop-color="#1e1940"/></linearGradient></defs>
+    </svg>
+    <svg class="layer" id="thumbs" viewBox="0 0 1600 960" style="z-index:4" aria-hidden="true"></svg>
+    <svg class="layer" id="threadsvg" viewBox="0 0 1600 960" style="z-index:5" aria-hidden="true">
+      <defs><radialGradient id="gSpark"><stop offset="0" stop-color="#fff6d8"/><stop offset=".35" stop-color="#ffd27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
+      <path id="threadGlow" d="" fill="none" stroke="#ffd27a" stroke-width="16" stroke-linecap="round" opacity="0"/>
+      <path id="threadMid" d="" fill="none" stroke="#ffd27a" stroke-width="6" stroke-linecap="round" opacity="0"/>
+      <path id="thread" d="" fill="none" stroke="#fff0c4" stroke-width="2.6" stroke-linecap="round" opacity="0"/>
+      <circle id="flare" cx="0" cy="0" r="0" fill="none" stroke="#ffd27a" stroke-width="3" opacity="0"/>
+      <circle id="spark" cx="0" cy="0" r="24" fill="url(#gSpark)" opacity="0"/>
+      <circle id="wordspark" cx="0" cy="0" r="18" fill="url(#gSpark)" opacity="0"/>
+    </svg>
+    <div class="tlabel" id="tlabel"></div>
+  </div>
+</div>
+<div class="strip">
+  <div class="status"><div class="prog" aria-hidden="true"><i id="prog"></i></div><span id="status" aria-live="polite">Reading Octopus.</span></div>
+  <div class="trail" id="trail"></div>
+</div>
+<p class="note">The sample pages were written for this mock-up, not copied from Wikipedia. Every gold word leads to another sample book, so you can keep hopping.</p>
+
+<section>
+  <h2>In VRChat</h2>
+  <div class="cards">
+    <div class="card"><h3>VR</h3><p>Touch a gold word with a fingertip (invisible hit areas sit over each word), or point the laser at it and pull the trigger. The book lands in your free hand.</p></div>
+    <div class="card"><h3>Desktop</h3><p>Click the word. The book flies to the empty side of your view and opens there; the old one drops to your side.</p></div>
+    <div class="card"><h3>Quest</h3><p>The thread is a single line renderer and the flying book is one small mesh with its title on the cover. The full page is only built once the book lands.</p></div>
+    <div class="card"><h3>Other players</h3><p>The flying book is visible to everyone, so it advertises where you are going. A book crossing the sky shows off the rabbit hole.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Builds on</h2>
+  <ul class="plain">
+    <li><b>Clickable gold words:</b> the same overlay hit areas over each word; a fingertip touch and a laser click both land on them.</li>
+    <li><b>Books fetched from GitHub Pages, ~5 s load hidden behind animation:</b> here the flight is that animation, and the cover shimmers until the page is ready.</li>
+    <li><b>Grabbable books off a lit bay:</b> the arriving book is the same grabbable book, delivered to your hand instead of taken off a shelf. Bays still wake when you stand next to them, never by facing them.</li>
+    <li><b>Others see the book you hold, title on the cover:</b> the flying book carries its title too.</li>
+    <li><b>Back history:</b> every hop goes on the Back list; the book at your side is the last step back.</li>
+    <li><b>A− / A+ text size with re-paging:</b> works the same in whichever book is open.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Open questions</h2>
+  <ol class="qs">
+    <li><b>Does the new book replace the one in your hand, or arrive in your free hand?</b> <span class="why">The demo uses the free hand and swaps hands on each hop.</span></li>
+    <li><b>Should other players see the thread,</b> or only the flying book?</li>
+    <li><b>What happens to the old book?</b> <span class="why">Here it shrinks to your side and the one before it fades away. Idea 3, a pile of books as Back, answers this another way.</span></li>
+  </ol>
+</section>
+
+<footer>Mock-up for choosing a direction. Made for The Midnight Archive by Doghouse Devs.</footer>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+(function(){
+"use strict";
+/* ---------- towers in the sky (scene coords, 1600 x 960; tower bases sit at y 620) ---------- */
+var TOWERS={
+  hist:  {name:"History",           x:110,  top:272, w:54,  levels:10, far:true},
+  bio:   {name:"Biology",           x:380,  top:100, w:108, levels:16},
+  people:{name:"People",            x:650,  top:228, w:46,  levels:10, cluster:true},
+  geo:   {name:"Geography",         x:870,  top:150, w:92,  levels:14},
+  arts:  {name:"Arts",              x:1068, top:236, w:62,  levels:10},
+  phys:  {name:"Physical sciences", x:1262, top:108, w:104, levels:16},
+  math:  {name:"Mathematics",       x:1500, top:268, w:54,  levels:10, far:true}
+};
+/* ---------- sample books (written for the mock-up). [word] links to "Word"; [word|Target] hides its target ---------- */
+var BOOKS={
+  "Octopus":{desc:"soft-bodied, eight-armed sea animal",crumb:"Biology › Animals › Molluscs",tower:"bio",level:12,shelf:7,
+    p1:"The octopus is a soft-bodied [mollusc|Mollusca] with eight arms, found in every [ocean]. It belongs to the [cephalopods|Cephalopod], together with [squid] and [cuttlefish]. Octopuses are known for their [intelligence|Cephalopod intelligence]: they solve puzzles, use tools and can change colour and texture in an instant to hide from [predators|Predation]. Most kinds live only a year or two.",
+    p2:"Each arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue [blood|Hemocyanin], and when threatened it squirts a cloud of [ink|Cephalopod ink] and slips through any gap wider than its [beak]."},
+  "Squid":{desc:"fast-swimming cephalopod with ten limbs",crumb:"Biology › Animals › Molluscs",tower:"bio",level:12,shelf:9,
+    p1:"Squid are [cephalopods|Cephalopod] with a long body, eight arms and two longer feeding tentacles. They swim by jet propulsion, pushing water out through a funnel.",
+    p2:"Many squid glow in the dark [ocean] to hide their shadow from [hunters|Predation] below. The giant squid is a favourite food of the [sperm whale]."},
+  "Ocean":{desc:"the salt water covering most of Earth",crumb:"Geography › Earth › Water",tower:"geo",level:8,shelf:2,
+    p1:"The ocean covers about seven tenths of Earth's surface and holds almost all of its water. It is divided into five named oceans, of which the Pacific is the largest.",
+    p2:"Its water rises and falls with the [tides|Tide], pulled by the Moon. Sunlight fades within a few hundred metres, and in the dark below live animals such as the [octopus] and the [sperm whale]."},
+  "Predation":{desc:"one animal hunting and eating another",crumb:"Biology › Ecology",tower:"bio",level:14,shelf:3,
+    p1:"Predation is when one animal, the predator, hunts and eats another, its prey. It shapes how both of them look and behave.",
+    p2:"Prey escape by hiding, fleeing or startling the hunter, as a [squid] does with a cloud of [ink|Cephalopod ink]. Large predators of the sea include sharks and the [sperm whale]."},
+  "Hemocyanin":{desc:"the copper protein that makes blood blue",crumb:"Physical sciences › Chemistry › Proteins",tower:"phys",level:14,shelf:6,
+    p1:"Hemocyanin is a protein that carries oxygen in the blood of many molluscs, including the [octopus], and of some crustaceans.",
+    p2:"Where our blood uses iron, hemocyanin holds oxygen with [copper], which turns blue when oxygen binds to it. It works well in cold water with little oxygen, such as the deep [ocean]."},
+  "Copper":{desc:"a soft, reddish metal, element 29",crumb:"Physical sciences › Chemistry › Elements",tower:"phys",level:11,shelf:29,
+    p1:"Copper is a soft, reddish metal and a chemical element. It carries electricity very well, so most electrical wiring is made of it.",
+    p2:"Living things need a little copper too. In [hemocyanin] it holds on to oxygen, which is why [octopus] blood is blue. Old copper roofs weather to green."},
+  "Cephalopod ink":{desc:"the dark cloud squirted by squid and octopuses",crumb:"Biology › Animals › Molluscs",tower:"bio",level:13,shelf:11,
+    p1:"Cephalopod ink is a dark liquid released by most [cephalopods|Cephalopod] when threatened. The cloud can hide the animal or act as a decoy shaped like its body.",
+    p2:"Its dark colour comes from melanin. Ink from the [cuttlefish] gave its name to [sepia], a brown pigment once used for writing and drawing."},
+  "Sepia":{desc:"a reddish-brown colour and pigment",crumb:"Arts › Visual arts › Colour",tower:"arts",level:8,shelf:4,
+    p1:"Sepia is a reddish-brown colour named after the Greek word for the [cuttlefish], whose [ink|Cephalopod ink] was used as a pigment.",
+    p2:"Artists drew with sepia ink for centuries, and old photographs are called sepia for their warm brown tone. The animal itself was already well known in [ancient Greece|Ancient Greece]."},
+  "Cuttlefish":{desc:"cephalopod with a hidden inner shell",crumb:"Biology › Animals › Molluscs",tower:"bio",level:12,shelf:4,
+    p1:"Cuttlefish are [cephalopods|Cephalopod] with eight arms, two tentacles and an inner shell called the cuttlebone, which helps them float.",
+    p2:"They are masters of disguise, changing colour and pattern faster than almost any animal, to hunt and to hide from [predators|Predation]. Their [ink|Cephalopod ink] once supplied the pigment [sepia]."},
+  "Mollusca":{desc:"soft-bodied animals, most with a shell",crumb:"Biology › Animals",tower:"bio",level:11,shelf:2,
+    p1:"Molluscs are a large group of soft-bodied animals, most of which grow a hard shell. Snails, clams and oysters are all molluscs.",
+    p2:"The [cephalopods|Cephalopod], such as the [octopus] and the [squid], are the largest and cleverest molluscs. Most molluscs live in the [ocean], but some live in fresh water or on land."},
+  "Cephalopod":{desc:"molluscs whose arms grow from the head",crumb:"Biology › Animals › Molluscs",tower:"bio",level:12,shelf:1,
+    p1:"Cephalopods are sea [molluscs|Mollusca] whose arms or tentacles grow from the head. The group includes the [octopus], [squid], [cuttlefish] and nautilus.",
+    p2:"Most have large eyes, a sharp [beak] and a keen sense of touch. Their name means “head-foot” in Greek, and writers in [ancient Greece|Ancient Greece] described them more than two thousand years ago."},
+  "Cephalopod intelligence":{desc:"how octopuses and their kin think",crumb:"Biology › Animal behaviour",tower:"bio",level:15,shelf:1,
+    p1:"Cephalopods have the largest brains of any animals without a backbone, and an [octopus] keeps most of its nerve cells in its arms.",
+    p2:"In tests they open jars, find their way through mazes and seem to recognise people. Writers in [ancient Greece|Ancient Greece] thought the octopus a foolish animal, a view modern studies have overturned."},
+  "Beak":{desc:"a hard mouth for biting and tearing",crumb:"Biology › Anatomy",tower:"bio",level:10,shelf:8,
+    p1:"A beak is a hard, pointed mouth used for biting and tearing. Birds and turtles have beaks, and so do the [cephalopods|Cephalopod], whose beak looks like a parrot's.",
+    p2:"The beak is the only hard part of a [squid] or [octopus]. It survives digestion, so scientists count beaks found in the stomachs of [sperm whales|Sperm whale]."},
+  "Sperm whale":{desc:"the largest whale with teeth",crumb:"Biology › Animals › Mammals",tower:"bio",level:9,shelf:5,
+    p1:"The sperm whale is the largest whale with teeth, and it has the biggest brain of any animal alive.",
+    p2:"It dives more than a kilometre into the dark [ocean] to hunt, mostly for [squid], and can stay under for over an hour. It often bears round scars from the suckers of its prey."},
+  "Tide":{desc:"the twice-daily rise and fall of the sea",crumb:"Physical sciences › Earth science",tower:"phys",level:8,shelf:7,
+    p1:"Tides are the regular rise and fall of sea level, caused mostly by the pull of the Moon's gravity, with help from the Sun.",
+    p2:"Most coasts see two high tides and two low tides each day. Rock pools left behind at low tide can shelter crabs, snails and even a small [octopus] from the open [ocean]."},
+  "Ancient Greece":{desc:"the Greek world of city-states, over 2,000 years ago",crumb:"History › Ancient world",tower:"hist",level:9,shelf:3,
+    p1:"Ancient Greece was a civilisation of city-states around the Aegean Sea, at its height in the 400s BC. Its thinkers wrote on almost every subject, from logic and ethics to politics.",
+    p2:"Greek scholars were among the first to study animals closely, describing the [octopus], the [cuttlefish] and its [ink|Cephalopod ink]. Some of their notes on [cephalopods|Cephalopod] were confirmed only two thousand years later."}
+};
+var CODE={bio:"B",geo:"G",phys:"PS",arts:"A",people:"PE",hist:"H",math:"M"};
+function pad2(n){return (n<10?"0":"")+n;}
+Object.keys(BOOKS).forEach(function(k){var b=BOOKS[k];b.title=k;b.code=CODE[b.tower]+"-L"+pad2(b.level)+"-S"+pad2(b.shelf);});
+
+/* ---------- helpers ---------- */
+var NS="http://www.w3.org/2000/svg";
+function S(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs){e.setAttribute(k,attrs[k]);}if(parent){parent.appendChild(e);}return e;}
+function $(id){return document.getElementById(id);}
+var RM=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+var SPEED=RM?0.18:1;
+var CX=555,CY=240;            /* centre of the closed cover inside a 740 x 480 book */
+var BASE=620,EYE=560,RX=8,SIDE_S=0.32;
+var SLOT={L:{x:50,y:440,ry:9,spine:420},R:{x:810,y:440,ry:-9,spine:1180}};
+var SIDE={L:{cx:112,cy:876,rz:-12},R:{cx:1488,cy:876,rz:12}};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function easeInOut(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function easeOut(t){return 1-Math.pow(1-t,3);}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+var demo=$("demo"),scene=$("scene");
+
+/* ---------- sky: stars, towers with shelf rings, isles, cloud sea ---------- */
+var R=rng(77),starsG=$("stars");
+for(var i=0;i<150;i++){
+  var sx=R()*1600,sy=R()*540;
+  if(Math.hypot(sx-1440,sy-112)<70){continue;}
+  S("circle",{cx:sx.toFixed(1),cy:sy.toFixed(1),r:(0.5+R()*1.3).toFixed(2),fill:"#fff3cf",opacity:(0.25+R()*0.65).toFixed(2)},starsG);
+}
+var towersG=$("towers"),islesG=$("isles"),cloudsG=$("clouds");
+function towerShape(x,top,w,levels,far,label,lblSize){
+  var g=S("g",{opacity:far?0.6:1},towersG);
+  var hw=w/2,roofH=w*0.62,bodyTop=top+roofH;
+  S("path",{d:"M"+(x-hw)+","+BASE+"L"+(x-hw*0.9)+","+bodyTop+"L"+(x+hw*0.9)+","+bodyTop+"L"+(x+hw)+","+BASE+"Z",fill:"url(#gTower)"},g);
+  var step=(BASE-bodyTop)/(levels+1),rings={};
+  for(var n=1;n<=levels;n++){
+    var y=BASE-n*step,rw=hw*1.16,bow=clamp((y-EYE)/400,-1,1)*w*0.1;
+    var d="M"+(x-rw).toFixed(1)+","+y.toFixed(1)+"Q"+x+","+(y+2*bow).toFixed(1)+" "+(x+rw).toFixed(1)+","+y.toFixed(1);
+    var rg=S("g",{"class":"ring"},g);
+    S("path",{"class":"rg",d:d,fill:"none",stroke:"#ffc266","stroke-width":8,opacity:0.13},rg);
+    S("path",{"class":"rb",d:d,fill:"none",stroke:"#ffc266","stroke-width":3.2,opacity:0.55},rg);
+    S("path",{d:d,fill:"none",stroke:"#fff0c4","stroke-width":2.4,"stroke-dasharray":"1.6 2.6",opacity:0.45},rg);
+    rings[n]={g:rg,y:y,bow:bow};
+  }
+  S("path",{d:"M"+(x-hw*1.14)+","+(bodyTop+2)+"L"+x+","+top+"L"+(x+hw*1.14)+","+(bodyTop+2)+"Z",fill:"url(#gRoof)"},g);
+  S("path",{d:"M"+x+","+top+"L"+(x+hw*1.14)+","+(bodyTop+2),stroke:"rgba(255,243,207,.28)","stroke-width":1.5,fill:"none"},g);
+  S("line",{x1:x,y1:top,x2:x,y2:top-16,stroke:"#3a3270","stroke-width":2},g);
+  S("circle",{cx:x,cy:top-18,r:7,fill:"#ffc266",opacity:0.55,filter:"url(#fLamp)"},g);
+  S("circle",{cx:x,cy:top-18,r:2.6,fill:"#ffe2a0"},g);
+  if(label){
+    S("text",{x:x,y:top-34,"text-anchor":"middle","font-family":"Cinzel, serif","font-size":lblSize,"font-weight":600,"letter-spacing":2,fill:"#e9c98a",opacity:0.92},g).textContent=label;
+  }
+  return rings;
+}
+Object.keys(TOWERS).forEach(function(k){
+  var t=TOWERS[k],ls=t.far?12:15,x=t.x;
+  if(t.cluster){
+    towerShape(x-40,t.top+40,t.w*0.85,8,true,null,ls);
+    towerShape(x+42,t.top+56,t.w*0.8,7,true,null,ls);
+  }
+  t.rings=towerShape(x,t.top,t.w,t.levels,t.far,t.name,ls);
+  var r=t.cluster?118:t.w*1.55;
+  S("path",{d:"M"+(x-r)+",612Q"+x+",596 "+(x+r)+",612Q"+(x+r*0.7)+",642 "+(x+r*0.32)+",672Q"+x+",712 "+(x-r*0.38)+",668Q"+(x-r*0.74)+",640 "+(x-r)+",612Z",fill:"#15112f"},islesG);
+  S("path",{d:"M"+(x-r)+",612Q"+x+",596 "+(x+r)+",612",fill:"none",stroke:"#6a5cb8","stroke-width":2,opacity:0.5},islesG);
+});
+(function(){
+  var cR=rng(5);
+  S("rect",{x:-20,y:660,width:1640,height:320,fill:"url(#gSea)"},cloudsG);
+  var soft=S("g",{filter:"url(#fSoft)"},cloudsG);
+  for(var c=0;c<34;c++){S("ellipse",{cx:(c*50-20+cR()*30).toFixed(1),cy:(650+cR()*40).toFixed(1),rx:(60+cR()*70).toFixed(1),ry:(16+cR()*20).toFixed(1),fill:cR()<0.5?"#41368c":"#4d41a0",opacity:0.9},soft);}
+  for(var h=0;h<18;h++){S("ellipse",{cx:(cR()*1600).toFixed(1),cy:(636+cR()*30).toFixed(1),rx:(40+cR()*60).toFixed(1),ry:(8+cR()*8).toFixed(1),fill:"#7d6fc8",opacity:0.22},soft);}
+})();
+
+/* ---------- hands: palm under the spine (behind the book), thumb over the gutter (in front) ---------- */
+var HAND={};
+["L","R"].forEach(function(sd){
+  var g=S("g",{"class":"handg"},$("hands"));
+  S("path",{d:"M-64,190C-60,120 -52,70 -44,34Q0,14 44,34C52,70 60,120 64,190Z",fill:"url(#gHand)"},g);
+  S("ellipse",{cx:0,cy:16,rx:62,ry:34,fill:"url(#gHand)",stroke:"rgba(255,194,102,.28)","stroke-width":2},g);
+  var th=S("g",{"class":"thumbg"},$("thumbs")),tx=sd==="L"?-20:20;
+  S("ellipse",{cx:tx,cy:-6,rx:12,ry:25,transform:"rotate("+(sd==="L"?22:-22)+" "+tx+" -6)",fill:"url(#gHand)",stroke:"rgba(255,194,102,.35)","stroke-width":1.5},th);
+  HAND[sd]={g:g,th:th};
+});
+function setHand(sd,hold){
+  var s=SLOT[sd],tf=hold?"translate("+s.spine+"px,922px)":"translate("+(s.spine+(sd==="L"?-70:70))+"px,948px) rotate("+(sd==="L"?-14:14)+"deg)";
+  HAND[sd].g.style.transform=tf;HAND[sd].th.style.transform=tf;
+}
+function setThumb(sd,on){HAND[sd].th.style.opacity=on?1:0;}
+
+/* ---------- books ---------- */
+function linkify(s){
+  return s.replace(/\[([^\]|]+)(?:\|([^\]]+))?\]/g,function(m,word,to){
+    var t=to||word.charAt(0).toUpperCase()+word.slice(1);
+    if(!BOOKS[t]&&window.console){console.warn("missing sample book: "+t);}
+    return '<a class="lk" tabindex="0" role="link" data-to="'+t+'"'+(to&&to.toLowerCase()!==word.toLowerCase()?' data-hid="1"':'')+'>'+word+'</a>';
+  });
+}
+function makeBook(key){
+  var b=BOOKS[key],t=TOWERS[b.tower],el=document.createElement("div");
+  el.className="bk";
+  el.innerHTML='<div class="tilt">'
+    +'<div class="rcase"><div class="pg r"><div class="plate">lead picture</div><p>'+linkify(b.p2)+'</p>'
+    +'<div class="foot">Shelf '+b.code+' · '+t.name+' tower, level '+b.level+'</div></div></div>'
+    +'<div class="leaf"><div class="face front"><div class="cv"><div class="orn">✦ ✦ ✦</div><div class="ct">'+b.title+'</div>'
+    +'<div class="cd">'+b.desc+'</div><div class="ctw">'+t.name+' · L'+b.level+'</div><div class="cl">loading page…</div></div><i class="shim"></i></div>'
+    +'<div class="face back"><div class="pg l"><div class="crumb">'+b.crumb+'</div><h3>'+b.title+'</h3><div class="desc">'+b.desc+'</div>'
+    +'<p class="dc">'+linkify(b.p1)+'</p></div></div>'
+    +'</div></div>';
+  scene.appendChild(el);
+  return {el:el,tilt:el.firstChild,key:key,x:0,y:0,s:1,rx:0,ry:0,rz:0,op:1};
+}
+function render(o){
+  o.el.style.transform="translate("+o.x.toFixed(2)+"px,"+o.y.toFixed(2)+"px) scale("+o.s.toFixed(4)+")";
+  o.tilt.style.transform="perspective(1600px) rotateX("+o.rx.toFixed(2)+"deg) rotateY("+o.ry.toFixed(2)+"deg) rotateZ("+o.rz.toFixed(2)+"deg)";
+  o.el.style.opacity=o.op;
+}
+function place(o,cx,cy,s){o.s=s;o.x=cx-CX*s;o.y=cy-CY*s;}
+
+/* ---------- animation: every step checks a run token so Reset cancels cleanly ---------- */
+var token=0;
+function tween(ms,fn,done){
+  var my=token,t0=null,dur=Math.max(16,ms*SPEED);
+  function step(now){
+    if(my!==token){return;}
+    if(t0===null){t0=now;}
+    var t=Math.min(1,(now-t0)/dur);fn(t);
+    if(t<1){requestAnimationFrame(step);}else if(done){done();}
+  }
+  requestAnimationFrame(step);
+}
+function wait(ms,done){var my=token;setTimeout(function(){if(my===token){done();}},ms*SPEED);}
+
+/* ---------- the thread of light ---------- */
+var thread=$("thread"),threadMid=$("threadMid"),threadGlow=$("threadGlow"),flare=$("flare"),spark=$("spark"),wspark=$("wordspark"),tlabel=$("tlabel");
+var TP=[[thread,1],[threadMid,0.4],[threadGlow,0.15]];
+function arc(a,b){
+  var mx=(a.x+b.x)/2,d=Math.hypot(b.x-a.x,b.y-a.y),cy=Math.min(a.y,b.y)-d*0.2;
+  return "M"+a.x.toFixed(1)+","+a.y.toFixed(1)+"Q"+mx.toFixed(1)+","+cy.toFixed(1)+" "+b.x.toFixed(1)+","+b.y.toFixed(1);
+}
+function setThread(d,op){TP.forEach(function(p){if(d!==null){p[0].setAttribute("d",d);}if(op!==undefined){p[0].setAttribute("opacity",(op*p[1]).toFixed(3));}});}
+function dash(len,off){TP.forEach(function(p){p[0].style.strokeDasharray=len===null?"":len+" "+len;p[0].style.strokeDashoffset=off===null?"":off;});}
+function dot(c,x,y,op){c.setAttribute("cx",x.toFixed(1));c.setAttribute("cy",y.toFixed(1));if(op!==undefined){c.setAttribute("opacity",op);}}
+
+/* ---------- status line under the demo ---------- */
+var statusEl=$("status"),progEl=$("prog"),trailEl=$("trail");
+function setStatus(s){statusEl.textContent=s;}
+function setProg(p){progEl.style.width=(clamp(p,0,1)*100).toFixed(1)+"%";}
+function handName(sd){return sd==="L"?"left":"right";}
+var st=null;
+function drawTrail(){
+  var t=st.trail,show=t.length>7?["…"].concat(t.slice(-6)):t;
+  trailEl.innerHTML="Back history: "+show.join("<em>→</em>");
+}
+function wordPoint(a){
+  var r=a.getClientRects()[0]||a.getBoundingClientRect(),d=demo.getBoundingClientRect(),k=d.width/1600;
+  return {x:(r.left+r.width/2-d.left)/k,y:(r.top+r.height*0.5-d.top)/k};
+}
+
+/* ---------- one hop: thread out, book off the ring, flight home, open ---------- */
+var T_SHOOT=600,T_DETACH=400,T_FLY=3400,T_ALL=T_SHOOT+T_DETACH+T_FLY;
+function hop(key,word){
+  if(!st){return;}
+  if(st.busy){setStatus("One book at a time: wait for this one to land.");return;}
+  var b=BOOKS[key];if(!b){return;}
+  st.busy=true;hideTip();
+  var tw=TOWERS[b.tower],ring=tw.rings[b.level]||tw.rings[1];
+  var free=st.activeSide==="R"?"L":"R",slot=SLOT[free];
+  var W=wordPoint(word),T={x:tw.x+((b.shelf%5)-2)*tw.w*0.15,y:ring.y+ring.bow*0.9};
+  word.classList.add("fired");
+  setStatus("Fetching “"+b.title+"” from GitHub Pages (about 5 s). The flight covers the wait.");
+  setProg(0);dot(wspark,W.x,W.y,1);
+  /* 1. the thread shoots out to the tower */
+  setThread(arc(W,T),1);
+  var len=thread.getTotalLength()+2;dash(len,len);
+  tween(T_SHOOT,function(t){var off=len*(1-easeOut(t));TP.forEach(function(p){p[0].style.strokeDashoffset=off;});setProg(t*T_SHOOT/T_ALL);},function(){
+    dash(null,null);
+    ring.g.classList.add("hot");
+    tlabel.innerHTML=tw.name+" tower · level "+b.level+"<small>"+b.title+" · shelf "+b.code+"</small>";
+    tlabel.style.left=T.x.toFixed(1)+"px";tlabel.style.top=(T.y-6).toFixed(1)+"px";tlabel.style.opacity=1;
+    /* 2. a small glowing book slides off that shelf ring */
+    var nb=makeBook(key);nb.el.classList.add("flying","loading");nb.el.style.zIndex=6;
+    place(nb,T.x,T.y,0.03);render(nb);dot(spark,T.x,T.y,1);
+    tween(T_DETACH,function(t){
+      var e=easeOut(t);
+      dot(flare,T.x,T.y,(1-e).toFixed(3));flare.setAttribute("r",(4+30*e).toFixed(1));
+      place(nb,T.x,T.y+10*e,0.03+0.03*e);render(nb);dot(spark,T.x,T.y+10*e);
+      setProg((T_SHOOT+T_DETACH*t)/T_ALL);
+    },function(){
+      flare.setAttribute("opacity",0);
+      /* 3. it flies back along the thread in an arc, growing as it comes */
+      var P0={x:T.x,y:T.y+10},L={x:slot.x+CX,y:slot.y+CY},C={x:(P0.x+L.x)/2,y:Math.min(P0.y,L.y)-200};
+      var raised=false,rz0=free==="L"?-20:20;
+      tween(T_FLY,function(t){
+        var u=easeInOut(t),iu=1-u;
+        var B={x:iu*iu*P0.x+2*iu*u*C.x+u*u*L.x,y:iu*iu*P0.y+2*iu*u*C.y+u*u*L.y};
+        place(nb,B.x,B.y,0.06+0.94*Math.pow(u,2.3));
+        nb.rx=RX*u;nb.ry=slot.ry*u;nb.rz=rz0*Math.sin(Math.PI*u);render(nb);
+        setThread(arc(W,B));dot(spark,B.x,B.y,Math.max(0,1-u*1.6).toFixed(3));
+        if(!raised&&t>0.78){raised=true;setHand(free,true);}
+        setProg((T_SHOOT+T_DETACH+T_FLY*t)/T_ALL);
+      },function(){land(nb,free,b,ring);});
+    });
+  });
+}
+/* 4. it lands in the free hand and opens; the old book closes and shrinks to your side */
+function land(nb,free,b,ring){
+  var old=st.active,oldSide=st.activeSide,fired=old.el.querySelector(".lk.fired");
+  nb.el.classList.remove("flying");nb.el.style.zIndex=3;old.el.style.zIndex=2;
+  ring.g.classList.remove("hot");spark.setAttribute("opacity",0);tlabel.style.opacity=0;setProg(1);
+  tween(500,function(t){setThread(null,1-t);wspark.setAttribute("opacity",(1-t).toFixed(3));},function(){setThread("",0);if(fired){fired.classList.remove("fired");}});
+  wait(220,function(){
+    nb.el.classList.remove("loading");nb.el.classList.add("open");setThumb(free,true);
+    st.active=nb;st.activeSide=free;st.trail.push(b.title);drawTrail();
+    setStatus(b.title+" is open in your "+handName(free)+" hand. "+old.key+" goes to your side. Keep following the gold words.");
+    wait(950,function(){st.busy=false;});
+    wait(380,function(){
+      old.el.classList.remove("open");setThumb(oldSide,false);
+      wait(650,function(){
+        var prev=st.aside[oldSide];
+        if(prev){var py=prev.y;tween(600,function(t){prev.y=py+180*t;prev.op=1-t;render(prev);},function(){prev.el.remove();});}
+        st.aside[oldSide]=old;old.el.classList.add("aside");old.el.style.zIndex=2;setHand(oldSide,false);
+        var sd=SIDE[oldSide],x0=old.x,y0=old.y,s0=old.s,rx0=old.rx,ry0=old.ry,rz0=old.rz;
+        tween(750,function(t){
+          var e=easeInOut(t);
+          old.s=lerp(s0,SIDE_S,e);old.x=lerp(x0,sd.cx-CX*SIDE_S,e);old.y=lerp(y0,sd.cy-CY*SIDE_S,e);
+          old.rx=lerp(rx0,0,e);old.ry=lerp(ry0,0,e);old.rz=lerp(rz0,sd.rz,e);render(old);
+        });
+      });
+    });
+  });
+}
+
+/* ---------- start / reset ---------- */
+function init(first){
+  token++;
+  Array.prototype.slice.call(scene.querySelectorAll(".bk")).forEach(function(e){e.parentNode.removeChild(e);});
+  Object.keys(TOWERS).forEach(function(k){var r=TOWERS[k].rings;Object.keys(r).forEach(function(n){r[n].g.classList.remove("hot");});});
+  dash(null,null);setThread("",0);flare.setAttribute("opacity",0);spark.setAttribute("opacity",0);wspark.setAttribute("opacity",0);tlabel.style.opacity=0;
+  var o=makeBook("Octopus");
+  place(o,SLOT.R.x+CX,SLOT.R.y+CY,1);o.rx=RX;o.ry=SLOT.R.ry;o.el.style.zIndex=3;o.el.classList.add("open");render(o);
+  st={active:o,activeSide:"R",aside:{L:null,R:null},busy:false,trail:["Octopus"]};
+  if(first){scene.classList.add("notrans");}
+  setHand("R",true);setThumb("R",true);setHand("L",false);setThumb("L",false);
+  if(first){requestAnimationFrame(function(){requestAnimationFrame(function(){scene.classList.remove("notrans");});});}
+  setProg(0);drawTrail();hideTip();
+  setStatus("Reading Octopus (Biology tower, level 12) in your right hand. Your left hand is free.");
+}
+
+/* ---------- scale the 1600 x 960 scene to the page ---------- */
+function fit(){scene.style.transform="scale("+(demo.clientWidth/1600)+")";}
+window.addEventListener("resize",fit);
+if(window.ResizeObserver){new ResizeObserver(fit).observe(demo);}
+fit();
+
+/* ---------- input: hover bubble, click / key on a gold word ---------- */
+var tip=$("tip");
+function hideTip(){tip.style.display="none";}
+function showTipFor(a){
+  if(!a||!a.hasAttribute("data-hid")||!a.closest(".bk.open")){hideTip();return;}
+  var r=a.getClientRects()[0]||a.getBoundingClientRect();
+  tip.textContent="→ "+a.getAttribute("data-to");tip.style.display="block";
+  var w=tip.offsetWidth,h=tip.offsetHeight,top=r.top-h-8;
+  if(top<4){top=r.bottom+8;}
+  tip.style.left=clamp(r.left,6,window.innerWidth-w-6)+"px";tip.style.top=top+"px";
+}
+function linkOf(e){return e.target&&e.target.closest?e.target.closest(".lk"):null;}
+function tryHop(a){var bk=a.closest(".bk");if(st&&st.active&&bk===st.active.el&&bk.classList.contains("open")){hop(a.getAttribute("data-to"),a);}}
+scene.addEventListener("mouseover",function(e){showTipFor(linkOf(e));});
+scene.addEventListener("mouseleave",hideTip);
+scene.addEventListener("focusin",function(e){showTipFor(linkOf(e));});
+scene.addEventListener("focusout",hideTip);
+window.addEventListener("scroll",hideTip,{passive:true});
+scene.addEventListener("click",function(e){var a=linkOf(e);if(a){e.preventDefault();tryHop(a);}});
+scene.addEventListener("keydown",function(e){if(e.key!=="Enter"&&e.key!==" "){return;}var a=linkOf(e);if(a){e.preventDefault();tryHop(a);}});
+$("reset").addEventListener("click",function(){init(false);});
+$("hitbox").addEventListener("change",function(e){demo.classList.toggle("hit",e.target.checked);});
+init(true);
+})();
+</script>
+</body>
+</html>
