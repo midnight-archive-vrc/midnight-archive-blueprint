@@ -62,6 +62,10 @@ main{
 .gallery img{display:block;width:100%;height:auto;aspect-ratio:1672/941}
 .gallery figcaption{min-height:0;padding:7px 9px 9px;font-size:12px}
 .gallery .hero figcaption{font-size:13px}
+.readrow{display:flex;gap:14px;align-items:flex-start;margin-top:12px}.readrow p{margin:0}
+.readfig{flex:none;width:190px;margin:0;border:1px solid var(--hair)}
+.readfig img{display:block;width:100%;height:auto}.readfig figcaption{min-height:0;font-size:11.5px;padding:6px 7px 8px}
+@media (max-width:520px){.readrow{flex-direction:column}.readfig{width:min(260px,100%)}}
 h1,h2,h3{text-wrap:balance}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--beam);outline-offset:2px}
@@ -336,7 +340,7 @@ footer a{color:var(--line)}
   <section class="panel intro prose" aria-labelledby="intro-h">
     <h2 class="panel-h" id="intro-h">Fall down a rabbit hole</h2>
     <p>The Midnight Archive is a library floating on clouds at night, in VRChat. Every book on its shelves is a real, readable Wikipedia article.</p>
-    <p>Open a book and follow its links. Each linked book flies off its shelf, from whatever tower it lives in, straight to you. Back takes you through everything you looked at, like a browser.</p>
+    <p>Pull a book off a shelf and read it in your hands. Its gold words are links: touch one and that book is brought to you from whatever tower it lives in. Back takes you through everything you looked at, like a browser.</p>
     <p>The books line the outside of tall towers on floating isles, joined by lantern-lit bridges. Inside, each tower is a cozy place to lie around and talk, themed by its topic.</p>
     <p class="sub">This page is the blueprint: concept art, a map you can click, and a cut through each tower. Nothing here is final.</p>
     <ul class="key" aria-label="Status key">
@@ -354,6 +358,9 @@ footer a{color:var(--line)}
       <figure><a href="art/tower-outside.jpg"><img src="art/tower-outside.jpg" width="1672" height="941" loading="lazy" alt="A tall round library tower whose outside walls are glowing bookshelves, with railed walkways around every floor, a spiral stair wrapping the outside, lit rooms with sofas between the shelves, and a blossom tree on top."></a><figcaption>Books on the outside: a walkway around every floor and a stair winding up the tower.</figcaption></figure>
       <figure><a href="art/tower-inside.jpg"><img src="art/tower-inside.jpg" width="1672" height="941" loading="lazy" alt="Inside a tower: a tall round hall with floor cushions, a fireplace and tea, hammock nets strung across the open middle, and stairs crossing between the floors under hanging lanterns."></a><figcaption>Inside a tower: cushions, a fireplace, hammock nets across the middle, stairs crossing between floors.</figcaption></figure>
       <figure><a href="art/spirit-dog.jpg"><img src="art/spirit-dog.jpg" width="1672" height="941" loading="lazy" alt="Character sheet of a spirit dog made of soft moonlight, with a leather satchel and a small lantern on its collar: running with a glowing book in its mouth, front, side and back views, and happy, curious and sleepy faces."></a><figcaption>The spirit dog, an archive helper who fetches books for visitors.</figcaption></figure>
+      <figure><a href="art/read-in-hands.jpg"><img src="art/read-in-hands.jpg" width="1672" height="941" loading="lazy" alt="First-person view on a tower walkway at night: two hands hold an open old book; a fingertip touches a glowing gold word, and a thread of golden light runs from it across the sky to a distant tower, where a small glowing book flies back along the thread."></a><figcaption>Reading from the book in your hands: touch a gold word and that book comes to you along a thread of light.</figcaption></figure>
+      <figure><a href="art/helper-cart.jpg"><img src="art/helper-cart.jpg" width="1672" height="941" loading="lazy" alt="A fox-eared visitor reads on a cushion on a tower walkway while a glowing spirit dog trots up with a book in its mouth, and a finished book tumbles onto an overflowing wooden book cart beside her."></a><figcaption>Your books follow you: a helper fetches each book, and the ones you finish pile up on your cart.</figcaption></figure>
+      <figure><a href="art/main-hall.jpg"><img src="art/main-hall.jpg" width="1672" height="941" loading="lazy" alt="A grand round hall at night with tall moonlit windows: a brass lectern under one floating parchment page in the middle, oak card-catalog cabinets around the walls, a robot typing on a brass typewriter, and a visitor walking past with books floating around her."></a><figcaption>The main hall at the centre: the one floating reading page, on a lectern, with the card catalogs around it.</figcaption></figure>
     </div>
   </section>
 
@@ -422,6 +429,25 @@ footer a{color:var(--line)}
       <p class="sub">Pick a tower above to see its theme. One shared set of furniture with a few special pieces per tower keeps the world light enough for Quest.</p>
     </section>
 
+    <section class="panel prose" aria-labelledby="read-h">
+      <h2 class="panel-h" id="read-h">Reading from real books <span class="tag pro">Proposal</span></h2>
+      <p>Nobody reads from floating screens. You read from the books themselves; the one floating page in the world stands on a lectern in the main hall.</p>
+      <ul>
+        <li><b>The book in your hands.</b> Grab or click a book on a shelf and it opens in your hands. Turn the page by its corner. Others see which book you hold. <span class="tag pro">Proposal</span></li>
+        <li><b>Gold words are the links.</b> No list of link buttons: the words in the text are the buttons. Point at one to see where it goes. <span class="tag dec">Settled</span> Touch it and that book is brought to you from its tower; the trip hides the few seconds it takes to load. <span class="tag pro">Proposal</span></li>
+        <li><b>Your books follow you.</b> Each visitor picks a style: a spirit dog or paper helpers who fetch your books and toss the finished ones onto a growing book cart, a cart that rolls along by itself, or a cloud of floating books. The pile is your visit, and Back hands you the book before. <span class="tag pro">Proposal</span></li>
+        <li><b>Lecterns in the towers.</b> Set a book on a lectern in a cozy nook and it opens big for everyone sitting there. Anyone can turn the page. <span class="tag pro">Proposal</span></li>
+        <li><b>The main hall.</b> A big lectern in the middle and a ring of smaller ones around it, every one shared with everybody in the instance. A small card catalog beside each lectern finds a book and fetches it straight onto that lectern. <span class="tag pro">Proposal</span></li>
+        <li><b>Presenter mode.</b> In the room that was going to be the Lecture Hall: one person presents a book from a lectern on a low stage. The big page behind them follows for the audience, with highlights, and the presenter can hand over. <span class="tag pro">Proposal</span></li>
+        <li><b>The card catalog.</b> Type a title on a brass typewriter; the results pop out of a drawer as index cards. <span class="tag idea">Idea</span></li>
+        <li><b>Long books unfold.</b> A long article's sections fan out around you as floating pages; pull one close to read it. <span class="tag idea">Idea</span></li>
+      </ul>
+      <div class="readrow">
+        <figure class="readfig"><a href="mockups/reader-looks.html#A3"><img src="art/lectern-candlelit.jpg" width="1014" height="1164" loading="lazy" alt="Mock-up of the Candlelit reading page: toasted parchment in a walnut frame with brass corners, the title Octopus, gold-underlined link words, and a row of brass buttons with A minus and A plus for text size."></a><figcaption>The Candlelit page for the lecterns. Links are the gold words; A− / A+ sets the text size. Tap to try it.</figcaption></figure>
+  <p>Pages are in a <b>Brass &amp; Vellum</b> style; lecterns use the warm <b>Candlelit</b> page. <span class="tag dec">Settled</span> A− / A+ sets the text size. <span class="tag dec">Settled</span> <a href="mockups/reader-looks.html#A3">See the page styles</a>.</p>
+      </div>
+    </section>
+
     <section class="panel prose" aria-labelledby="games-h">
       <h2 class="panel-h" id="games-h">Games in the academy <span class="tag dec">Settled</span> planned, not built yet</h2>
       <p>The academy at the centre of the archipelago is where the games live. Switch the map to <b>Academy</b> to see the rooms.</p>
@@ -437,10 +463,10 @@ footer a{color:var(--line)}
       <h2 class="panel-h" id="how-h">How exploring works <span class="tag tb">Prototype</span></h2>
       <ol>
         <li>Open a book and read the article.</li>
-        <li>Links to other books in the archive are highlighted in the text, and listed as buttons under each page.</li>
+        <li>Links to other books are the gold words in the text. Point at one to see where it goes.</li>
         <li>Press one. That book flies off its shelf to you and opens. The flight covers the few seconds it takes to load.</li>
         <li>Back returns through everything you looked at, like a browser. (The glowing trail of your path only appears during races.)</li>
-        <li>Back returns to the book before. Title search finds any book in the archive.</li>
+        <li>Title search finds any book in the archive. A shelf lights up when you stand next to it or click it; grab or click a book to open it.</li>
       </ol>
       <p class="sub">This already works in a plain grey test world. The route on the map above is a made-up example of a race.</p>
     </section>
@@ -475,6 +501,7 @@ footer a{color:var(--line)}
       <ul>
         <li>The look follows the concept art at the top: a cloud library at night, lantern-lit bridges, glowing books drifting up.</li>
         <li>Books on the towers' outside walls, cozy insides. <span class="tag dec">Settled</span></li>
+        <li>You read from books, not floating screens; the one floating page is on the main hall lectern. <span class="tag pro">Proposal</span> Pages in a Brass &amp; Vellum style, Candlelit on the lecterns. <span class="tag dec">Settled</span></li>
         <li>People, the biggest topic, is one tower built as three sub-towers on a shared plaza, joined by sky bridges: Arts and entertainment; Writers, thinkers and leaders; Science, sports and more. Click it on the map. <span class="tag dec">Settled</span></li>
         <li>A real 3D place you can walk and fly through, with an uneven skyline: each tower's height comes from how many books it holds. <span class="tag dec">Settled</span></li>
         <li>Built for PC VR first. Quest gets the same world, with the fine detail painted into textures. <span class="tag dec">Settled</span></li>
@@ -534,7 +561,7 @@ var CLASSES=[
 /* ---------- The archipelago (plan x east, plan y south, metres from the centre of the academy). All of it is a proposal. ---------- */
 var TOWERS={
   "1":{x:180,y:-105,isle:"chron",shell:"round",roof:"spire",reach:"Lantern Way from History, then on to Geography.",
-       /* People is ONE tower built as three sub-towers on a shared plaza, joined by sky bridges (Jane, 14 Nov) */
+       /* People is ONE tower built as three sub-towers on a shared plaza, joined by sky bridges (14 Nov) */
        cluster:[{n:"Arts and entertainment",subs:["1.2","1.3"],f:91,d:"artists, musicians, composers, entertainers, directors"},
                 {n:"Writers, thinkers and leaders",subs:["1.1","1.4","1.5","1.6","1.7"],f:73,d:"writers, philosophers, historians, religious figures, politicians, military people and activists"},
                 {n:"Science, sports and more",subs:["1.8","1.9","1.10"],f:74,d:"scientists, inventors, sports figures and everyone else"}]},

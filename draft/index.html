@@ -1042,7 +1042,7 @@ function buildPlan(){
     var g=el("g",{"class":"tower","data-cls":c,transform:tr,tabindex:"0",role:"button","aria-label":"Tower "+c+", "+k.t+", about "+est(items(k)).slice(1)+" items"},tw);
     var bg=el("g",{transform:tr},bays);
     if(t.cluster){
-      /* People: one tower built as three sub-towers on a shared plaza, joined by sky bridges (Jane, 14 Nov) */
+      /* People: one tower built as three sub-towers on a shared plaza, joined by sky bridges (14 Nov) */
       el("circle",{cx:3,cy:6,r:TR+8,"class":"tw-shadow"},g);
       el("circle",{r:TR+7,"class":"tw-plaza"},g);
       var cp=[0,1,2].map(function(i){return pol(13.5,i*120+30);});

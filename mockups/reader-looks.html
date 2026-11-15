@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midnight Archive · Reader UI, Brass &amp; Vellum family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0b1c;--bg2:#141235;--ink:#e6e4f5;--muted:#a3a0c4;--gold:#ffc266;--line:rgba(230,228,245,.14)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg));
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
+header{max-width:1240px;margin:0 auto;padding:28px 16px 8px}
+header h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:34px;letter-spacing:.04em;margin:0}
+header p{color:var(--muted);margin:6px 0 0;max-width:86ch}
+.controls{max-width:1240px;margin:0 auto;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controls button{font:inherit;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.controls button[aria-pressed="true"]{background:var(--gold);color:#1a1230;border-color:var(--gold);font-weight:600}
+.controls label{margin-left:auto;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer}
+main{max-width:1240px;margin:0 auto;padding:8px 16px 40px;display:grid;gap:28px;grid-template-columns:repeat(2,minmax(0,1fr))}
+main.single{grid-template-columns:minmax(0,1fr)} main.single .look:not(.on){display:none} main.single .look .stage{max-width:640px;margin:0 auto}
+@media (max-width:980px){main{grid-template-columns:minmax(0,1fr)}}
+.look h2{font-family:"Cormorant Garamond",serif;font-size:24px;margin:0 0 2px;font-weight:600}
+.look .tag{color:var(--muted);font-size:13px;margin:0 0 10px}
+.look ul.notes{color:var(--muted);font-size:13px;margin:12px 0 0;padding-left:18px}
+.look ul.notes b{color:var(--ink);font-weight:600}
+.stage{position:relative;border-radius:14px;padding:22px;overflow:hidden;
+  background:radial-gradient(500px 260px at 80% 0%,rgba(255,194,102,.10),transparent 60%),radial-gradient(400px 300px at 0% 100%,rgba(122,92,255,.18),transparent 60%),#0c0b22}
+.panel{position:relative;aspect-ratio:1000/1130;width:100%;display:flex;flex-direction:column;overflow:visible}
+.spread .panel{aspect-ratio:1600/1000}
+/* links: the words are the buttons; a hover/point bubble shows where a hidden-target link goes */
+.lk{cursor:pointer;position:relative}
+.tip{position:absolute;display:none;white-space:nowrap;font:600 12px/1.2 Inter,system-ui,sans-serif;padding:5px 9px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:50;pointer-events:none}
+.hit .lk{outline:2px dashed #1aa37a;outline-offset:1px}
+.body p{margin:0 0 9px}
+
+/* ---------- shared Brass & Vellum parts ---------- */
+.frame{background:#2a1a12;border-radius:6px;padding:14px;box-shadow:0 0 0 2px #c9a35a inset,0 0 0 6px #2a1a12 inset,0 0 0 7px #8a6a33 inset,0 20px 60px rgba(0,0,0,.6)}
+.corner{position:absolute;width:26px;height:26px;border:2px solid #c9a35a}
+.c1{top:8px;left:8px;border-right:0;border-bottom:0}.c2{top:8px;right:8px;border-left:0;border-bottom:0}
+.c3{bottom:8px;left:8px;border-right:0;border-top:0}.c4{bottom:8px;right:8px;border-left:0;border-top:0}
+.page{flex:1;background:linear-gradient(180deg,#f3e7cc,#ead9b4);color:#2b2118;border-radius:3px;margin:10px;padding:18px 22px 14px;display:flex;flex-direction:column;
+  box-shadow:inset 0 0 40px rgba(120,80,30,.25);font-family:"Cormorant Garamond",serif}
+.crumb{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#7a5a36;font-family:Inter,sans-serif}
+.title{display:flex;gap:14px;align-items:flex-start;margin-top:6px}
+.title h3{font-size:36px;line-height:1;margin:0;font-weight:700}
+.title .desc{font-style:italic;font-size:17px;color:#5b4630;margin-top:4px}
+.plate{margin-left:auto;width:104px;height:104px;flex:none;border:3px double #8a6a33;background:radial-gradient(circle at 40% 40%,#d8b98a,#8a6a46 70%,#5b4630);display:grid;place-items:center;color:#f3e7cc;font-size:11px;font-family:Inter,sans-serif;text-align:center}
+.body{font-size:19.5px;line-height:1.42;margin-top:12px;text-align:justify;hyphens:auto}
+.body p:first-child::first-letter{float:left;font-size:48px;line-height:.9;padding:4px 6px 0 0;color:#7a2b1c;font-weight:700}
+.lk{color:#7a2b1c;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;font-weight:600}
+.lk:hover{background:#7a2b1c18}
+.bar{display:flex;gap:6px;padding:8px 10px 2px;font-family:Inter,sans-serif;font-size:12.5px;align-items:center}
+.bar span{background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border-radius:3px;padding:6px 10px;font-weight:600;box-shadow:inset 0 1px 0 #fff6,0 1px 2px #0008;white-space:nowrap}
+.bar .pg{background:none;box-shadow:none;color:#c9a35a;font-weight:500;margin:0 auto}
+.src{font-size:11px;color:#c9a35a;text-align:center;padding:4px 0 2px;font-family:Inter,sans-serif}
+
+/* ---------- A2 · Open Book Spread ---------- */
+.A2 .frame{padding:16px 18px;background:linear-gradient(180deg,#3b2416,#24150d)}
+.A2 .pages{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:6px 4px}
+.A2 .page{margin:0;border-radius:4px 0 0 4px;background:linear-gradient(90deg,#efe0bf 0%,#f3e7cc 70%,#dcc597 100%)}
+.A2 .page.r{border-radius:0 4px 4px 0;background:linear-gradient(90deg,#d6bd8c 0%,#f0e3c5 18%,#f3e7cc 100%)}
+.A2 .page.l{align-items:center;text-align:center;justify-content:center;gap:10px}
+.A2 .page.l .plate{margin:6px auto;width:160px;height:130px}
+.A2 .page.l h3{font-size:46px;margin:0;font-weight:700}
+.A2 .page.l .desc{font-style:italic;font-size:18px;color:#5b4630}
+.A2 .orn{color:#a07a3a;letter-spacing:.4em;font-size:14px}
+.A2 .body{font-size:17.5px;margin-top:0}
+.A2 .ribbon{position:absolute;z-index:2;top:-4px;left:calc(50% - 9px);width:18px;height:70px;background:#7a2b1c;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+
+/* ---------- A3 · Candlelit (darker page for night eyes) ---------- */
+.A3 .page{background:radial-gradient(130% 90% at 50% 30%,#e7cf9f 0%,#c9a46b 75%,#a87d45 100%);color:#2a1a10;box-shadow:inset 0 0 70px rgba(70,35,8,.55)}
+.A3 .crumb{color:#5a3a1a}
+.A3 .lk{color:#5a1408;text-decoration:none;border-bottom:2px solid #b8862f;background:linear-gradient(180deg,transparent 60%,rgba(255,214,140,.45) 60%)}
+.A3 .body p:first-child::first-letter{color:#5a1408}
+.A3 .frame{box-shadow:0 0 0 2px #c9a35a inset,0 0 0 6px #2a1a12 inset,0 0 0 7px #8a6a33 inset,0 0 60px rgba(255,170,80,.25),0 20px 60px rgba(0,0,0,.6)}
+.A3 .candle{position:absolute;right:-12px;top:30%;width:14px;height:60px;background:#efe3c8;border-radius:3px;box-shadow:0 0 30px 12px rgba(255,190,90,.35)}
+.A3 .candle::before{content:"";position:absolute;top:-16px;left:3px;width:8px;height:14px;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff6c9,#ffb347 60%,transparent 70%)}
+
+/* ---------- A4 · Lectern with ribbon bookmarks ---------- */
+.A4 .stand{position:relative;flex:1;display:flex;flex-direction:column;transform:perspective(900px) rotateX(8deg);transform-origin:50% 100%}
+.A4 .frame{border-radius:6px 6px 2px 2px;flex:1;display:flex;flex-direction:column}
+.A4 .rail{height:16px;margin:0 -6px;background:linear-gradient(180deg,#e0bd72,#8a6a33);border-radius:3px;box-shadow:0 3px 8px #0009}
+.A4 .post{width:46px;height:34px;margin:0 auto;background:linear-gradient(90deg,#3b2416,#5b3a22,#3b2416)}
+.A4 .ribbons{position:absolute;right:-34px;top:40px;display:flex;flex-direction:column;gap:8px}
+.A4 .ribbons span{writing-mode:vertical-rl;transform:rotate(180deg);font:600 12px Inter,sans-serif;color:#f3e7cc;background:#7a2b1c;padding:10px 6px;border-radius:0 4px 4px 0;box-shadow:2px 2px 6px #0008}
+.A4 .ribbons span:nth-child(2){background:#2f4a6b}.A4 .ribbons span:nth-child(3){background:#3d5a2a}.A4 .ribbons span:nth-child(4){background:#6b4a8a}
+.A4 .bar{justify-content:center}
+
+/* ---------- A5 · Illuminated Manuscript ---------- */
+.A5 .page{background:#f4ead2;font-family:"EB Garamond",serif;position:relative;padding:26px 30px 16px;
+  box-shadow:inset 0 0 0 10px #f4ead2,inset 0 0 0 12px #b8862f,inset 0 0 0 15px #f4ead2,inset 0 0 0 16px #6b4a8a,inset 0 0 40px rgba(120,80,30,.2)}
+.A5 .page::before,.A5 .page::after{content:"❦";position:absolute;color:#b8862f;font-size:22px}
+.A5 .page::before{top:10px;left:14px}.A5 .page::after{bottom:8px;right:14px;transform:rotate(180deg)}
+.A5 .crumb{font-family:Cinzel,serif;color:#6b4a8a;letter-spacing:.14em}
+.A5 .title h3{font-family:Cinzel,serif;font-size:32px;letter-spacing:.06em;color:#3a2a5a}
+.A5 .plate{border-radius:50%;border:4px solid #b8862f;box-shadow:0 0 0 3px #6b4a8a}
+.A5 .body{font-size:18.5px}
+.A5 .body p:first-child::first-letter{font-family:Cinzel,serif;font-size:58px;padding:6px 8px 0 0;color:#f4ead2;background:linear-gradient(135deg,#6b4a8a,#3a2a5a);border:3px solid #b8862f;margin:2px 8px 0 0;line-height:.85}
+.A5 .lk{color:#2c3f86;text-decoration:none;border-bottom:2px solid #b8862f;font-weight:600}
+.A5 .bar span{font-family:Cinzel,serif;letter-spacing:0;font-size:11.5px;padding:6px 8px}
+
+/* ---------- A6 · Quiet Vellum (lightest, Quest-friendly) ---------- */
+.A6 .frame{padding:10px;background:#2a1a12;box-shadow:0 0 0 1px #c9a35a inset,0 20px 60px rgba(0,0,0,.6)}
+.A6 .corner{display:none}
+.A6 .page{margin:4px;background:#f2e6cb;box-shadow:none;padding:22px 26px 14px}
+.A6 .crumb{color:#8a6a46;letter-spacing:.04em;text-transform:none;font-size:13px}
+.A6 .title h3{font-family:"EB Garamond",serif;font-weight:600;font-size:38px}
+.A6 .plate{border:1px solid #b8a27a;background:#e5d5b2;color:#8a6a46}
+.A6 .body{font-family:"EB Garamond",serif;font-size:19px;line-height:1.5;text-align:left}
+.A6 .body p:first-child::first-letter{float:none;font-size:inherit;padding:0;color:inherit;font-weight:inherit}
+.A6 .lk{color:#8a2a18;text-decoration:underline;text-decoration-style:solid;text-decoration-color:#c9a35a;text-decoration-thickness:2px}
+.A6 .bar span{background:none;box-shadow:none;color:#e9d8b0;border:1px solid #c9a35a66;font-weight:500}
+.A6 .bar .pg{border:0}
+
+section.compare{max-width:1240px;margin:0 auto;padding:0 16px 48px}
+section.compare h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:26px;margin:0 0 10px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500} td:first-child{color:var(--muted);white-space:nowrap}
+footer{max-width:1240px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:13px}
+body.shot header,body.shot .controls,body.shot .compare,body.shot footer,body.shot .look h2,body.shot .look .tag,body.shot .notes{display:none}
+body.shot main{padding:0}body.shot main.single .look .stage{max-width:none;border-radius:0}
+/* text size: the page shows whole lines only and re-flows; paragraphs indent like a printed book */
+.body{flex:1 1 0;min-height:0;overflow:hidden}
+.body p{margin:0}.body p+p{text-indent:1.6em}
+.body p:first-child::first-letter{font-size:2.45em}
+.A5 .body p:first-child::first-letter{font-size:3em}
+.bar{flex-wrap:wrap}
+.bar .ts{min-width:32px;text-align:center;cursor:pointer;user-select:none}
+.bar .tsv{background:none!important;box-shadow:none!important;border:0!important;color:#c9a35a;font-weight:500;padding:6px 0!important;min-width:40px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>Midnight Archive · the Brass &amp; Vellum reader, six ways</h1>
+  <p>The Brass &amp; Vellum reader as first drawn (A1) and five variations of it. In every one the gold words in the text are the links: click a word to open that book. <b>A− / A+</b> changes the text size: the page re-flows, shows whole lines only, and the page count changes (in the world each player's size is remembered for their next visit). Hover "predators" (or point at it in VR) to see where a link goes when its words don't name the book. The sample text is written for this mock-up, not taken from Wikipedia.</p>
+</header>
+<div class="controls" role="group" aria-label="Which look">
+  <button type="button" data-show="all" aria-pressed="true">All six</button>
+  <button type="button" data-show="A1" aria-pressed="false">A1 · Original</button>
+  <button type="button" data-show="A2" aria-pressed="false">A2 · Open book</button>
+  <button type="button" data-show="A3" aria-pressed="false">A3 · Candlelit</button>
+  <button type="button" data-show="A4" aria-pressed="false">A4 · Lectern</button>
+  <button type="button" data-show="A5" aria-pressed="false">A5 · Illuminated</button>
+  <button type="button" data-show="A6" aria-pressed="false">A6 · Quiet vellum</button>
+  <label><input type="checkbox" id="hit"> show the clickable link areas</label>
+</div>
+
+<main id="looks">
+  <article class="look A1" data-look="A1">
+    <h2>A1 · Original</h2>
+    <p class="tag">Parchment page in a walnut frame with brass corners, ink-red links, a drop cap, brass buttons.</p>
+    <div class="stage"><div class="panel frame">
+      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+      <div class="page">
+        <div class="crumb">Biological and health sciences › Animals › Molluscs · B-L12-S07</div>
+        <div class="title"><div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div></div><div class="plate">lead picture</div></div>
+        <div class="body" data-fill></div>
+      </div>
+      <div class="bar"><span>‹ Back</span><span>Go to shelf</span><span class="pg">‹ 1 / 3 ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span><span>People</span><span>♪</span><span>✕</span></div>
+      <div class="src">Wikipedia · CC BY-SA 4.0 · Octopus</div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> closest to the concept art; dark ink on a light page reads best in a headset.</li><li><b>Watch:</b> a bright page glows at night.</li></ul>
+  </article>
+
+  <article class="look A2 spread" data-look="A2">
+    <h2>A2 · Open book</h2>
+    <p class="tag">A real open book: title, picture and where it lives on the left page, the text on the right, a ribbon in the gutter.</p>
+    <div class="stage"><div class="panel frame">
+      <i class="ribbon"></i>
+      <div class="pages">
+        <div class="page l"><div class="crumb">Biological and health sciences › Animals › Molluscs</div><div class="orn">✦ ✦ ✦</div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div><div class="plate">lead picture</div><div class="crumb">shelf B-L12-S07</div></div>
+        <div class="page r"><div class="body" data-fill></div></div>
+      </div>
+      <div class="bar"><span>‹ Back</span><span>Go to shelf</span><span class="pg">‹ 1 / 3 ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span><span>People</span><span>♪</span><span>✕</span></div>
+      <div class="src">Wikipedia · CC BY-SA 4.0 · Octopus</div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> feels like holding a book; the picture gets real space; turning pages can animate like paper.</li><li><b>Watch:</b> a wide panel (takes more room beside the shelf); half the text per page.</li></ul>
+  </article>
+
+  <article class="look A3" data-look="A3">
+    <h2>A3 · Candlelit</h2>
+    <p class="tag">Aged, toasted parchment in warm light: softer on the eyes at night, gold-leaf highlighted links. <b style="color:#ffc266">Picked for the lecterns.</b></p>
+    <div class="stage"><div class="panel frame">
+      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+      <div class="page">
+        <div class="crumb">Biological and health sciences › Animals › Molluscs · B-L12-S07</div>
+        <div class="title"><div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div></div><div class="plate">lead picture</div></div>
+        <div class="body" data-fill></div>
+      </div>
+      <div class="bar"><span>‹ Back</span><span>Go to shelf</span><span class="pg">‹ 1 / 3 ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span><span>People</span><span>♪</span><span>✕</span></div>
+      <div class="src">Wikipedia · CC BY-SA 4.0 · Octopus</div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> no glare in a dark world; the warm glow matches the lanterns.</li><li><b>Watch:</b> slightly lower contrast than A1.</li></ul>
+  </article>
+
+  <article class="look A4" data-look="A4">
+    <h2>A4 · Lectern</h2>
+    <p class="tag">The page rests on a brass-railed reading stand, tilted toward you, with ribbon bookmarks as the side buttons.</p>
+    <div class="stage"><div class="panel">
+      <div class="stand">
+        <div class="frame">
+          <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+          <div class="page">
+            <div class="crumb">Biological and health sciences › Animals › Molluscs · B-L12-S07</div>
+            <div class="title"><div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div></div><div class="plate">lead picture</div></div>
+            <div class="body" data-fill></div>
+          </div>
+          <div class="bar"><span>‹ page</span><span class="pg">1 / 3</span><span>page ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span></div>
+        </div>
+        <div class="ribbons"><span>Back</span><span>Shelf</span><span>People</span><span>Music</span></div>
+        <div class="rail"></div><div class="post"></div>
+      </div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> feels like a real object in the library; ribbons are big, easy targets in VR.</li><li><b>Watch:</b> the stand is extra geometry (cheap); tilt must not make text harder to read.</li></ul>
+  </article>
+
+  <article class="look A5" data-look="A5">
+    <h2>A5 · Illuminated</h2>
+    <p class="tag">A medieval manuscript page: gold and violet border, an illuminated first letter, ultramarine links, a round picture.</p>
+    <div class="stage"><div class="panel frame">
+      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+      <div class="page">
+        <div class="crumb">Biological · Animals · Molluscs · B-L12-S07</div>
+        <div class="title"><div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div></div><div class="plate">lead picture</div></div>
+        <div class="body" data-fill></div>
+      </div>
+      <div class="bar"><span>‹ Back</span><span>Go to shelf</span><span class="pg">‹ 1 / 3 ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span><span>People</span><span>♪</span><span>✕</span></div>
+      <div class="src">Wikipedia · CC BY-SA 4.0 · Octopus</div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> the most "magical archive"; violet ties in with the night sky.</li><li><b>Watch:</b> ornaments are busier; blue links are less obvious than gold at a distance.</li></ul>
+  </article>
+
+  <article class="look A6" data-look="A6">
+    <h2>A6 · Quiet vellum</h2>
+    <p class="tag">The same idea, pared back: a thin brass line, a clean page, more space, outline buttons. The cheapest to render.</p>
+    <div class="stage"><div class="panel frame">
+      <div class="page">
+        <div class="crumb">Biological and health sciences › Animals › Molluscs · B-L12-S07</div>
+        <div class="title"><div><h3>Octopus</h3><div class="desc">soft-bodied, eight-armed sea animal</div></div><div class="plate">lead picture</div></div>
+        <div class="body" data-fill></div>
+      </div>
+      <div class="bar"><span>‹ Back</span><span>Go to shelf</span><span class="pg">‹ 1 / 3 ›</span><span class="ts" data-d="-1" title="Smaller text">A−</span><span class="tsv">100%</span><span class="ts" data-d="1" title="Larger text">A+</span><span>People</span><span>♪</span><span>✕</span></div>
+      <div class="src">Wikipedia · CC BY-SA 4.0 · Octopus</div>
+    </div></div>
+    <ul class="notes"><li><b>Strong:</b> calm, very readable, lightest on Quest.</li><li><b>Watch:</b> less atmosphere than the framed ones.</li></ul>
+  </article>
+</main>
+
+<section class="compare" aria-labelledby="cmp">
+  <h2 id="cmp">Side by side</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>A1 Original</th><th>A2 Open book</th><th>A3 Candlelit</th><th>A4 Lectern</th><th>A5 Illuminated</th><th>A6 Quiet vellum</th></tr></thead>
+    <tbody>
+      <tr><td>Mood</td><td>Classic library</td><td>Holding a real book</td><td>Warm, soft, night (chosen for lecterns)</td><td>A reading stand in the archive</td><td>Old magic manuscript</td><td>Calm, clean</td></tr>
+      <tr><td>Reading in VR</td><td>Best</td><td>Good (narrow columns)</td><td>Good, softer</td><td>Good if the tilt is gentle</td><td>Good, busier</td><td>Best</td></tr>
+      <tr><td>Text per page</td><td>Full</td><td>About half</td><td>Full</td><td>Full</td><td>A little less (border)</td><td>Full</td></tr>
+      <tr><td>Buttons</td><td>Brass row</td><td>Brass row</td><td>Brass row</td><td>Ribbon bookmarks + page row</td><td>Brass row</td><td>Outline row</td></tr>
+      <tr><td>Text size</td><td>A− / A+ in the row</td><td>A− / A+ in the row</td><td>A− / A+ in the row</td><td>A− / A+ beside the page arrows</td><td>A− / A+ in the row</td><td>A− / A+ in the row</td></tr>
+      <tr><td>Quest cost</td><td>Low</td><td>Low (wider)</td><td>Low</td><td>Low (+ stand)</td><td>Low</td><td>Lowest</td></tr>
+    </tbody>
+  </table></div>
+</section>
+<footer>Mock-up for choosing a direction; parts mix freely (for example A3's candlelit page on A4's lectern). Made for The Midnight Archive by Doghouse Devs.</footer>
+
+<script>
+(function(){
+  var TEXT='<p>The octopus is a soft-bodied <a class="lk" data-to="Mollusca">mollusc</a> with eight arms, found in every <a class="lk" data-to="">ocean</a>. It belongs to the <a class="lk" data-to="Cephalopod">cephalopods</a>, together with <a class="lk" data-to="">squid</a> and <a class="lk" data-to="">cuttlefish</a>. Octopuses are known for their <a class="lk" data-to="Cephalopod intelligence">intelligence</a>: they solve puzzles, use tools and can change colour and texture in an instant to hide from <a class="lk" data-to="Predation">predators</a>. Most kinds live only a year or two.</p>'
+   +'<p>Each arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue <a class="lk" data-to="Hemocyanin">blood</a>, and when threatened it squirts a cloud of <a class="lk" data-to="Cephalopod ink">ink</a> and slips through any gap wider than its <a class="lk" data-to="">beak</a>.</p>';
+  document.querySelectorAll('[data-fill]').forEach(function(b){b.innerHTML=TEXT;});
+  var STEPS=[0.8,0.9,1,1.15,1.3,1.5], fits=[];
+  document.querySelectorAll('.look').forEach(function(l){
+    var body=l.querySelector('.body'), base=parseFloat(getComputedStyle(body).fontSize), i=2;
+    var pg=l.querySelector('.pg'), v=l.querySelector('.tsv'), arrows=pg&&pg.textContent.indexOf('‹')>=0;
+    function fit(){
+      var sz=base*STEPS[i]; body.style.fontSize=sz+'px'; body.style.maxHeight='none';
+      var lh=parseFloat(getComputedStyle(body).lineHeight); if(!(lh>4)) lh=sz*(lh>0&&lh<4?lh:1.45);
+      body.style.maxHeight=(Math.max(1,Math.floor((body.clientHeight+0.5)/lh))*lh)+'px';
+      if(v) v.textContent=Math.round(STEPS[i]*100)+'%';
+      var n=Math.max(2,Math.ceil(3*STEPS[i]*STEPS[i]-0.05)); if(pg) pg.textContent=arrows?'‹ 1 / '+n+' ›':'1 / '+n;
+    }
+    l.querySelectorAll('.ts').forEach(function(b){b.addEventListener('click',function(){i=Math.max(0,Math.min(STEPS.length-1,i+(+b.dataset.d)));fit();});});
+    fits.push(fit);
+  });
+  function refit(){fits.forEach(function(f){f();});}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(refit);} refit(); window.addEventListener('resize',refit);
+  var tip=document.createElement('div'); tip.className='tip'; document.body.appendChild(tip);
+  document.addEventListener('mouseover',function(e){
+    var a=e.target.closest?e.target.closest('.lk'):null;
+    if(!a||!a.dataset.to){tip.style.display='none';return;}
+    var r=a.getBoundingClientRect(); tip.textContent='→ '+a.dataset.to; tip.style.display='block';
+    tip.style.left=(r.left+window.scrollX)+'px'; tip.style.top=(r.top+window.scrollY-tip.offsetHeight-6)+'px';
+  });
+  var main=document.getElementById('looks');
+  document.querySelectorAll('.controls button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.controls button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      var v=b.dataset.show;
+      if(v==='all'){main.classList.remove('single');}
+      else{main.classList.add('single');document.querySelectorAll('.look').forEach(function(l){l.classList.toggle('on',l.dataset.look===v);});}
+      refit();
+    });
+  });
+  document.getElementById('hit').addEventListener('change',function(e){document.querySelectorAll('.stage').forEach(function(s){s.classList.toggle('hit',e.target.checked);});});
+  /* link straight to one look with #A3; ?shot hides everything but the panel (for pictures) */
+  if(location.search.indexOf('shot')>=0) document.body.classList.add('shot');
+  var want=location.hash.slice(1), wb=document.querySelector('.controls button[data-show="'+want+'"]'); if(wb) wb.click();
+  var up=+((location.search.match(/[?&]up=(\d)/)||[])[1]||0), lk=wb&&document.querySelector('.look[data-look="'+want+'"] .ts[data-d="1"]');
+  for(var u=0;lk&&u<up;u++) lk.click();
+})();
+</script>
+</body>
+</html>
