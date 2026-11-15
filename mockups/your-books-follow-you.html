@@ -1,0 +1,1067 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A helper fetches your books</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--night:#0c0b22;--night2:#141235;--violet:#2a2160;--amber:#ffc266;--cream:#fff3cf;--gold:#ffd27a;
+  --brass:#c9a35a;--brass2:#8a6a33;--walnut:#2a1a12;--ink:#2b2118;--red:#7a2b1c;
+  --text:#e6e4f5;--muted:#a3a0c4;--line:rgba(230,228,245,.14)}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;
+  background:radial-gradient(1200px 700px at 70% -10%,#2a2160 0%,transparent 60%),linear-gradient(180deg,#141235,#0a0b1c)}
+.wrap{max-width:1560px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 6px}
+.eyebrow{font-family:Cinzel,serif;font-size:12px;letter-spacing:.22em;color:var(--brass);text-transform:uppercase}
+h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:42px;line-height:1.05;letter-spacing:.02em;margin:4px 0 6px}
+header p{color:var(--muted);margin:0;max-width:96ch}
+header p b{color:var(--text);font-weight:600}
+.hints{margin:14px 0 10px;font-size:14px;color:var(--muted)}
+.hints b{color:var(--gold);font-weight:600}
+
+/* ---------- demo ---------- */
+.demo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px 18px;align-items:start;padding:16px;border-radius:16px;border:1px solid var(--line);
+  background:radial-gradient(600px 300px at 85% 0%,rgba(255,194,102,.08),transparent 60%),radial-gradient(500px 340px at 0% 100%,rgba(122,92,255,.16),transparent 60%),#0c0b22}
+@media (max-width:1060px){.demo{grid-template-columns:minmax(0,1fr)}}
+.styles{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.styles .lbl{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;margin-right:6px}
+.styles .sub{flex-basis:100%;margin:0;color:var(--muted);font-size:13px}
+.cap{font:600 11px/1.2 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin:0 0 8px}
+.box{position:relative;width:100%;aspect-ratio:800/560;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(201,163,90,.35),0 18px 50px rgba(0,0,0,.55);background:#0c0b22}
+.scene{position:absolute;left:0;top:0;width:800px;height:560px;transform-origin:0 0}
+.scene svg.bg,.scene svg.fox{position:absolute;left:0;top:0;width:800px;height:560px;display:block;pointer-events:none}
+.scene svg.bg{z-index:0}.scene svg.fox{z-index:2}
+#clouds{animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(-24px)}}
+#foxUp{transition:transform .6s cubic-bezier(.4,1.3,.5,1)}
+#foxLegs,.sitonly,.nook{transition:opacity .45s}
+.sitonly,.nook{opacity:0}
+.seated #foxUp{transform:translateY(34px)}
+.seated #foxLegs{opacity:0}
+.seated .sitonly,.seated .nook{opacity:1}
+
+/* a book, spine facing you */
+.bk{position:absolute;left:0;top:0;width:140px;height:17px;border-radius:2px 3px 3px 2px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 40%,rgba(0,0,0,.3)),var(--c,#7a2b1c);box-shadow:0 2px 3px rgba(0,0,0,.45)}
+.bk::before{content:"";position:absolute;left:2px;right:-2px;bottom:100%;height:6px;background:var(--c,#7a2b1c);filter:brightness(1.45) saturate(.8);
+  transform:skewX(-38deg);transform-origin:0 100%;border-radius:2px 2px 0 0}
+.bk::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(90deg,transparent 12px,#c9a35a 12px,#c9a35a 14px,transparent 14px,transparent calc(100% - 14px),#c9a35a calc(100% - 14px),#c9a35a calc(100% - 12px),transparent calc(100% - 12px))}
+.bk span{position:absolute;left:18px;right:18px;top:0;z-index:1;font:700 13.5px/17px "Cormorant Garamond",serif;color:#ffd27a;letter-spacing:.04em;
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 1px rgba(0,0,0,.6)}
+.bk .no{display:none;position:absolute;z-index:2;left:-15px;top:-7px;width:30px;height:30px;border-radius:50%;background:#ffd27a;color:#2a1a12;
+  font:700 16px/30px Inter,sans-serif;text-align:center;font-style:normal;box-shadow:0 0 10px rgba(255,210,122,.9)}
+.race .bk .no{display:block}
+.race .bk.fly .no,.race #helper .bk .no{display:none}
+.fly{z-index:8}
+.floor{z-index:4}
+
+/* the open book in the reader's hands */
+#hand{position:absolute;left:0;top:0;width:80px;height:50px;z-index:5}
+#hand .ob{position:absolute;inset:0;transform:perspective(260px) rotateX(34deg) rotateZ(-9deg);filter:drop-shadow(0 0 14px rgba(255,194,102,.55))}
+#hand .ob::before{content:"";position:absolute;inset:-3px -4px;border-radius:5px;background:var(--c,#7a2b1c);box-shadow:0 0 0 1px #c9a35a}
+#hand .pp{position:absolute;top:0;bottom:0;width:50%;background:repeating-linear-gradient(180deg,transparent 0 6px,rgba(43,33,24,.28) 6px 7px),linear-gradient(180deg,#f3e7cc,#ead9b4);background-clip:content-box;padding:7px 6px}
+#hand .pp.l{left:0;border-radius:3px 0 0 3px;transform:skewY(5deg);box-shadow:inset -6px 0 8px -4px rgba(90,60,20,.5)}
+#hand .pp.r{right:0;border-radius:0 3px 3px 0;transform:skewY(-5deg);box-shadow:inset 6px 0 8px -4px rgba(90,60,20,.5)}
+.htag{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-10px);white-space:nowrap;padding:2px 9px;border-radius:6px;
+  background:#2a1a12;border:1px solid #c9a35a;color:#ffd27a;font:700 14px/1.3 "Cormorant Garamond",serif;letter-spacing:.03em;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+
+/* the book cart */
+#cart{position:absolute;left:0;top:0;width:180px;height:200px;z-index:3}
+#cart svg{position:absolute;left:0;top:0;width:180px;height:200px;overflow:visible}
+#cart .wheel{transform-box:fill-box;transform-origin:center}
+.rolling #cart .wheel{animation:spin .55s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#cart .selfonly{display:none}
+.s-cart #cart .selfonly{display:inline}
+.s-float #cart{display:none}
+.ptag{position:absolute;left:50%;top:204px;transform:translateX(-50%);font:600 10px/1 Inter,sans-serif;letter-spacing:.14em;color:#c9a35a;white-space:nowrap;opacity:0;transition:opacity .3s}
+.seated .ptag{opacity:1}
+
+/* the helper */
+#helper{position:absolute;left:0;top:0;width:80px;height:64px;z-index:6;transform-origin:50% 100%}
+#helper .hin{position:absolute;inset:0}
+#helper.left .hin{transform:scaleX(-1)}
+#helper svg{position:absolute;inset:0;width:80px;height:64px;overflow:visible;display:none}
+.s-dog #helper .v-dog,.s-kits #helper .v-kits{display:block}
+.s-cart #helper,.s-float #helper{display:none}
+#helper .spark{opacity:0;transition:opacity .3s}
+#helper.moving .spark{opacity:1}
+#helper.moving .kit{animation:waddle .22s ease-in-out infinite alternate}
+#helper .kit:nth-child(2){animation-delay:.11s}
+@keyframes waddle{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+#helper .kit{transform-box:fill-box;transform-origin:50% 100%}
+#helper .carry{position:absolute;left:0;top:0;display:none}
+#helper.has .carry{display:block}
+
+/* chips and labels in the scene */
+.chip{position:absolute;z-index:9;padding:5px 10px;border-radius:8px;background:rgba(42,26,18,.92);border:1px solid #c9a35a;color:#f3e7cc;font:500 12px/1.35 Inter,sans-serif;white-space:nowrap}
+.chip b{color:#ffd27a;font-weight:600}
+#visit{right:12px;top:12px;font:600 15px/1.2 "Cormorant Garamond",serif;letter-spacing:.03em;color:#ffd27a;padding:6px 12px}
+#fchip{left:12px;top:12px;opacity:0;transition:opacity .25s}
+#fchip.on{opacity:1}
+#ttag{left:0;top:0;transform:translate(-50%,-100%);opacity:0;transition:opacity .25s;font-size:11.5px}
+#ttag.on{opacity:1}
+#raceTag{left:12px;bottom:12px;display:none;max-width:300px;white-space:normal}
+.race #raceTag{display:block}
+.flash{position:absolute;z-index:8;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,#fff3cf 0,rgba(255,210,122,.6) 25%,rgba(255,194,102,0) 70%)}
+.say{min-height:44px;margin:10px 2px 0;font-size:14px;color:var(--muted)}
+.say b{color:var(--gold);font-weight:600}
+
+/* ---------- close-up of the open book (Brass & Vellum) ---------- */
+.frame{position:relative;background:linear-gradient(180deg,#3b2416,#24150d);border-radius:6px;padding:14px;
+  box-shadow:0 0 0 2px #c9a35a inset,0 0 0 6px #2a1a12 inset,0 0 0 7px #8a6a33 inset,0 20px 60px rgba(0,0,0,.6)}
+.corner{position:absolute;width:26px;height:26px;border:2px solid #c9a35a;z-index:1}
+.c1{top:8px;left:8px;border-right:0;border-bottom:0}.c2{top:8px;right:8px;border-left:0;border-bottom:0}
+.c3{bottom:8px;left:8px;border-right:0;border-top:0}.c4{bottom:8px;right:8px;border-left:0;border-top:0}
+.page{position:relative;background:linear-gradient(180deg,#f3e7cc,#ead9b4);color:#2b2118;border-radius:3px;margin:8px 8px 0;padding:18px 22px 16px;
+  box-shadow:inset 16px 0 20px -12px rgba(90,60,20,.5),inset 0 0 40px rgba(120,80,30,.25);font-family:"Cormorant Garamond",serif;min-height:420px;transform-origin:0 50%}
+.edges{height:7px;margin:0 10px 6px;border-radius:0 0 3px 3px;background:repeating-linear-gradient(180deg,#e9d8b0 0 1px,#c9b088 1px 2px)}
+.crumb{font:500 11.5px/1.4 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#7a5a36}
+.title{display:flex;gap:14px;align-items:flex-start;margin-top:6px}
+.title h3{font-size:38px;line-height:1;margin:0;font-weight:700}
+.title .desc{font-style:italic;font-size:17px;color:#5b4630;margin-top:5px}
+.plate{margin-left:auto;width:86px;height:86px;flex:none;border:3px double #8a6a33;display:grid;place-items:center;color:#f3e7cc;font:500 10.5px/1.2 Inter,sans-serif;text-align:center;
+  background:radial-gradient(circle at 40% 40%,#d8b98a,#8a6a46 70%,#5b4630)}
+.body{font-size:19.5px;line-height:1.45;margin-top:12px;text-align:justify;hyphens:auto}
+.body p{margin:0}.body p+p{text-indent:1.6em}
+.body p:first-child::first-letter{float:left;font-size:2.45em;line-height:.9;padding:4px 6px 0 0;color:#7a2b1c;font-weight:700}
+.lk{color:#7a2b1c;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;font-weight:600;cursor:pointer;border-radius:2px;outline:none}
+.lk:hover,.lk:focus-visible{background:rgba(122,43,28,.12)}
+.lk:focus-visible{box-shadow:0 0 0 2px #c9a35a}
+.busy .lk{cursor:progress}
+.bar{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px 2px;font:12.5px Inter,sans-serif;align-items:center}
+.bb{font:600 12.5px Inter,sans-serif;background:linear-gradient(180deg,#d9b46a,#a07a3a);color:#2a1a12;border:0;border-radius:3px;padding:6px 11px;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.55);white-space:nowrap}
+.bb:hover{filter:brightness(1.1)}
+.bb:disabled{opacity:.45;cursor:default;filter:none}
+.bar .where{color:#c9a35a;margin-left:auto}
+.src{font:11px Inter,sans-serif;color:#c9a35a;text-align:center;padding:4px 0 2px}
+.tip{position:fixed;display:none;white-space:nowrap;font:600 12px/1.2 Inter,system-ui,sans-serif;padding:5px 9px;border-radius:7px;
+  background:#2a1a12;color:#ffd27a;border:1px solid #c9a35a;box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:50;pointer-events:none}
+
+/* ---------- controls ---------- */
+.controls{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:10px;border-top:1px solid var(--line)}
+.controls .bb{font-size:13.5px;padding:8px 14px;border-radius:999px}
+.pill{font:500 13.5px Inter,sans-serif;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+.pill:hover{background:rgba(255,255,255,.1)}
+.pill[aria-pressed="true"]{background:#ffd27a;color:#1a1230;border-color:#ffd27a;font-weight:600;box-shadow:0 0 14px rgba(255,210,122,.45)}
+.pill:disabled{opacity:.45;cursor:default}
+.stat{margin-left:auto;color:var(--muted);font-size:13.5px}
+.stat b{color:var(--text);font-weight:600}
+.racenote{grid-column:1/-1;margin:-6px 0 0;font-size:13px;color:var(--muted)}
+
+/* ---------- notes ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:26px 0}
+@media (max-width:1060px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:26px;margin:0 0 8px}
+.card ul,.card ol{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+.card li{margin:0 0 8px}
+.card li b{color:var(--text);font-weight:600}
+footer{padding:0 0 40px;color:var(--muted);font-size:13px}
+
+@media (max-width:600px){
+  h1{font-size:34px}
+  .page{padding:14px 14px 12px;min-height:0}
+  .title h3{font-size:30px}
+  .plate{width:64px;height:64px}
+  .body{font-size:17px;text-align:left}
+  .stat{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  #clouds,.rolling #cart .wheel,#helper.moving .kit{animation:none}
+  #foxUp,#foxLegs,.sitonly,.nook{transition-duration:.05s}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">The Midnight Archive · reading idea 3</div>
+  <h1>A helper fetches your books</h1>
+  <p>Follow a gold word and your helper runs to that book's tower, brings it back to you, and tosses the book you finished onto a growing heap in your book cart. The heap is your Back history and your trail for the visit. <b>Each visitor picks how their books follow them:</b> a spirit dog, Slipkits, a cart that rolls by itself, or books that float around you. The sample pages were written for this mock-up, not copied from Wikipedia.</p>
+</header>
+
+<p class="hints">Try this: click a <b>gold word</b> in the open book and watch the fetch. Then try <b>‹ Back</b> (or the <b>B</b> key), <b>Settle in a nook</b>, <b>Leave</b>, and <b>Fast-forward</b> to see the cart overflow. Switch styles at any time: your books stay.</p>
+
+<section class="demo" aria-label="Interactive demo">
+  <div class="styles" role="group" aria-label="How your books follow you">
+    <span class="lbl">Each visitor picks how their books follow them:</span>
+    <button type="button" class="pill" data-style="dog" aria-pressed="true">Spirit dog + cart</button>
+    <button type="button" class="pill" data-style="kits" aria-pressed="false">Slipkits + cart</button>
+    <button type="button" class="pill" data-style="cart" aria-pressed="false">Self-rolling cart</button>
+    <button type="button" class="pill" data-style="float" aria-pressed="false">Floating books</button>
+    <p class="sub">Same fetch, toss, Back and Leave under every style. Only the art changes.</p>
+  </div>
+
+  <div>
+    <p class="cap">The scene · a Fox reading on a tower walkway</p>
+    <div class="box" id="box">
+      <div class="scene s-dog" id="scene">
+        <svg class="bg" viewBox="0 0 800 560" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0a1e"/><stop offset=".55" stop-color="#141235"/><stop offset="1" stop-color="#2a2160"/></linearGradient>
+            <radialGradient id="moonHalo"><stop offset="0" stop-color="#fff3cf" stop-opacity=".35"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></radialGradient>
+            <radialGradient id="warm"><stop offset="0" stop-color="#ffc266" stop-opacity=".55"/><stop offset="1" stop-color="#ffc266" stop-opacity="0"/></radialGradient>
+            <linearGradient id="deck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2e1c"/><stop offset=".35" stop-color="#2a1a12"/><stop offset="1" stop-color="#140c08"/></linearGradient>
+            <pattern id="spines" width="14" height="9" patternUnits="userSpaceOnUse"><rect width="14" height="9" fill="#ffc266"/><rect x="3" width="2" height="9" fill="#b8742a"/><rect x="8" width="3" height="9" fill="#e89a45"/><rect x="12" width="1" height="9" fill="#8a4a1a"/></pattern>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+          </defs>
+          <rect width="800" height="560" fill="url(#sky)"/>
+          <g id="stars"></g>
+          <circle cx="560" cy="70" r="70" fill="url(#moonHalo)"/>
+          <circle cx="560" cy="70" r="22" fill="#fff3cf"/>
+          <g id="towers"></g>
+          <g id="clouds" filter="url(#soft)">
+            <ellipse cx="80" cy="420" rx="170" ry="34" fill="#3b2c80" opacity=".9"/>
+            <ellipse cx="330" cy="430" rx="210" ry="38" fill="#35297a" opacity=".9"/>
+            <ellipse cx="600" cy="418" rx="200" ry="36" fill="#3b2c80" opacity=".9"/>
+            <ellipse cx="790" cy="430" rx="160" ry="34" fill="#35297a" opacity=".9"/>
+            <ellipse cx="200" cy="395" rx="120" ry="16" fill="#5a47a8" opacity=".55"/>
+            <ellipse cx="660" cy="392" rx="140" ry="16" fill="#5a47a8" opacity=".5"/>
+            <rect x="-40" y="440" width="900" height="130" fill="#2c2268"/>
+          </g>
+          <!-- walkway deck with a thin cosmetic railing at the far edge -->
+          <path d="M60 476 Q440 418 800 438 L800 560 L0 560 Z" fill="url(#deck)"/>
+          <path d="M60 476 Q440 418 800 438" fill="none" stroke="#ffc266" stroke-opacity=".35" stroke-width="2"/>
+          <g fill="none" stroke="#c9a35a" stroke-opacity=".16" stroke-width="1"><path d="M30 506 Q440 452 800 472"/><path d="M0 538 Q440 486 800 506"/></g>
+          <g stroke="#8a6a33" stroke-opacity=".7" stroke-width="1.3" fill="none">
+            <path d="M60 452 Q440 394 800 414"/>
+            <path d="M90 470v-22M180 457v-22M270 446v-22M360 438v-22M450 434v-22M540 432v-22M630 433v-22M720 436v-22"/>
+          </g>
+          <!-- another visitor, far off: their helper is drawn simply and faded -->
+          <g opacity=".7">
+            <ellipse cx="88" cy="452" rx="12" ry="7" fill="#b9a8ff" opacity=".35"/><circle cx="98" cy="444" r="6" fill="#b9a8ff" opacity=".35"/>
+            <path d="M120 412 C120 386 132 374 143 374 C154 374 166 386 166 412 L166 446 Q160 440 155 446 Q149 440 143 446 Q137 440 132 446 Q126 440 120 446 Z" fill="#cfd0ff" opacity=".5"/>
+            <ellipse cx="137" cy="398" rx="2.6" ry="3.6" fill="#1a1636"/><ellipse cx="150" cy="398" rx="2.6" ry="3.6" fill="#1a1636"/>
+            <rect x="174" y="434" width="40" height="12" rx="2" fill="#5b3a22" opacity=".8"/><circle cx="182" cy="448" r="4" fill="none" stroke="#c9a35a" stroke-opacity=".7"/><circle cx="206" cy="448" r="4" fill="none" stroke="#c9a35a" stroke-opacity=".7"/>
+            <rect x="178" y="429" width="28" height="5" rx="1" fill="#2f4a6b"/><rect x="182" y="424" width="26" height="5" rx="1" fill="#7a2b1c" transform="rotate(-8 195 426)"/><rect x="176" y="419" width="27" height="5" rx="1" fill="#3d5a2a" transform="rotate(6 190 421)"/>
+          </g>
+          <text x="148" y="478" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" fill="#a3a0c4">Ghost, far off (helper drawn simply)</text>
+          <!-- nook props: appear when you settle in -->
+          <g class="nook">
+            <path d="M232 412v-60" stroke="#8a6a33" stroke-width="1.2"/>
+            <ellipse cx="232" cy="372" rx="40" ry="40" fill="url(#warm)"/>
+            <rect x="225" y="352" width="14" height="20" rx="3" fill="#ffc266" stroke="#8a6a33" stroke-width="2"/>
+            <path d="M223 352h18l-9-8z" fill="#8a6a33"/>
+          </g>
+          <ellipse cx="368" cy="330" rx="90" ry="70" fill="url(#warm)"/>
+        </svg>
+
+        <svg class="fox" viewBox="0 0 800 560" aria-hidden="true">
+          <defs><linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a3f86"/><stop offset="1" stop-color="#221d48"/></linearGradient></defs>
+          <g transform="translate(-50 0)">
+            <ellipse cx="372" cy="474" rx="62" ry="8" fill="#000" opacity=".35"/>
+            <g class="sitonly">
+              <ellipse cx="366" cy="452" rx="70" ry="19" fill="#5a2a5e" stroke="#c9a35a" stroke-width="1.5"/>
+              <ellipse cx="366" cy="446" rx="58" ry="11" fill="#6e3672"/>
+              <ellipse cx="404" cy="468" rx="12" ry="5.5" fill="url(#fur)"/><ellipse cx="426" cy="465" rx="12" ry="5.5" fill="url(#fur)"/>
+            </g>
+            <g id="foxLegs" fill="url(#fur)" stroke="#ffc266" stroke-opacity=".3" stroke-width="1.4">
+              <rect x="344" y="386" width="21" height="84" rx="10"/><rect x="369" y="386" width="21" height="82" rx="10"/>
+              <ellipse cx="356" cy="470" rx="14" ry="6"/><ellipse cx="384" cy="468" rx="14" ry="6"/>
+            </g>
+            <g id="foxUp">
+              <g fill="url(#fur)" stroke="#ffc266" stroke-opacity=".3" stroke-width="1.4">
+                <path d="M340 392 C302 398 272 428 282 462 C290 482 318 474 322 452 C326 432 336 416 350 404 Z"/>
+                <path d="M332 302 C330 282 350 272 368 272 C392 272 405 284 403 306 L399 380 C397 398 381 405 366 405 C348 405 336 396 336 380 Z"/>
+                <path d="M398 298 Q424 312 434 334" fill="none" stroke="#2c2660" stroke-width="15" stroke-linecap="round"/>
+                <ellipse cx="372" cy="244" rx="30" ry="27"/>
+                <path d="M392 236 C410 240 419 250 415 257 C409 264 396 262 388 258 Z"/>
+                <path d="M349 231 L345 194 L369 220 Z"/><path d="M376 219 L393 186 L399 227 Z"/>
+                <path d="M338 302 Q356 342 404 344" fill="none" stroke="#3a3170" stroke-width="15" stroke-linecap="round"/>
+              </g>
+              <path d="M284 462 C292 480 315 474 319 458 C307 463 294 463 284 462 Z" fill="#d8d2f5" opacity=".55"/>
+              <circle cx="415" cy="256" r="2.6" fill="#140f2a"/><circle cx="391" cy="240" r="2" fill="#fff3cf" opacity=".85"/>
+            </g>
+            <text x="368" y="497" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" fill="#e6e4f5">Fox (you)</text>
+          </g>
+        </svg>
+
+        <div id="cart">
+          <svg viewBox="0 0 180 200" aria-hidden="true">
+            <defs><linearGradient id="brass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0bd72"/><stop offset="1" stop-color="#8a6a33"/></linearGradient>
+              <radialGradient id="lamp"><stop offset="0" stop-color="#ffc266" stop-opacity=".7"/><stop offset="1" stop-color="#ffc266" stop-opacity="0"/></radialGradient></defs>
+            <ellipse cx="90" cy="198" rx="80" ry="7" fill="#000" opacity=".35"/>
+            <path d="M22 118 L2 94" stroke="#8a6a33" stroke-width="4" stroke-linecap="round"/><circle cx="2" cy="94" r="4.5" fill="url(#brass)"/>
+            <g class="wheel" opacity=".75"><circle cx="122" cy="184" r="13" fill="none" stroke="#8a6a33" stroke-width="3"/><path d="M122 171v26M109 184h26M113 175l18 18M131 175l-18 18" stroke="#8a6a33" stroke-width="1.4"/></g>
+            <path d="M16 110 L164 110 L154 160 L26 160 Z" fill="#5b3a22" stroke="#3b2416" stroke-width="1.5"/>
+            <path d="M20 128 L160 128 M23 144 L157 144" stroke="#3b2416" stroke-width="1.5"/>
+            <rect x="12" y="105" width="156" height="7" rx="3.5" fill="url(#brass)"/>
+            <rect x="14" y="92" width="4" height="16" fill="url(#brass)"/><rect x="162" y="92" width="4" height="16" fill="url(#brass)"/>
+            <circle cx="16" cy="91" r="3.5" fill="#e0bd72"/><circle cx="164" cy="91" r="3.5" fill="#e0bd72"/>
+            <circle cx="90" cy="135" r="11" fill="none" stroke="#c9a35a" stroke-width="1.6"/><path d="M93 127 a9 9 0 1 0 0 16 a7 7 0 1 1 0 -16 z" fill="#c9a35a"/>
+            <g class="selfonly"><circle cx="64" cy="134" r="3" fill="#ffd27a"/><circle cx="116" cy="134" r="3" fill="#ffd27a"/>
+              <path d="M164 92v-12" stroke="#8a6a33" stroke-width="1.2"/><circle cx="164" cy="74" r="20" fill="url(#lamp)"/><rect x="159" y="66" width="10" height="14" rx="2" fill="#ffc266" stroke="#8a6a33" stroke-width="1.5"/></g>
+            <path d="M44 160 L50 172 M136 160 L130 172" stroke="#3b2416" stroke-width="4"/>
+            <g class="wheel"><circle cx="50" cy="181" r="17" fill="none" stroke="url(#brass)" stroke-width="3.5"/><path d="M50 164v34M33 181h34M38 169l24 24M62 169l-24 24" stroke="#c9a35a" stroke-width="1.6"/><circle cx="50" cy="181" r="3.5" fill="#e0bd72"/></g>
+            <g class="wheel"><circle cx="130" cy="181" r="17" fill="none" stroke="url(#brass)" stroke-width="3.5"/><path d="M130 164v34M113 181h34M118 169l24 24M142 169l-24 24" stroke="#c9a35a" stroke-width="1.6"/><circle cx="130" cy="181" r="3.5" fill="#e0bd72"/></g>
+          </svg>
+          <div class="ptag">PARKED</div>
+        </div>
+
+        <div id="hand" title="The book in your hands"><div class="ob"><div class="pp l"></div><div class="pp r"></div></div><div class="htag" id="htitle">Octopus</div></div>
+
+        <div id="helper">
+          <div class="hin">
+            <svg class="v-dog" viewBox="0 0 80 64" aria-hidden="true">
+              <defs><radialGradient id="dg" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#eef0ff" stop-opacity=".95"/><stop offset=".55" stop-color="#a99cff" stop-opacity=".8"/><stop offset="1" stop-color="#6a55d8" stop-opacity=".45"/></radialGradient>
+                <filter id="dglow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+              <g class="spark" fill="#ffd27a"><circle cx="-6" cy="24" r="1.4"/><circle cx="-16" cy="16" r="1"/><circle cx="-12" cy="34" r="1.1"/><circle cx="-26" cy="26" r=".9"/><circle cx="2" cy="14" r="1"/><circle cx="-34" cy="20" r=".8"/></g>
+              <g filter="url(#dglow)" fill="url(#dg)">
+                <path d="M21 34 C10 31 4 19 10 9 C13 20 19 25 27 28 Z"/>
+                <path d="M21 42 q-2 10 -1 17 h6 q0 -8 3 -15 z"/><path d="M45 42 q0 9 1 17 h6 q-1 -9 1 -16 z"/>
+                <ellipse cx="35" cy="38" rx="18" ry="11"/>
+                <circle cx="56" cy="26" r="11"/><ellipse cx="66" cy="30" rx="7.5" ry="4.8"/>
+                <path d="M49 18 C42 20 41 34 46 39 C51 35 53 26 53 19 Z" fill="#9b8cf0"/>
+              </g>
+              <circle cx="73" cy="28.5" r="1.9" fill="#2a2040"/><circle cx="59.5" cy="23" r="2" fill="#ffb347"/>
+              <path d="M47 33 q5 5 12 3" stroke="#7a4a2a" stroke-width="2.6" fill="none"/>
+              <circle cx="53" cy="41" r="6" fill="#ffc266" opacity=".35"/><rect x="51" y="38" width="4.5" height="6" rx="1" fill="#ffc266" stroke="#8a6a33" stroke-width=".8"/>
+              <rect x="27" y="27" width="13" height="9" rx="2" fill="#6b4226" stroke="#c9a35a" stroke-width=".8"/>
+            </svg>
+            <svg class="v-kits" viewBox="0 0 80 64" aria-hidden="true">
+              <g class="spark" fill="#ffd27a"><circle cx="-6" cy="40" r="1.2"/><circle cx="-14" cy="30" r=".9"/><circle cx="-20" cy="44" r=".8"/></g>
+              <g class="kit"><path d="M10 52l-2 9M18 52l2 9M6 36l-5-12M22 36l5-12" stroke="#3a2f2a" stroke-width="1.5" stroke-linecap="round"/><path d="M5 34 L23 34 L22 53 L6 53 Z" fill="#f6f1e4"/><path d="M5 34 L14 27 L23 34 Z" fill="#e3d8bf"/><path d="M6 37h16" stroke="#c4483a" stroke-width=".9"/><path d="M6 42h16M6 46h16M6 50h16" stroke="#7aa0d8" stroke-width=".6"/><circle cx="11" cy="40" r="1.4" fill="#2a2118"/><circle cx="17" cy="40" r="1.4" fill="#2a2118"/></g>
+              <g class="kit"><path d="M36 50l-2 10M44 50l2 10M32 34l-4-13M48 34l4-13" stroke="#3a2f2a" stroke-width="1.5" stroke-linecap="round"/><path d="M30 31 L50 31 L49 51 L31 51 Z" fill="#f6f1e4"/><path d="M30 31 L40 23 L50 31 Z" fill="#e3d8bf"/><path d="M31 34h18" stroke="#c4483a" stroke-width=".9"/><path d="M31 39h18M31 43h18M31 47h18" stroke="#7aa0d8" stroke-width=".6"/><circle cx="37" cy="37" r="1.4" fill="#2a2118"/><circle cx="43" cy="37" r="1.4" fill="#2a2118"/></g>
+              <g class="kit"><path d="M62 52l-2 9M70 52l2 9M58 36l-5-12M74 36l5-12" stroke="#3a2f2a" stroke-width="1.5" stroke-linecap="round"/><path d="M57 34 L75 34 L74 53 L58 53 Z" fill="#f6f1e4"/><path d="M57 34 L66 27 L75 34 Z" fill="#e3d8bf"/><path d="M58 37h16" stroke="#c4483a" stroke-width=".9"/><path d="M58 42h16M58 46h16M58 50h16" stroke="#7aa0d8" stroke-width=".6"/><circle cx="63" cy="40" r="1.4" fill="#2a2118"/><circle cx="69" cy="40" r="1.4" fill="#2a2118"/></g>
+            </svg>
+          </div>
+          <div class="carry"></div>
+        </div>
+
+        <div class="chip" id="visit">1 book this visit</div>
+        <div class="chip" id="fchip"></div>
+        <div class="chip" id="ttag"></div>
+        <div class="chip" id="raceTag"><b>Race only:</b> the heap's order is your route, so the books are numbered from the start.</div>
+      </div>
+    </div>
+    <p class="say" id="say" aria-live="polite">You are holding <b>Octopus</b>. Your helper is waiting by the cart.</p>
+  </div>
+
+  <div>
+    <p class="cap">Close-up · the open book in your hands</p>
+    <div class="frame">
+      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+      <div class="page" id="pg">
+        <div class="crumb" id="crumb"></div>
+        <div class="title"><div><h3 id="ptitle"></h3><div class="desc" id="pdesc"></div></div><div class="plate" id="plate">lead picture</div></div>
+        <div class="body" id="pbody"></div>
+      </div>
+      <div class="edges"></div>
+      <div class="bar"><button type="button" class="bb" data-act="back">‹ Back</button><span class="where" id="where"></span></div>
+      <div class="src">Sample page written for this mock-up</div>
+    </div>
+  </div>
+
+  <div class="controls" role="group" aria-label="Demo controls">
+    <button type="button" class="bb" data-act="back">‹ Back</button>
+    <button type="button" class="pill" id="nookBtn" aria-pressed="false">Settle in a nook</button>
+    <button type="button" class="bb" data-act="leave">Leave</button>
+    <button type="button" class="pill" data-act="fast">Fast-forward (overflow the cart)</button>
+    <button type="button" class="pill" id="raceBtn" aria-pressed="false">Race mode</button>
+    <button type="button" class="pill" data-act="reset">Reset</button>
+    <span class="stat" id="stat"></span>
+  </div>
+  <p class="racenote">Race mode: only during races does the heap's order become your route (the books get numbers 1, 2, 3). Outside races it is just a heap.</p>
+</section>
+
+<section class="cards">
+  <div class="card">
+    <h2>In VRChat</h2>
+    <ul>
+      <li><b>VR:</b> point at a gold word and pull the trigger. The helper hands you the new book and takes the old one. For Back, use a Back gesture or reach into the cart (or the cloud) for the previous book.</li>
+      <li><b>Desktop:</b> click a gold word. A Back key (B here) or the ‹ Back button on the book.</li>
+      <li><b>One helper per player,</b> on a PlayerObject like the held-book sync.</li>
+      <li><b>Others see your helper and your pile:</b> a social signal of how deep you went.</li>
+      <li><b>Quest and perf:</b> other players' helpers are drawn simply and fade out past about 15 m. The pile is one batched mesh with spine colours from data.</li>
+      <li><b>Cheap motion:</b> throws are scripted arcs, not physics. The helper floats or flies, so it needs no path-finding.</li>
+      <li><b>Your style is remembered</b> per player (VRChat Persistence). You pick it at the main hall and can change it any time from your book.</li>
+      <li><b>Same mechanics under every style:</b> the pile is just your list of books, so each new style is art only.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Builds on</h2>
+    <ul>
+      <li><b>The spec's Slipkit fetch:</b> the old "Slipkit fetch animation covers the load", now as your own helper.</li>
+      <li><b>Books from GitHub Pages:</b> the 4 to 5 s fetch run hides the ~5 s download.</li>
+      <li><b>Clickable gold words:</b> the testbed's overlay hit areas over the words carry over to the book's pages.</li>
+      <li><b>A− / A+ with re-paging:</b> works the same on a held book.</li>
+      <li><b>Back history:</b> the heap is that list, made visible.</li>
+      <li><b>Grabbable books off a lit bay:</b> the same grab works on books in the cart. Bays still light when you stand next to them, never by facing them.</li>
+      <li><b>Others see the book you hold:</b> the title on the cover, and now on the spines in your heap.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Open questions</h2>
+    <ol>
+      <li><b>Which helper</b> should new visitors start with: the spirit dog, the Slipkits, the cart, or floating books?</li>
+      <li><b>Which styles at launch, and should others see your style?</b> All four, or one or two first?</li>
+      <li><b>Should others see your pile?</b> Seen by everyone as a social signal, or private to you?</li>
+      <li><b>Does the pile stay where you leave it</b> until you exit the instance, or does the helper always tidy it away when you walk off?</li>
+    </ol>
+  </div>
+</section>
+
+<footer>Mock-up for choosing a direction. Made for The Midnight Archive by Doghouse Devs.</footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+"use strict";
+var RM=!!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+/* ---------- sample books (written for this mock-up) ---------- */
+var TOWERS={
+  bio:{name:"Biology tower",x:92,top:140,w:66,home:{x:92,y:236}},
+  geo:{name:"Geography tower",x:470,top:205,w:40,home:{x:470,y:262}},
+  phys:{name:"Physical sciences tower",x:716,top:125,w:60,home:{x:716,y:214}}
+};
+var DECO=[{name:"History",x:640,top:262,w:24}];
+var BOOKS={
+  "Octopus":{t:"bio",lvl:12,code:"B-L12-S07",c:"#7a2b1c",crumb:"Animals › Molluscs",desc:"soft-bodied, eight-armed sea animal",
+    text:"The octopus is a soft-bodied [mollusc|Mollusca] with eight arms, found in every [ocean]. It belongs to the [cephalopods|Cephalopod], together with [squid] and [cuttlefish]. Octopuses are known for their [intelligence|Cephalopod intelligence]: they solve puzzles, use tools and can change colour and texture in an instant to hide from [predators|Predation]. Most kinds live only a year or two.\nEach arm is lined with suckers that can taste what they touch. An octopus has three hearts and blue [blood|Hemocyanin], and when threatened it squirts a cloud of [ink|Cephalopod ink] and slips through any gap wider than its [beak]."},
+  "Squid":{t:"bio",lvl:12,code:"B-L12-S09",c:"#2f4a6b",crumb:"Animals › Molluscs",desc:"fast-swimming cephalopod with ten limbs",
+    text:"Squid are [cephalopods|Cephalopod] with a long, streamlined body, eight arms and two longer feeding tentacles. They swim by jet propulsion, squeezing water out through a funnel, and many kinds glow in the dark depths of the [ocean]. Like the [octopus], a squid has blue [blood|Hemocyanin] and can squirt ink to escape [predators|Predation]."},
+  "Cuttlefish":{t:"bio",lvl:12,code:"B-L12-S08",c:"#3d5a2a",crumb:"Animals › Molluscs",desc:"cephalopod with an internal shell",
+    text:"Cuttlefish are [cephalopods|Cephalopod] with a broad body and an internal shell, the cuttlebone, which helps them float. They are masters of disguise, rippling colour and pattern across their skin to stalk prey and to hide from [predators|Predation]. Their nearest relatives are [squid] and the [octopus]."},
+  "Ocean":{t:"geo",lvl:3,code:"G-L03-S14",c:"#1f5c66",crumb:"Physical geography › Water",desc:"the salt water that covers most of Earth",
+    text:"The ocean covers about seventy per cent of Earth's surface and holds nearly all of its water. Sunlight reaches only the top few hundred metres; below lies the cold, dark deep sea, home to [squid], [octopuses|Octopus] and countless [molluscs|Mollusca]. Sea water carries dissolved salts and metals, including traces of [copper].\nOcean currents carry heat around the planet and shape the weather on land."},
+  "Predation":{t:"bio",lvl:7,code:"B-L07-S21",c:"#6b2f4a",crumb:"Ecology › Food webs",desc:"one animal hunting and eating another",
+    text:"Predation is when one animal, the predator, hunts and eats another, its prey. Prey have many defences: speed, shells, poison or camouflage, like the colour-changing [octopus] and [cuttlefish]. Some, such as [squid], squirt ink to confuse an attacker. Over many generations, predators and prey shape each other, each getting better at catching or escaping."},
+  "Hemocyanin":{t:"phys",lvl:5,code:"P-L05-S03",c:"#2c3f86",crumb:"Chemistry › Proteins",desc:"the copper protein that carries oxygen in blue blood",
+    text:"Hemocyanin is a protein that carries oxygen in the blood of many [molluscs|Mollusca] and of arthropods such as crabs and spiders. Where our haemoglobin uses iron, hemocyanin uses [copper]. It is colourless when empty and turns blue when it picks up oxygen, which is why an [octopus] or a [squid] has blue blood."},
+  "Copper":{t:"phys",lvl:2,code:"P-L02-S29",c:"#9a5a2a",crumb:"Chemistry › Elements",desc:"soft reddish metal, element 29",
+    text:"Copper is a soft, reddish metal and chemical element number 29. It carries heat and electricity very well, so most electrical wire is made of it. Left out in the weather it slowly turns green. Living things need tiny amounts: in [hemocyanin] the copper is what holds on to oxygen, and traces of it are dissolved in the [ocean]."},
+  "Cephalopod":{t:"bio",lvl:12,code:"B-L12-S05",c:"#6b4a8a",crumb:"Animals › Molluscs",desc:"molluscs whose arms grow from the head",
+    text:"Cephalopods are a group of [molluscs|Mollusca] whose arms grow straight from the head; the name means “head-foot”. The group includes the [octopus], [squid], [cuttlefish] and the shelled nautilus. Most have large brains and sharp eyes, and almost all of them live in the [ocean]."},
+  "Mollusca":{t:"bio",lvl:11,code:"B-L11-S02",c:"#5a4a2a",crumb:"Animals",desc:"soft-bodied animals, many with shells",
+    text:"Molluscs are soft-bodied animals, and many of them grow a hard shell. They include snails, slugs, clams, oysters and the [cephalopods|Cephalopod]. Most live in the [ocean], but snails and slugs also live in fresh water and on land. Many feed with a rasping tongue called a radula."}
+};
+var START="Octopus";
+
+/* ---------- layout numbers (scene is 800 x 560) ---------- */
+var CART_Y=474,CART_WALK=612,CART_PARK=522,CAP=15,SIT=34;
+var HREST={x:470,y:470};
+var OMEGA=RM?0:0.16;
+
+/* ---------- elements ---------- */
+function $(id){return document.getElementById(id);}
+var box=$("box"),scene=$("scene"),cart=$("cart"),helper=$("helper"),carryEl=helper.querySelector(".carry"),hand=$("hand"),
+    htitle=$("htitle"),visitEl=$("visit"),fchip=$("fchip"),ttag=$("ttag"),sayEl=$("say"),statEl=$("stat"),
+    crumbEl=$("crumb"),ptitle=$("ptitle"),pdesc=$("pdesc"),plate=$("plate"),pbody=$("pbody"),whereEl=$("where"),pg=$("pg"),
+    tip=$("tip"),raceBtn=$("raceBtn"),nookBtn=$("nookBtn");
+cart.style.transformOrigin="50% 100%";
+
+/* ---------- state ---------- */
+var state,seq=0,speed=1,live=new Set();
+function fresh(style){
+  return {style:style||"dog",cur:START,hist:[],heap:[],count:1,busy:false,gen:(state?state.gen+1:0),race:false,settled:false,
+    cartX:CART_WALK,hp:{x:HREST.x,y:HREST.y,s:1},spilledOnce:false};
+}
+state=fresh("dog");
+
+/* ---------- small helpers ---------- */
+function D(ms){return RM?Math.min(ms*0.15,80):ms*speed;}
+function wait(ms){return new Promise(function(r){setTimeout(r,D(ms));});}
+function lerp(a,b,t){return a+(b-a)*t;}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function sv(p){return p.s==null?1:p.s;}
+function hands(){return {x:368,y:338+(state.settled?SIT:0)};}
+function posB(p){return "translate("+(p.x-70).toFixed(1)+"px,"+(p.y-8.5).toFixed(1)+"px) rotate("+(p.r||0).toFixed(1)+"deg) scale("+sv(p).toFixed(3)+")";}
+function posH(p){return "translate("+(p.x-40).toFixed(1)+"px,"+(p.y-64).toFixed(1)+"px) rotate("+(p.r||0).toFixed(1)+"deg) scale("+sv(p).toFixed(3)+")";}
+function posC(p){return "translate("+(p.x-90).toFixed(1)+"px,"+(p.y-200).toFixed(1)+"px) rotate("+(p.r||0).toFixed(1)+"deg) scale("+sv(p).toFixed(3)+")";}
+function handTf(s){var h=hands();return "translate("+(h.x-40)+"px,"+(h.y-25)+"px) scale("+s+")";}
+function arc(a,b,lift,tf,o){
+  o=o||{};var n=o.n||18,f=[],cx=(a.x+b.x)/2,cy=Math.min(a.y,b.y)-lift;
+  for(var k=0;k<=n;k++){
+    var t=k/n,e=o.lin?t:ease(t),u=1-e;
+    var p={x:u*u*a.x+2*u*e*cx+e*e*b.x,y:u*u*a.y+2*u*e*cy+e*e*b.y,r:lerp(a.r||0,(b.r||0)+(o.spin||0),e),s:lerp(sv(a),sv(b),e)};
+    var op=o.mode==="in"?Math.min(1,t*4):o.mode==="out"?(t<.6?1:Math.max(0,1-(t-.6)/.4)):1;
+    f.push({transform:tf(p),opacity:op,offset:t});
+  }
+  return f;
+}
+function anim(el,frames,ms,easing){
+  var a=el.animate(frames,{duration:Math.max(1,D(ms)),easing:easing||"linear",fill:"forwards"});
+  live.add(a);
+  return a.finished.then(function(){live.delete(a);return a;},function(){live.delete(a);return a;});
+}
+function settle(el,tf,op){el.style.transform=tf;if(op!=null)el.style.opacity=op;el.getAnimations().forEach(function(a){a.cancel();});}
+function makeBook(key){
+  var e=document.createElement("div");e.className="bk";e.style.setProperty("--c",BOOKS[key].c);
+  e.innerHTML="<span>"+key+"</span><i class=\"no\"></i>";return e;
+}
+function flyer(key,p){var e=makeBook(key);e.classList.add("fly");e.style.transform=posB(p);scene.appendChild(e);return e;}
+function flash(p){
+  var f=document.createElement("div");f.className="flash";f.style.left=p.x+"px";f.style.top=p.y+"px";scene.appendChild(f);
+  anim(f,[{transform:"scale(.3)",opacity:1},{transform:"scale(1.7)",opacity:0}],650,"ease-out").then(function(){f.remove();});
+}
+function say(h){sayEl.innerHTML=h;}
+function towerOf(key){return TOWERS[BOOKS[key].t];}
+function where(key){return towerOf(key).name+" · level "+BOOKS[key].lvl;}
+
+/* ---------- build the night scene ---------- */
+(function(){
+  var s="",x,y;
+  for(var i=0;i<80;i++){x=(i*97.3+13)%800;y=(i*53.7+7)%330;s+="<circle cx=\""+x.toFixed(1)+"\" cy=\""+y.toFixed(1)+"\" r=\""+(0.5+((i*7)%10)/10).toFixed(2)+"\" fill=\"#fff3cf\" opacity=\""+(0.25+((i*13)%10)/16).toFixed(2)+"\"/>";}
+  $("stars").innerHTML=s;
+  function tower(t,label,dim){
+    var w=t.w,x0=t.x-w/2,h=430-t.top,rh=w*0.55,o="<g opacity=\""+(dim?0.55:1)+"\">";
+    o+="<rect x=\""+x0+"\" y=\""+t.top+"\" width=\""+w+"\" height=\""+h+"\" fill=\"#1d1840\" rx=\"3\"/>";
+    o+="<g filter=\"url(#glow)\">";
+    for(var yy=t.top+12;yy<420;yy+=22){o+="<rect x=\""+(x0+3)+"\" y=\""+yy+"\" width=\""+(w-6)+"\" height=\"9\" fill=\"url(#spines)\" opacity=\".85\"/>";}
+    o+="</g>";
+    for(yy=t.top+22;yy<420;yy+=22){o+="<rect x=\""+(x0-4)+"\" y=\""+yy+"\" width=\""+(w+8)+"\" height=\"1.6\" fill=\"#c9a35a\" opacity=\".5\"/>";}
+    o+="<rect x=\""+x0+"\" y=\""+t.top+"\" width=\""+w+"\" height=\""+h+"\" fill=\"url(#tshade)\"/>";
+    o+="<polygon points=\""+(x0-5)+","+t.top+" "+(x0+w+5)+","+t.top+" "+t.x+","+(t.top-rh)+"\" fill=\"#2a2160\" stroke=\"#8a6a33\"/>";
+    o+="<circle cx=\""+t.x+"\" cy=\""+(t.top-rh-3)+"\" r=\"2.5\" fill=\"#ffc266\"/>";
+    o+="<text x=\""+t.x+"\" y=\""+(t.top-rh-12)+"\" text-anchor=\"middle\" font-family=\"Inter,sans-serif\" font-size=\"10\" letter-spacing=\"1.4\" fill=\"#c9a35a\">"+label.toUpperCase()+"</text></g>";
+    return o;
+  }
+  var defs="<defs><linearGradient id=\"tshade\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\".45\"/><stop offset=\".45\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#000\" stop-opacity=\".55\"/></linearGradient></defs>";
+  var out=defs;
+  DECO.forEach(function(d){out+=tower(d,d.name,true);});
+  Object.keys(TOWERS).forEach(function(k){out+=tower(TOWERS[k],TOWERS[k].name.replace(" tower",""),false);});
+  $("towers").innerHTML=out;
+})();
+
+/* ---------- the page in the close-up ---------- */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function linkify(txt){
+  return txt.split("\n").map(function(p){
+    return "<p>"+esc(p).replace(/\[([^\]|]+)(?:\|([^\]]+))?\]/g,function(m,w,to){
+      var t=to||(w.charAt(0).toUpperCase()+w.slice(1));
+      var tipA=t.toLowerCase()!==w.toLowerCase()?" data-tip=\""+t+"\"":"";
+      return "<a class=\"lk\" role=\"button\" tabindex=\"0\" data-to=\""+t+"\""+tipA+">"+w+"</a>";
+    })+"</p>";
+  }).join("");
+}
+function linksOf(key){
+  var out=[],re=/\[([^\]|]+)(?:\|([^\]]+))?\]/g,m;
+  while((m=re.exec(BOOKS[key].text))){var t=m[2]||(m[1].charAt(0).toUpperCase()+m[1].slice(1));if(BOOKS[t]&&t!==key&&out.indexOf(t)<0)out.push(t);}
+  return out;
+}
+function renderPage(key){
+  var b=BOOKS[key];
+  crumbEl.textContent=towerOf(key).name+" › "+b.crumb+" · "+b.code;
+  ptitle.textContent=key;pdesc.textContent=b.desc;pbody.innerHTML=linkify(b.text);
+  plate.style.background="radial-gradient(circle at 40% 40%,#d8b98a,"+b.c+" 75%,#2a1a12)";
+  whereEl.textContent=where(key);
+}
+var pageOutAnim=null;
+function pageOut(){pageOutAnim=pg.animate([{opacity:1,transform:"none"},{opacity:.2,transform:"translateX(-12px) rotateY(6deg)"}],{duration:D(260),fill:"forwards"});}
+function pageIn(key){
+  renderPage(key);
+  if(pageOutAnim){pageOutAnim.cancel();pageOutAnim=null;}
+  pg.animate([{opacity:.2,transform:"translateX(16px) rotateY(-6deg)"},{opacity:1,transform:"none"}],{duration:D(340),easing:"ease-out"});
+}
+
+/* ---------- hand, helper, cart ---------- */
+function setHand(key){htitle.textContent=key;hand.style.setProperty("--c",BOOKS[key].c);}
+function showHand(on){settle(hand,handTf(1),on?1:0);}
+async function openHand(key){
+  var g=state.gen;setHand(key);
+  await anim(hand,[{transform:handTf(.4),opacity:.2},{transform:handTf(1.08),opacity:1,offset:.7},{transform:handTf(1),opacity:1}],260,"ease-out");
+  if(g===state.gen)showHand(true);
+}
+async function closeHand(){var g=state.gen;await anim(hand,[{transform:handTf(1),opacity:1},{transform:handTf(.5),opacity:0}],160);if(g===state.gen)showHand(false);}
+function setHelper(p){state.hp={x:p.x,y:p.y,s:sv(p)};settle(helper,posH(p));}
+function face(x){helper.classList.toggle("left",x<state.hp.x-2);}
+function carryOff(){
+  if(state.style==="kits")return {x:0,y:-50};
+  return helper.classList.contains("left")?{x:-30,y:-34}:{x:30,y:-34};
+}
+function carryWorld(){var o=carryOff(),s=state.hp.s;return {x:state.hp.x+o.x*s,y:state.hp.y+o.y*s};}
+function setCarry(key){
+  carryEl.innerHTML="";helper.classList.toggle("has",!!key);state.carryKey=key||null;
+  if(!key)return;
+  var b=makeBook(key),o=carryOff();b.querySelector(".no").remove();b.style.transform=posB({x:40+o.x,y:64+o.y,r:state.style==="kits"?0:-6,s:.5});carryEl.appendChild(b);
+}
+async function moveHelper(p,ms,lift,o){
+  var g=state.gen;face(p.x);helper.classList.add("moving");
+  var a={x:state.hp.x,y:state.hp.y,s:state.hp.s};
+  if(state.carryKey){setCarry(state.carryKey);}
+  await anim(helper,arc(a,p,lift,posH,o),ms);
+  if(g!==state.gen)return;
+  helper.classList.remove("moving");setHelper(p);
+}
+function setCart(x){state.cartX=x;settle(cart,posC({x:x,y:CART_Y}));}
+
+/* ---------- the heap: one list, drawn in the cart, on the floor or as a cloud ---------- */
+function newItem(key){
+  var n=seq++;
+  return {key:key,jx:rnd(-1,1),jr:rnd(-1,1),a0:n*2.39996,f:.72+.28*((n*.618)%1),dy:((n*37)%5-2)*7,tilt:rnd(-12,12),spot:null,el:null,free:false};
+}
+function cartItems(){return state.heap.filter(function(it){return it.spot==="cart";});}
+function cartLocal(k,it){return {x:90+it.jx*(6+k*2.1),y:100-k*6.4,r:it.jr*Math.min(28,4+k*1.7),s:.56};}
+function cartWorld(lp,cx){return {x:(cx==null?state.cartX:cx)-90+lp.x,y:CART_Y-200+lp.y,r:lp.r,s:lp.s};}
+function floorSpot(it){
+  it.fx=Math.max(30,Math.min(780,state.cartX-60+rnd(0,190)));it.fy=rnd(496,540);
+  it.fr=Math.random()<.25?rnd(78,98)*(Math.random()<.5?-1:1):rnd(-50,50);
+}
+function chooseSpot(it){
+  if(state.style==="float"){it.spot="cloud";return;}
+  if(cartItems().length<CAP){it.spot="cart";}else{it.spot="floor";floorSpot(it);}
+}
+/* the cloud of floating books */
+var oc={y:268,R:88,RY:20},T=0;
+function cloudN(){return state.heap.filter(function(it){return it.spot==="cloud";}).length;}
+function cloudTarget(n){return {y:268+(state.settled?SIT:0),R:88+7*n,RY:20+.9*n};}
+function orbitPos(it,t,c){
+  var a=it.a0+t*OMEGA,d=Math.sin(a);
+  return {x:318+Math.cos(a)*c.R*it.f,y:c.y+d*c.RY*it.f+it.dy,r:it.tilt+Math.sin(t*.7+it.a0)*4,s:.44+.1*d,d:d};
+}
+function tick(now){
+  T=now/1000;
+  if(state.style==="float"){
+    var tg=cloudTarget(cloudN());oc.y+=(tg.y-oc.y)*.06;oc.R+=(tg.R-oc.R)*.06;oc.RY+=(tg.RY-oc.RY)*.06;
+    state.heap.forEach(function(it){
+      if(it.spot!=="cloud"||it.free||!it.el)return;
+      var p=orbitPos(it,T,oc);it.el.style.transform=posB(p);it.el.style.zIndex=p.d>0?7:1;it.el.style.opacity=(.7+.3*p.d).toFixed(2);
+    });
+  }
+  requestAnimationFrame(tick);
+}
+function targetOf(it,ms){
+  if(it.spot==="cart"){var k=cartItems().indexOf(it);return cartWorld(cartLocal(k,it));}
+  if(it.spot==="floor")return {x:it.fx,y:it.fy,r:it.fr,s:.62};
+  var n=cloudN();return orbitPos(it,T+D(ms||0)/1000,cloudTarget(n));
+}
+function placeItem(it){
+  if(!it.el){it.el=makeBook(it.key);}
+  it.el.classList.remove("fly","floor");it.el.style.opacity="";it.el.style.zIndex="";
+  it.el.getAnimations().forEach(function(a){a.cancel();});
+  if(it.spot==="cart"){
+    var k=cartItems().indexOf(it);cart.appendChild(it.el);it.el.style.transform=posB(cartLocal(k,it));it.el.style.zIndex=2+k;
+  }else if(it.spot==="floor"){
+    it.el.classList.add("floor");scene.appendChild(it.el);it.el.style.transform=posB({x:it.fx,y:it.fy,r:it.fr,s:.62});
+  }else{
+    scene.appendChild(it.el);it.el.style.transform=posB(orbitPos(it,T,oc));
+  }
+}
+function relayoutCart(){
+  var items=cartItems(),ps=[];
+  items.forEach(function(it,k){
+    var to=cartLocal(k,it),from=it.el.style.transform,tt=posB(to);
+    it.el.style.zIndex=2+k;
+    if(from!==tt){ps.push(anim(it.el,[{transform:from},{transform:tt}],260,"ease-out").then(function(){settle(it.el,tt);}));}
+  });
+  return Promise.all(ps);
+}
+function updateNumbers(){state.heap.forEach(function(it,i){if(it.el){var n=it.el.querySelector(".no");if(n)n.textContent=i+1;}});}
+function status(){
+  var n=state.count;visitEl.textContent=n+(n===1?" book":" books")+" this visit";
+  statEl.innerHTML="Holding <b>"+state.cur+"</b> · <b>"+state.heap.length+"</b> in the heap · Back reaches <b>"+state.hist.length+"</b>";
+  updateNumbers();
+}
+/* ---------- small motions ---------- */
+function wiggle(el,amt){
+  if(!el)return;var b=el.style.transform;
+  var a=el.animate([{transform:b},{transform:b+" rotate("+amt+"deg) translateY(-1.5px)"},{transform:b+" rotate("+(-amt/2)+"deg)"},{transform:b}],{duration:D(280)});
+  live.add(a);a.finished.then(function(){live.delete(a);},function(){live.delete(a);});
+}
+function hop(){
+  var p=state.hp,a=helper.animate([{transform:posH(p)},{transform:posH({x:p.x,y:p.y-14,r:-6,s:p.s}),offset:.4},{transform:posH(p)}],{duration:D(320),easing:"ease-out"});
+  live.add(a);a.finished.then(function(){live.delete(a);},function(){live.delete(a);});
+}
+function jostle(){cartItems().slice(-5,-1).forEach(function(it,i){wiggle(it.el,i%2?4:-4);});}
+async function rummage(){
+  var p=state.hp,fr=[];
+  for(var k=0;k<=8;k++){fr.push({transform:posH({x:p.x+(k%2?5:-5),y:p.y-(k%2?4:0),r:k%2?12:-12,s:p.s}),offset:k/8});}
+  fr[8].transform=posH(p);
+  cartItems().slice(-6).forEach(function(it,i){setTimeout(function(){wiggle(it.el,i%2?7:-7);},D(i*110));});
+  var g=state.gen;await anim(helper,fr,820);if(g===state.gen)settle(helper,posH(p));
+}
+async function rattle(){
+  var x=state.cartX,fr=[];
+  for(var k=0;k<=8;k++){fr.push({transform:posC({x:x+(k%2?3:-3),y:CART_Y-(k%2?2:0),r:k%2?1.5:-1.5}),offset:k/8});}
+  fr[8].transform=posC({x:x,y:CART_Y});
+  cartItems().slice(-6).forEach(function(it,i){setTimeout(function(){wiggle(it.el,i%2?7:-7);},D(i*90));});
+  var g=state.gen;await anim(cart,fr,640);if(g===state.gen)settle(cart,posC({x:x,y:CART_Y}));
+}
+var seen={},clock=0;
+function markSeen(k){seen[k]=++clock;}
+function pickNext(){var ls=linksOf(state.cur);if(!ls.length)return null;ls.sort(function(a,b){return (seen[a]||0)-(seen[b]||0);});return ls[0];}
+
+/* ---------- busy state ---------- */
+var ctrlBtns=[].slice.call(document.querySelectorAll("[data-act],[data-style],#nookBtn"));
+function begin(){state.busy=true;document.body.classList.add("busy");ctrlBtns.forEach(function(b){if(b.dataset.act!=="reset")b.disabled=true;});}
+function end(g){if(g!==state.gen)return;state.busy=false;speed=1;document.body.classList.remove("busy");ctrlBtns.forEach(function(b){b.disabled=false;});status();}
+
+/* ---------- fetch timer and tower label ---------- */
+var timer=null;
+function startTimer(key){
+  var t0=performance.now();fchip.classList.add("on");
+  function upd(){fchip.innerHTML="Fetching <b>"+key+"</b> · "+((performance.now()-t0)/1000).toFixed(1)+" s";}
+  upd();clearInterval(timer);timer=setInterval(upd,100);
+  return function(){
+    clearInterval(timer);timer=null;var s=((performance.now()-t0)/1000).toFixed(1);
+    fchip.innerHTML="<b>"+key+"</b> arrived in "+s+" s";
+    setTimeout(function(){if(!timer)fchip.classList.remove("on");},2400);return s;
+  };
+}
+function showTowerTag(key){
+  var h=towerOf(key).home;ttag.style.left=Math.max(100,Math.min(690,h.x))+"px";ttag.style.top=(h.y-24)+"px";
+  ttag.innerHTML="<b>"+where(key)+"</b>";ttag.classList.add("on");
+}
+function hideTowerTag(){ttag.classList.remove("on");}
+function cartCarry(key){
+  var k=cartItems().length,lp={x:98,y:100-k*6.4-12,r:-5,s:.56},b=makeBook(key);
+  b.querySelector(".no").remove();b.style.transform=posB(lp);b.style.zIndex=60;cart.appendChild(b);
+  state.cartCarryEl=b;state.cartCarryLp=lp;
+}
+function who(){return {dog:"spirit dog",kits:"Slipkits",cart:"cart",float:"book"}[state.style];}
+
+/* ---------- 1. the helper (or the cart, or the book itself) brings the new book ---------- */
+async function bring(to,g){
+  var home=towerOf(to).home,st=state.style,h=hands();
+  showTowerTag(to);
+  if(st==="dog"||st==="kits"){
+    await moveHelper({x:home.x,y:home.y+16,s:.3},1400,90);if(g!==state.gen)return false;
+    flash(home);setCarry(to);await wait(650);if(g!==state.gen)return false;
+    hideTowerTag();
+    await moveHelper({x:h.x+58,y:h.y+40,s:1},1600,80);if(g!==state.gen)return false;
+    helper.classList.add("left");setCarry(to);
+    return true;
+  }
+  if(st==="cart"){
+    var from={x:state.cartX,y:CART_Y,s:1},at={x:home.x,y:home.y+30,s:.28};
+    scene.classList.add("rolling");
+    await anim(cart,arc(from,at,90,posC),1400);if(g!==state.gen)return false;
+    flash(home);cartCarry(to);await wait(650);if(g!==state.gen)return false;
+    hideTowerTag();
+    await anim(cart,arc(at,from,70,posC),1600);if(g!==state.gen)return false;
+    settle(cart,posC(from));scene.classList.remove("rolling");
+    return true;
+  }
+  flash(home);
+  var f=flyer(to,{x:home.x,y:home.y,s:.2});
+  await anim(f,[{opacity:0,transform:posB({x:home.x,y:home.y,s:.2})},{opacity:1,transform:posB({x:home.x,y:home.y-14,s:.26})}],700);
+  if(g!==state.gen)return false;
+  hideTowerTag();
+  await anim(f,arc({x:home.x,y:home.y-14,s:.26},{x:h.x,y:h.y,r:-20,s:.5},110,posB),2900);
+  if(g!==state.gen)return false;
+  state.floatBook=f;
+  return true;
+}
+
+/* ---------- 2. the new book reaches your hands; returns where the old one is thrown from ---------- */
+async function deliver(oldKey,newKey,g){
+  var st=state.style,h=hands(),hp={x:h.x,y:h.y,r:-12,s:.5};
+  if(st==="dog"||st==="kits"){
+    var cw=carryWorld(),c={x:cw.x,y:cw.y,r:-6,s:.5};setCarry(null);
+    var nf=flyer(newKey,c);
+    await closeHand();
+    var of=flyer(oldKey,hp);
+    await Promise.all([anim(nf,arc(c,hp,16,posB),360),anim(of,arc(hp,c,26,posB),360)]);
+    nf.remove();of.remove();if(g!==state.gen)return null;
+    setCarry(oldKey);state.cur=newKey;markSeen(newKey);await openHand(newKey);if(g!==state.gen)return null;
+    helper.classList.remove("left");setCarry(oldKey);await wait(150);if(g!==state.gen)return null;
+    var from=carryWorld();setCarry(null);hop();
+    return {x:from.x,y:from.y,r:-6,s:.5};
+  }
+  var src,nb;
+  if(st==="cart"){
+    src=state.cartCarryEl?cartWorld(state.cartCarryLp):{x:state.cartX,y:CART_Y-110,s:.56};
+    if(state.cartCarryEl){state.cartCarryEl.remove();state.cartCarryEl=null;}
+    nb=flyer(newKey,src);
+    await closeHand();
+    await anim(nb,arc(src,hp,40,posB),420);
+  }else{
+    nb=state.floatBook;state.floatBook=null;
+    await closeHand();
+  }
+  if(nb)nb.remove();if(g!==state.gen)return null;
+  state.cur=newKey;markSeen(newKey);await openHand(newKey);
+  return hp;
+}
+
+/* ---------- 3. the old book is tossed onto the heap (or drifts up into the cloud) ---------- */
+async function toss(key,from,g,quick){
+  var it=newItem(key);chooseSpot(it);state.heap.push(it);
+  var ms=quick?480:700,tgt=targetOf(it,it.spot==="cloud"?ms+300:ms),f=flyer(key,from);
+  if(it.spot==="cloud"){
+    it.free=true;it.el=f;
+    await anim(f,arc(from,tgt,40,posB),ms+300);
+    if(g!==state.gen)return it;
+    it.free=false;f.classList.remove("fly");f.style.transform=posB(orbitPos(it,T,oc));
+    f.getAnimations().forEach(function(a){a.cancel();});updateNumbers();
+    return it;
+  }
+  await anim(f,arc(from,tgt,it.spot==="floor"?80:60,posB,{spin:(Math.random()<.5?-1:1)*360}),ms);
+  f.remove();if(g!==state.gen)return it;
+  placeItem(it);updateNumbers();
+  if(it.spot==="cart"){
+    var lp=cartLocal(cartItems().indexOf(it),it);
+    anim(it.el,[{transform:posB({x:lp.x,y:lp.y-6,r:lp.r*.4,s:.56})},{transform:posB(lp)}],170,"ease-in").then(function(){settle(it.el,posB(lp));});
+    jostle();
+  }else{
+    var p={x:it.fx,y:it.fy,r:it.fr,s:.62};
+    await anim(it.el,[{transform:posB(p)},{transform:posB({x:p.x+7,y:p.y-18,r:p.r+25,s:.62}),offset:.35},{transform:posB(p),offset:.6},
+      {transform:posB({x:p.x+10,y:p.y-6,r:p.r+10,s:.62}),offset:.8},{transform:posB(p)}],quick?380:560);
+    settle(it.el,posB(p));
+  }
+  return it;
+}
+async function homeHelper(g){
+  if(state.style!=="dog"&&state.style!=="kits")return;
+  await moveHelper({x:HREST.x,y:HREST.y,s:1},650,30);
+  if(g===state.gen){helper.classList.add("left");}
+}
+function spillLine(first){
+  if(!first)return " (That one landed on the floor.)";
+  return state.style==="cart"?" The cart is full past "+CAP+" books, so they spill onto the floor. The cart seems proud of this."
+    :" The cart is full past "+CAP+" books, so they spill onto the floor. Your "+who()+(state.style==="kits"?" are":" is")+" delighted.";
+}
+
+/* ---------- following a gold word ---------- */
+async function follow(to){
+  if(state.busy)return;
+  if(!BOOKS[to]){say("There is no sample page for <b>"+to+"</b> in this mock-up. In the world every gold word brings its book.");return;}
+  if(to===state.cur){say("You are already reading <b>"+to+"</b>.");return;}
+  begin();var g=state.gen,old=state.cur,st=state.style;
+  say(st==="float"?"<b>"+to+"</b> slips off its shelf in the <b>"+where(to)+"</b> and flies to you by itself. The flight hides the ~5 s download."
+    :"Your "+who()+(st==="kits"?" scurry":st==="cart"?" rolls":" dashes")+" off to the <b>"+where(to)+"</b> for <b>"+to+"</b>. The 4 to 5 s run hides the ~5 s download.");
+  var stop=startTimer(to);
+  var ok=await bring(to,g);if(!ok||g!==state.gen)return;
+  pageOut();
+  var from=await deliver(old,to,g);if(!from||g!==state.gen)return;
+  var secs=stop();pageIn(to);
+  state.hist.push(old);state.count++;status();
+  var it=await toss(old,from,g,false);if(g!==state.gen)return;
+  await homeHelper(g);if(g!==state.gen)return;
+  var msg="<b>"+to+"</b> came from the "+where(to)+" in "+secs+" s. <b>"+old+"</b> went "+(it.spot==="cloud"?"up into your cloud of books.":"onto the heap.");
+  if(it.spot==="floor"){msg+=spillLine(!state.spilledOnce);state.spilledOnce=true;}
+  say(msg);end(g);
+}
+
+/* ---------- Back: dig the previous book out of the heap ---------- */
+function removeItem(it){
+  if(!it)return {x:state.cartX,y:CART_Y-110,s:.56};
+  var p;
+  if(it.spot==="cart")p=cartWorld(cartLocal(cartItems().indexOf(it),it));
+  else if(it.spot==="floor")p={x:it.fx,y:it.fy,r:it.fr,s:.62};
+  else p=orbitPos(it,T,oc);
+  state.heap.splice(state.heap.indexOf(it),1);
+  if(it.el)it.el.remove();
+  if(it.spot==="cart")relayoutCart();
+  updateNumbers();
+  return {x:p.x,y:p.y,r:p.r,s:p.s};
+}
+async function back(){
+  if(state.busy)return;
+  if(!state.hist.length){say("Nothing to go back to yet: this is the first book of your trail.");return;}
+  begin();var g=state.gen,cur=state.cur,prev=state.hist.pop(),st=state.style,h=hands(),it=null,from,pulled,pf;
+  for(var i=state.heap.length-1;i>=0;i--){if(state.heap[i].key===prev){it=state.heap[i];break;}}
+  pageOut();
+  if(st==="dog"||st==="kits"){
+    say("Your "+who()+" "+(st==="kits"?"dig":"digs")+" through the heap for <b>"+prev+"</b>…");
+    var wp=it?targetOf(it):{x:state.cartX,y:CART_Y-110};
+    await moveHelper({x:wp.x-8,y:Math.min(wp.y+26,CART_Y),s:1},650,50);if(g!==state.gen)return;
+    await rummage();if(g!==state.gen)return;
+    pulled=removeItem(it);pf=flyer(prev,pulled);
+    var cw=carryWorld();
+    await anim(pf,arc(pulled,{x:cw.x,y:cw.y,r:-6,s:.5},34,posB),300);pf.remove();if(g!==state.gen)return;
+    setCarry(prev);
+    await moveHelper({x:h.x+58,y:h.y+40,s:1},700,40);if(g!==state.gen)return;
+    helper.classList.add("left");setCarry(prev);
+    from=await deliver(cur,prev,g);if(!from||g!==state.gen)return;
+  }else{
+    if(st==="cart"){say("The cart rattles and digs out <b>"+prev+"</b>…");await rattle();if(g!==state.gen)return;}
+    else say("<b>"+prev+"</b> drifts down out of your cloud…");
+    pulled=removeItem(it);pf=flyer(prev,pulled);
+    var hp={x:h.x,y:h.y,r:-12,s:.5};
+    await closeHand();
+    await anim(pf,arc(pulled,hp,st==="cart"?60:20,posB),st==="cart"?560:800);pf.remove();if(g!==state.gen)return;
+    state.cur=prev;markSeen(prev);await openHand(prev);
+    from=hp;
+  }
+  pageIn(prev);status();
+  var it2=await toss(cur,from,g,false);if(g!==state.gen)return;
+  await homeHelper(g);if(g!==state.gen)return;
+  say("Back to <b>"+prev+"</b>. <b>"+cur+"</b> went "+(it2.spot==="cloud"?"up into the cloud.":"onto the heap."));
+  end(g);
+}
+
+/* ---------- Leave: the cart is wheeled away to reshelve, the books fly home ---------- */
+async function scatter(items,poss,g){
+  await Promise.all(items.map(function(it,i){
+    if(it.el)it.el.remove();
+    var p=poss[i],f=flyer(it.key,p),home=towerOf(it.key).home;
+    return wait(i*60).then(function(){
+      if(g!==state.gen){f.remove();return;}
+      return anim(f,arc(p,{x:home.x,y:home.y,r:i%2?-40:40,s:.2},80+(i%3)*30,posB,{mode:"out"}),900).then(function(){f.remove();if(g===state.gen&&i%3===0)flash(home);});
+    });
+  }));
+}
+async function leave(){
+  if(state.busy)return;
+  if(!state.heap.length){say("Nothing to reshelve yet. Follow a few gold words first.");return;}
+  begin();var g=state.gen,st=state.style,items=state.heap.slice(),k=0;
+  var poss=items.map(function(it){
+    if(it.spot==="cart")return cartWorld(cartLocal(k++,it));
+    if(it.spot==="floor")return {x:it.fx,y:it.fy,r:it.fr,s:.62};
+    return orbitPos(it,T,oc);
+  });
+  state.heap=[];state.hist=[];status();
+  if(st==="float"){
+    say("Your cloud of books scatters home to the towers.");
+    await scatter(items,poss,g);if(g!==state.gen)return;
+    say("Every book flew home to its tower. You keep the one in your hands.");end(g);return;
+  }
+  var helped=st!=="cart",x0=state.cartX;
+  if(helped){await moveHelper({x:x0-100,y:CART_Y,s:1},600,20);if(g!==state.gen)return;helper.classList.remove("left");}
+  say(helped?"Your "+who()+" wheels the cart away to reshelve, and the books fly home.":"The cart rolls away to reshelve, and the books fly home.");
+  await scatter(items,poss,g);if(g!==state.gen)return;
+  scene.classList.add("rolling");
+  var hp0={x:state.hp.x,y:state.hp.y,s:1};
+  var pa=anim(cart,[{transform:posC({x:x0,y:CART_Y})},{transform:posC({x:x0+330,y:CART_Y})}],1300,"ease-in");
+  if(helped)anim(helper,[{transform:posH(hp0)},{transform:posH({x:hp0.x+330,y:hp0.y,s:1})}],1300,"ease-in");
+  await pa;if(g!==state.gen)return;
+  if(helped)setHelper({x:hp0.x+330,y:hp0.y,s:1});
+  await wait(500);if(g!==state.gen)return;
+  var pc=anim(cart,[{transform:posC({x:x0+330,y:CART_Y})},{transform:posC({x:x0,y:CART_Y})}],1200,"ease-out");
+  if(helped){helper.classList.add("left");anim(helper,[{transform:posH(state.hp)},{transform:posH(HREST)}],1200,"ease-out").then(function(){if(g===state.gen)setHelper(HREST);});}
+  await pc;if(g!==state.gen)return;
+  setCart(x0);scene.classList.remove("rolling");
+  say("Every book flew home to its tower and the cart came back empty. You keep the book in your hands; Back starts fresh.");
+  end(g);
+}
+
+/* ---------- Settle in a nook ---------- */
+async function nook(){
+  if(state.busy)return;
+  begin();var g=state.gen,st=state.style,oldY=hands().y;
+  state.settled=!state.settled;
+  nookBtn.setAttribute("aria-pressed",String(state.settled));nookBtn.textContent=state.settled?"Get up":"Settle in a nook";
+  scene.classList.toggle("seated",state.settled);
+  anim(hand,[{transform:"translate(328px,"+(oldY-25)+"px) scale(1)"},{transform:handTf(1)}],600,"cubic-bezier(.4,1.3,.5,1)").then(function(){if(g===state.gen)showHand(true);});
+  if(st!=="float"){
+    var x0=state.cartX,x1=state.settled?CART_PARK:CART_WALK;
+    scene.classList.add("rolling");
+    await anim(cart,[{transform:posC({x:x0,y:CART_Y})},{transform:posC({x:x1+(x1<x0?-7:7),y:CART_Y}),offset:.8},{transform:posC({x:x1,y:CART_Y})}],950,"ease-out");
+    if(g!==state.gen)return;
+    setCart(x1);scene.classList.remove("rolling");
+  }else{await wait(700);if(g!==state.gen)return;}
+  say(state.settled?(st==="float"?"You settle into a nook, and your cloud of books settles lower around you.":"You settle into a nook, and the cart parks beside you.")
+    :(st==="float"?"You get up, and the cloud rises with you.":"You get up, and the cart follows you again."));
+  end(g);
+}
+
+/* ---------- Fast-forward: many fetches in a row, to see the heap overflow ---------- */
+async function fast(){
+  if(state.busy)return;
+  begin();var g=state.gen,st=state.style,spilled=false,ps=[];
+  speed=.6;
+  var n=st==="float"?10:Math.max(6,CAP+3-state.heap.length);
+  say("Fast-forward: "+n+" fetches in a row…");
+  for(var i=0;i<n;i++){
+    var to=pickNext();if(!to)break;
+    var old=state.cur;state.hist.push(old);state.count++;state.cur=to;markSeen(to);setHand(to);
+    var h=hands(),from=(st==="dog"||st==="kits")?{x:state.hp.x+(st==="kits"?0:-26),y:state.hp.y-44,r:-6,s:.5}:{x:h.x,y:h.y,r:-12,s:.5};
+    ps.push(toss(old,from,g,true).then(function(it){if(it&&it.spot==="floor")spilled=true;}));
+    if(i%3===0&&(st==="dog"||st==="kits"))hop();
+    status();
+    await wait(170);if(g!==state.gen)return;
+  }
+  await Promise.all(ps);if(g!==state.gen)return;
+  pageIn(state.cur);
+  var msg=n+" books fetched. You are now reading <b>"+state.cur+"</b>.";
+  if(spilled){msg+=spillLine(!state.spilledOnce);state.spilledOnce=true;}
+  else if(st==="float")msg+=" The cloud widens as it grows instead of spilling.";
+  say(msg);end(g);
+}
+
+/* ---------- choosing a style: the same list, drawn another way ---------- */
+var STYLE_LINE={
+  dog:"<b>Spirit dog + cart:</b> a small glowing dog fetches each book and tosses the old one onto your cart.",
+  kits:"<b>Slipkits + cart:</b> three little folded index cards carry each book together.",
+  cart:"<b>Self-rolling cart:</b> the cart fetches books by itself, and you toss the old one in.",
+  float:"<b>Floating books:</b> no helper. Books fly to you on their own, and finished ones join a slowly orbiting cloud at shoulder height."
+};
+function setStyle(s){
+  if(state.busy||s===state.style)return;
+  state.style=s;
+  scene.classList.remove("s-dog","s-kits","s-cart","s-float");scene.classList.add("s-"+s);
+  document.querySelectorAll("[data-style]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.style===s));});
+  var keep=state.heap;state.heap=[];
+  keep.forEach(function(it){if(it.el)it.el.remove();it.el=null;it.free=false;chooseSpot(it);state.heap.push(it);placeItem(it);});
+  setCart(state.settled?CART_PARK:CART_WALK);helper.classList.add("left");setHelper(HREST);setCarry(null);
+  status();
+  say(STYLE_LINE[s]+(keep.length?" Same "+keep.length+" books as before, just drawn another way.":""));
+}
+
+/* ---------- reset ---------- */
+function reset(){
+  var style=state.style;
+  live.forEach(function(a){try{a.cancel();}catch(e){}});live.clear();
+  if(timer){clearInterval(timer);timer=null;}
+  [].slice.call(scene.querySelectorAll(".bk,.flash")).forEach(function(e){e.remove();});
+  state=fresh(style);speed=1;seq=0;seen={};clock=0;
+  scene.classList.remove("rolling","seated","race");document.body.classList.remove("busy");
+  raceBtn.setAttribute("aria-pressed","false");nookBtn.setAttribute("aria-pressed","false");nookBtn.textContent="Settle in a nook";
+  ctrlBtns.forEach(function(b){b.disabled=false;});
+  hand.getAnimations().forEach(function(a){a.cancel();});cart.getAnimations().forEach(function(a){a.cancel();});helper.getAnimations().forEach(function(a){a.cancel();});
+  setCart(CART_WALK);helper.classList.remove("moving");helper.classList.add("left");setHelper(HREST);setCarry(null);
+  setHand(START);showHand(true);markSeen(START);
+  if(pageOutAnim){pageOutAnim.cancel();pageOutAnim=null;}pg.getAnimations().forEach(function(a){a.cancel();});
+  renderPage(START);fchip.classList.remove("on");hideTowerTag();
+  var c=cloudTarget(0);oc={y:c.y,R:c.R,RY:c.RY};
+  status();say("Reset. You are holding <b>Octopus</b>, and the heap is empty.");
+}
+
+/* ---------- wiring ---------- */
+pbody.addEventListener("click",function(e){
+  var a=e.target.closest(".lk");if(!a)return;e.preventDefault();
+  if(state.busy){say("One book at a time: your "+who()+" is still on a run.");return;}
+  follow(a.dataset.to);
+});
+pbody.addEventListener("keydown",function(e){
+  var a=e.target.closest(".lk");if(!a||(e.key!=="Enter"&&e.key!==" "))return;e.preventDefault();if(!state.busy)follow(a.dataset.to);
+});
+document.querySelectorAll("[data-act]").forEach(function(b){b.addEventListener("click",function(){
+  var a=b.dataset.act;if(a==="back")back();else if(a==="leave")leave();else if(a==="fast")fast();else if(a==="reset")reset();
+});});
+document.querySelectorAll("[data-style]").forEach(function(b){b.addEventListener("click",function(){setStyle(b.dataset.style);});});
+nookBtn.addEventListener("click",nook);
+raceBtn.addEventListener("click",function(){
+  state.race=!state.race;scene.classList.toggle("race",state.race);raceBtn.setAttribute("aria-pressed",String(state.race));updateNumbers();
+  say(state.race?"Race mode: the heap's order is your route, so the books are numbered from the start. This shows only during races.":"Race over: no numbers. Outside races it is just a heap.");
+});
+document.addEventListener("keydown",function(e){
+  var t=e.target,tag=t&&t.tagName;if(tag==="INPUT"||tag==="TEXTAREA"||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==="b"||e.key==="B"||e.key==="Backspace"){e.preventDefault();back();}
+});
+function showTip(a){
+  if(!a||!a.dataset.tip){tip.style.display="none";return;}
+  tip.textContent="→ "+a.dataset.tip;tip.style.display="block";
+  var r=a.getBoundingClientRect(),w=tip.offsetWidth;
+  tip.style.left=Math.max(8,Math.min(window.innerWidth-w-8,r.left))+"px";tip.style.top=(r.top-tip.offsetHeight-6)+"px";
+}
+pbody.addEventListener("mouseover",function(e){showTip(e.target.closest?e.target.closest(".lk"):null);});
+pbody.addEventListener("mouseleave",function(){tip.style.display="none";});
+pbody.addEventListener("focusin",function(e){showTip(e.target.closest(".lk"));});
+pbody.addEventListener("focusout",function(){tip.style.display="none";});
+window.addEventListener("scroll",function(){tip.style.display="none";},{passive:true});
+function fit(){scene.style.transform="scale("+(box.clientWidth/800)+")";}
+window.addEventListener("resize",fit);
+if(window.ResizeObserver)new ResizeObserver(fit).observe(box);
+
+/* ---------- start ---------- */
+setCart(CART_WALK);helper.classList.add("left");setHelper(HREST);setHand(START);showHand(true);markSeen(START);
+renderPage(START);status();fit();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
